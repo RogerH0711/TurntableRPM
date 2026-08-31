@@ -63,6 +63,25 @@ final class MotionEngine: ObservableObject {
         var fieldAccuracy: String = "—"
     }
 
+    /// 量測模式。
+    enum Mode: String, CaseIterable, Identifiable {
+        /// 使用者自己按開始與停止。
+        case manual
+        /// 等轉盤到達穩定轉速才真正開始記錄，盤面停下時自動結束。
+        case automatic
+        var id: String { rawValue }
+        var label: String { self == .manual ? "手動" : "自動" }
+    }
+
+    /// 量測的階段。自動模式會多一個「等待轉速穩定」的階段。
+    enum Phase: Equatable {
+        case idle
+        /// 感測器已開，但還在等轉速穩定 —— 這段資料不會被記錄。
+        case waitingForStability
+        case measuring
+        case stopped
+    }
+
     enum Availability {
         /// 實機且動作感測器可用。`magneticNorth` 為 false 代表拿不到磁北參考，校準功能會受限。
         case ready(magneticNorth: Bool)
@@ -72,6 +91,9 @@ final class MotionEngine: ObservableObject {
 
     @Published private(set) var snapshot = Snapshot()
     @Published private(set) var isRunning = false
+    @Published private(set) var phase: Phase = .idle
+    /// 量測模式。自動模式會自己等轉速穩定、自己在盤面停下時結束。
+    @Published var mode: Mode = .manual
     @Published private(set) var availability: Availability = .unavailable
     @Published private(set) var statusMessage = ""
     /// 停止之後產生的匯出檔。給 ShareLink 用。
@@ -100,6 +122,11 @@ final class MotionEngine: ObservableObject {
         return queue
     }()
     private var refreshTimer: Timer?
+    /// 自動模式：轉速從什麼時候開始持續穩定。
+    private var stableSince: TimeInterval?
+    /// 自動模式的判準。
+    private let autoStableSeconds = 3.0
+    private let autoWindowSeconds = 2.0
     /// 圓心擬合是全量掃描，每 2 秒跑一次就夠了。
     private var refineTick = 0
     private var cachedRefined: MagneticRevolutionCounter.Refined?
@@ -138,6 +165,8 @@ final class MotionEngine: ObservableObject {
         accumulator.reset()
         exportURL = nil
         analysis = nil
+        phase = (mode == .automatic) ? .waitingForStability : .measuring
+        stableSince = nil
         refineTick = 0
         cachedRefined = nil
         manager.deviceMotionUpdateInterval = 1.0 / targetSampleRate
@@ -187,7 +216,7 @@ final class MotionEngine: ObservableObject {
         }
         UIApplication.shared.isIdleTimerDisabled = true
         isRunning = true
-        statusMessage = "量測中"
+        statusMessage = mode == .automatic ? "等待轉速穩定…" : "量測中"
     }
 
     func stop() {
@@ -198,6 +227,7 @@ final class MotionEngine: ObservableObject {
         refreshTimer = nil
         UIApplication.shared.isIdleTimerDisabled = false
         isRunning = false
+        phase = .stopped
         cachedRefined = accumulator.refined()
         pullSnapshot()
         statusMessage = "已停止"
@@ -301,7 +331,49 @@ final class MotionEngine: ObservableObject {
         return d
     }
 
+    /// 給反旋轉顯示用。每個畫面更新都會呼叫，所以刻意不是 @Published ——
+    /// 每秒 120 次的 objectWillChange 會把 SwiftUI 淹掉。
+    func displayAngleDegrees() -> Double {
+        accumulator.displayAngleDegrees(now: ProcessInfo.processInfo.systemUptime)
+    }
+
+    /// 自動模式的狀態機。在 10 Hz 的快照迴圈裡跑。
+    private func advanceAutomaticPhase() {
+        guard mode == .automatic, isRunning else { return }
+        let recent = accumulator.recentSamples(seconds: autoWindowSeconds)
+        guard recent.count > 32, let mean = SpeedStatistics.meanOmega(recent) else { return }
+
+        switch phase {
+        case .waitingForStability:
+            // 要同時「夠快」與「夠穩」。只看穩定度的話，靜止不動也是穩定的。
+            let fastEnough = mean / 6.0 > 10.0
+            let steady = SpeedStatistics.isStable(recent, relativeStdDevLimit: 0.01)
+            guard fastEnough && steady else { stableSince = nil; return }
+
+            let now = ProcessInfo.processInfo.systemUptime
+            if let since = stableSince {
+                if now - since >= autoStableSeconds {
+                    // 丟掉等待期間的資料，從乾淨的狀態開始記錄。
+                    accumulator.reset()
+                    phase = .measuring
+                    statusMessage = "量測中"
+                }
+            } else {
+                stableSince = now
+                statusMessage = "轉速穩定中…"
+            }
+
+        case .measuring:
+            // 盤面停下就自動結束。門檻取標稱的 20%（規格 §6.2）。
+            if mean / 6.0 < 8.0 { stop() }
+
+        case .idle, .stopped:
+            break
+        }
+    }
+
     private func pullSnapshot() {
+        advanceAutomaticPhase()
         refineTick += 1
         if isRunning && refineTick % 20 == 0 { cachedRefined = accumulator.refined() }
         let reading = accumulator.read()

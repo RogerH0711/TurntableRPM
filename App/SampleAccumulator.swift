@@ -170,6 +170,34 @@ final class SampleAccumulator {
         return reading
     }
 
+    /// 給反旋轉顯示用的即時角度（度）。
+    ///
+    /// **用最新一筆的時間戳外推，不是直接回傳累積值。** 感測器回呼是 100 Hz，
+    /// 畫面是 120 Hz，直接讀會有最多 10 ms 的落後 —— 在 192 °/s 之下就是 1.9°，
+    /// 而且會隨著兩個時脈的相位漂移忽大忽小，看起來就是畫面在抖。
+    /// 規格 §4.3 特別點名這一點。
+    ///
+    /// - Parameter now: 必須跟 `CMLogItem.timestamp` 同一個時間基準，
+    ///   也就是 `ProcessInfo.processInfo.systemUptime`。
+    func displayAngleDegrees(now: TimeInterval) -> Double {
+        lock.lock()
+        defer { lock.unlock() }
+        guard let last = previous else { return 0 }
+        let dt = max(0, min(now - last.t, 0.1))   // 上限 0.1 s，避免暫停後爆衝
+        return phase.gyroTotalDegrees + last.omega * dt
+    }
+
+    /// 最近 N 秒的樣本。自動模式用它判斷轉速穩了沒。
+    func recentSamples(seconds: Double) -> [SpinSample] {
+        lock.lock()
+        defer { lock.unlock() }
+        guard let last = previous else { return [] }
+        let cutoff = last.t - seconds
+        var i = samples.count - 1
+        while i > 0 && samples[i - 1].t >= cutoff { i -= 1 }
+        return Array(samples[i...])
+    }
+
     /// 扣掉圓心偏移之後重算。這是全量掃描，不要每次 `read()` 都跑 ——
     /// 呼叫端自己節流（目前是每 2 秒一次，外加停止時一次）。
     func refined() -> MagneticRevolutionCounter.Refined? {

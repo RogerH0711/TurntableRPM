@@ -126,4 +126,44 @@ final class MeasurementAnalysisTests: XCTestCase {
         let run = SyntheticSignal.make(nominalRPM: 100.0 / 3.0, durationSeconds: 0.3)
         XCTAssertNil(MeasurementAnalysis.analyze(samples: run.samples))
     }
+
+    // MARK: - 主導成分
+
+    /// 單一正弦：最強的峰應該佔掉絕大部分功率。
+    func testDominantPeakShareIsHighForSingleTone() {
+        let run = SyntheticSignal.make(
+            nominalRPM: 100.0 / 3.0, durationSeconds: 90,
+            wow: [WowComponent(amplitudePercent: 0.40, frequencyHz: rot33)])
+        let a = MeasurementAnalysis.analyze(samples: run.samples)!
+        XCTAssertGreaterThan(a.dominantPeakShare, 0.9)
+    }
+
+    /// 多個相當的成分：沒有單一主導。
+    func testDominantPeakShareIsLowWhenSpread() {
+        let run = SyntheticSignal.make(
+            nominalRPM: 100.0 / 3.0, durationSeconds: 90,
+            wow: [WowComponent(amplitudePercent: 0.20, frequencyHz: rot33),
+                  WowComponent(amplitudePercent: 0.20, frequencyHz: rot33 * 2),
+                  WowComponent(amplitudePercent: 0.20, frequencyHz: rot33 * 5),
+                  WowComponent(amplitudePercent: 0.20, frequencyHz: 4.0)])
+        let a = MeasurementAnalysis.analyze(samples: run.samples)!
+        XCTAssertLessThan(a.dominantPeakShare, 0.45)
+    }
+
+    /// 這個指標比峰值/RMS 穩定：實測同一台唱盤兩次得到 1.67 與 1.95，
+    /// 譜峰內容卻一樣。換成功率佔比之後，同樣的頻譜要給出同樣的結論。
+    func testShareIsStableAcrossRunsWithSameContent() {
+        var shares: [Double] = []
+        for seed in UInt64(1) ... 4 {
+            let run = SyntheticSignal.make(
+                nominalRPM: 100.0 / 3.0, durationSeconds: 90,
+                wow: [WowComponent(amplitudePercent: 0.42, frequencyHz: rot33),
+                      WowComponent(amplitudePercent: 0.047, frequencyHz: rot33 * 35.32)],
+                noisePercent: 0.03, seed: seed)
+            shares.append(MeasurementAnalysis.analyze(samples: run.samples)!.dominantPeakShare)
+        }
+        XCTAssertLessThan(shares.max()! - shares.min()!, 0.05,
+                          "同樣的頻譜內容應該得到一致的佔比，實際 \(shares)")
+        XCTAssertGreaterThan(shares.min()!, 0.6, "0.42% 對 0.047% 顯然是單頻主導")
+    }
 }

@@ -11,6 +11,7 @@ struct LiveMeasurementView: View {
     @StateObject private var store = CalibrationStore()
     @State private var showingCalibrationSheet = false
     @State private var showingAbout = false
+    @State private var showingDial = false
 
     /// 有沒有可以拿來校準或匯出的量測結果。
     private var hasMeasurement: Bool { (engine.snapshot.rawMeanRPM ?? 0) > 0 }
@@ -23,6 +24,7 @@ struct LiveMeasurementView: View {
                         unavailableBanner
                     }
                     speedReadout
+                    modePicker
                     controlButton
                     if !engine.isRunning && !hasMeasurement { safetyBanner }
                     stopwatchPanel
@@ -55,6 +57,17 @@ struct LiveMeasurementView: View {
                 ) { store.save($0) }
             }
             .sheet(isPresented: $showingAbout) { AboutView() }
+            // 反旋轉盤面。全螢幕，因為它要佔滿內接圓。
+            .fullScreenCover(isPresented: $showingDial) {
+                SpinningDialView(engine: engine) {
+                    engine.stop()
+                    showingDial = false
+                }
+            }
+            .onChange(of: engine.isRunning) { _, running in
+                // 盤面自己停下時（自動模式）也要收掉全螢幕。
+                if !running { showingDial = false }
+            }
         }
     }
 
@@ -106,9 +119,36 @@ struct LiveMeasurementView: View {
         }
     }
 
+    /// 手動 vs 自動。
+    ///
+    /// 自動模式解決的是「先按開始再放手機」的問題 —— 它會等轉速穩定才真正
+    /// 開始記錄，盤面停下時自己結束。`StabilityGate` 是事後補救，這是事前避免。
+    @ViewBuilder
+    private var modePicker: some View {
+        if !engine.isRunning {
+            VStack(alignment: .leading, spacing: 6) {
+                Picker("模式", selection: $engine.mode) {
+                    ForEach(MotionEngine.Mode.allCases) { Text($0.label).tag($0) }
+                }
+                .pickerStyle(.segmented)
+
+                Text(engine.mode == .automatic
+                     ? "等轉盤到達穩定轉速才開始記錄，盤面停下時自動結束。"
+                     : "自己按開始與停止。記得先讓轉盤轉起來再按開始。")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
     private var controlButton: some View {
         Button {
-            engine.isRunning ? engine.stop() : engine.start()
+            if engine.isRunning {
+                engine.stop()
+            } else {
+                engine.start()
+                showingDial = true
+            }
         } label: {
             Text(engine.isRunning ? "停止" : "開始量測")
                 .font(.title3.weight(.semibold))

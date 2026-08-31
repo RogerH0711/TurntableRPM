@@ -17,7 +17,7 @@ TurntableRPM/
 │   └── LiveMeasurementView.swift 畫面
 ├── Packages/TurntableCore/   演算法核心
 │   ├── Sources/                  純 Swift + Foundation，不 import UIKit/CoreMotion
-│   ├── Tests/                    94 個測試
+│   ├── Tests/                    97 個測試
 │   └── Reference/                Python 參考實作，黃金值的來源
 ├── tools/
 │   └── analyze_export.py     分析 App 匯出的量測 JSON（含分段圓擬合）
@@ -30,7 +30,7 @@ TurntableRPM/
 
 | 指令 | 用途 |
 |---|---|
-| `make test` | 演算法測試（94 個，約 3 秒，不需要模擬器或實機） |
+| `make test` | 演算法測試（97 個，約 4 秒，不需要模擬器或實機） |
 | `make docker-test` | 同一批測試在 Linux container 跑一次（`swift:5.10`） |
 | `make generate` | 新增/刪除 `App/` 底下的檔案後**必須**跑，重新產生 .xcodeproj |
 | `make open` | 產生並開啟 Xcode |
@@ -206,8 +206,9 @@ CI 另外還有 `.github/workflows/swift.yml`。
 
 - **M0 演算法核心** — 完成，74 個測試全過（macOS 與 Linux container 都驗過）。
 - **M1 感測器接通** — 完成，實機驗證過（取樣率 100.1 Hz、重力投影、圈數正確）。
-- **M2 標稱辨識 / 反旋轉盤面 / 停止凍結** — 部分。標稱辨識邏輯有了，
-  但畫面仍是工程診斷傾印，反旋轉盤面與停止凍結未做。
+- **M2 標稱辨識 / 反旋轉盤面 / 停止凍結** — 大部分完成。標稱辨識、畫面重整、
+  **反旋轉盤面**（`SpinningDialView`，規格 §6.2）都做好了。停止凍結未做。
+  另加**手動／自動兩種模式**：自動模式等轉速穩定才開始記錄、盤面停下時自己結束。
 - **M3 校準** — **完成。碼錶校準是唯一可信的路徑**
   （`StopwatchCalibration` + `CalibrationStore` + `StopwatchCalibrationSheet`）：
   輸入圈數與秒數算出 k，連機型一起存進 UserDefaults，之後所有對外讀數自動套用；

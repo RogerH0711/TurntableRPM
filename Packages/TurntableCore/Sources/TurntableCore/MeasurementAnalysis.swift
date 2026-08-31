@@ -70,6 +70,21 @@ public struct MeasurementAnalysis: Sendable {
     public let trimmedStartSeconds: Double
     public let trimmedEndSeconds: Double
 
+    /// 最強的那根譜峰佔全部譜峰功率的比例（0–1）。
+    ///
+    /// **判斷「單頻主導」還是「隨機抖動」要用這個，不要用峰值/RMS 比。**
+    /// 峰值/RMS 的理論值是單頻 1.41、高斯隨機 1.96，但實測兩次同一台唱盤
+    /// 得到 1.67 與 1.95 —— 譜峰內容其實一模一樣，只是比值本身的隨機起伏
+    /// 就跨過了 1.41 與 1.96 的中點。拿它當二分判準會給出前後矛盾的結論。
+    ///
+    /// 譜峰功率的分布是直接證據：一根峰佔掉大半，就是單一零件的週期性問題。
+    public var dominantPeakShare: Double {
+        let power = peaks.map { $0.amplitudePercent * $0.amplitudePercent }
+        let total = power.reduce(0, +)
+        guard total > 0, let top = power.max() else { return 0 }
+        return top / total
+    }
+
     /// 每圈一次成分的振幅（%）。偏心的直接指標。
     public var onePerRevolutionPercent: Double {
         peaks.first { $0.isRotationHarmonic && Int($0.orderOfRotation.rounded()) == 1 }?

@@ -106,6 +106,8 @@ struct AnalysisView: View {
                           String(format: "%.3f", analysis.wowFlutter.peak2SigmaPercent), "%")
             DiagnosticRow("峰值 / RMS",
                           String(format: "%.2f", analysis.wowFlutter.peakToRMSRatio))
+            DiagnosticRow("最強成分佔比",
+                          String(format: "%.0f", analysis.dominantPeakShare * 100), "%")
             DiagnosticRow("每圈一次成分",
                           String(format: "%.3f", analysis.onePerRevolutionPercent), "%")
 
@@ -116,17 +118,26 @@ struct AnalysisView: View {
         .measurementCard()
     }
 
-    /// 峰值/RMS 比本身就有診斷價值：高斯型隨機抖動約 1.96，單頻正弦 wow 約 1.41。
+    /// 判斷「單頻主導」還是「隨機」用譜峰的功率分布，不用峰值/RMS 比。
+    ///
+    /// 實測同一台唱盤兩次得到 1.67 與 1.95，譜峰內容卻一模一樣 —— 比值本身的
+    /// 隨機起伏就跨過了 1.41 與 1.96 的中點，拿它當門檻會給出前後矛盾的結論。
     private var ratioInterpretation: String {
-        let r = analysis.wowFlutter.peakToRMSRatio
-        if r < 1.6 {
-            return "峰值/RMS 接近 1.41，代表抖動集中在單一頻率 —— 是某個零件的週期性問題，"
-                 + "看下面的譜峰找出是哪一個。"
+        let share = analysis.dominantPeakShare
+        guard let top = analysis.peaks.first else {
+            return "沒有找到顯著的週期性成分。"
         }
-        if r > 1.8 {
-            return "峰值/RMS 接近 1.96，代表抖動比較像隨機雜訊，沒有單一主導的來源。"
+        let hz = String(format: "%.3f Hz", top.frequencyHz)
+        let pct = Int((share * 100).rounded())
+        if share > 0.6 {
+            return "抖動由 \(hz) 這一根主導（佔譜峰功率 \(pct)%）—— 是某個零件的"
+                 + "週期性問題，不是隨機雜訊。看下面的判讀。"
         }
-        return "峰值/RMS 介於單頻（1.41）與隨機（1.96）之間，兩種成分都有。"
+        if share < 0.3 {
+            return "沒有單一主導的頻率（最強的 \(hz) 只佔 \(pct)%），"
+                 + "抖動比較像分散的隨機雜訊。"
+        }
+        return "\(hz) 是最強的成分（佔 \(pct)%），但還有其他來源，兩種成分都有。"
     }
 
     // MARK: - 譜峰判讀（這是最有價值的一區）
@@ -250,6 +261,10 @@ struct AnalysisView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+            // 單一字串字面值 —— Text 的 markdown 只在字面值生效（今晚第三次踩到）。
+            Text("**角度不能跨次量測比較。** 0° 是「按下開始的那一瞬間」盤面所在的位置，而那是隨機的。要能比較，盤面貼一個記號，每次都等記號轉到同一個位置（例如唱臂那側）才按開始。")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
             if heatScaleExpanded {
                 Text("色階已放大到容納最大值 —— 跟別次量測比較時要看圖例上的數字，"
                      + "不能只比顏色深淺。")
