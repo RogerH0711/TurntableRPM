@@ -12,6 +12,8 @@ struct LiveMeasurementView: View {
     @State private var showingCalibrationSheet = false
     @State private var showingAbout = false
     @State private var showingDial = false
+    @AppStorage("dialShowsElapsed") private var dialShowsElapsed = false
+    @AppStorage("dialShowsRevolutions") private var dialShowsRevolutions = false
 
     /// 有沒有可以拿來校準或匯出的量測結果。
     private var hasMeasurement: Bool { (engine.snapshot.rawMeanRPM ?? 0) > 0 }
@@ -59,7 +61,9 @@ struct LiveMeasurementView: View {
             .sheet(isPresented: $showingAbout) { AboutView() }
             // 反旋轉盤面。全螢幕，因為它要佔滿內接圓。
             .fullScreenCover(isPresented: $showingDial) {
-                SpinningDialView(engine: engine) {
+                SpinningDialView(engine: engine,
+                                 showsElapsed: dialShowsElapsed,
+                                 showsRevolutions: dialShowsRevolutions) {
                     engine.stop()
                     showingDial = false
                 }
@@ -137,6 +141,17 @@ struct LiveMeasurementView: View {
                      : "自己按開始與停止。記得先讓轉盤轉起來再按開始。")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+
+                DisclosureGroup("量測畫面顯示什麼") {
+                    Toggle("經過時間", isOn: $dialShowsElapsed)
+                    Toggle("累積圈數", isOn: $dialShowsRevolutions)
+                    Text("量測畫面會反向旋轉，讓內容在轉動中看起來靜止。"
+                         + "加的資訊愈多、字就得愈小，因為所有內容都必須落在螢幕的內接圓裡。")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+                .font(.subheadline)
+                .padding(.top, 4)
             }
         }
     }

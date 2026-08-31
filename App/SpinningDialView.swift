@@ -17,6 +17,10 @@ import TurntableCore
 /// 補掉感測器（100 Hz）與畫面（120 Hz）之間的落後。直接讀累積值會讓畫面抖。
 struct SpinningDialView: View {
     @ObservedObject var engine: MotionEngine
+    /// 額外資訊。刻意做成單行、小字 —— 每多一行內容就變高，
+    /// 而高度是內接圓約束裡最吃緊的方向。
+    var showsElapsed = false
+    var showsRevolutions = false
     let onStop: () -> Void
 
     var body: some View {
@@ -93,11 +97,33 @@ struct SpinningDialView: View {
                     .foregroundStyle(.orange.opacity(0.8))
                     .padding(.top, 4)
             }
+
+            if !extraInfo.isEmpty {
+                Text(extraInfo)
+                    .font(.subheadline)
+                    .monospacedDigit()
+                    .foregroundStyle(.white.opacity(0.45))
+                    .padding(.top, 10)
+            }
         }
         // 內接圓的約束：對角線不能超過直徑，所以內容寬度限制在直徑的 0.7 倍
         // （0.7 ≈ 1/√2，正方形內接於圓時的邊長比）。
         .frame(maxWidth: .infinity)
         .padding(.horizontal)
+    }
+
+    /// 計時與圈數併成一行，用中點分隔。分兩行的話高度會多一截，
+    /// 在 45° 旋轉時比較容易撞到內接圓的邊。
+    private var extraInfo: String {
+        var parts: [String] = []
+        if showsElapsed {
+            let s = Int(engine.snapshot.elapsedSeconds.rounded())
+            parts.append(String(format: "%d:%02d", s / 60, s % 60))
+        }
+        if showsRevolutions {
+            parts.append("\(engine.snapshot.revolutions) 圈")
+        }
+        return parts.joined(separator: "  ·  ")
     }
 
     private func errorColor(_ error: Double) -> Color {
