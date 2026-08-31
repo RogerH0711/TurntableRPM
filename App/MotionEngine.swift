@@ -221,6 +221,8 @@ final class MotionEngine: ObservableObject {
             let result = MeasurementAnalysis.analyze(samples: samples, sampleRate: rate)
             DispatchQueue.main.async {
                 self?.analysis = result
+                // 重拉快照，主畫面的平均轉速才會換成切過的值。
+                self?.pullSnapshot()
                 self?.writeExport()
             }
         }
@@ -249,8 +251,7 @@ final class MotionEngine: ObservableObject {
             "rawMeanRPM": s.rawMeanRPM ?? 0,
             "appliedFactor": s.appliedFactor ?? 0,
             "instantRPM": s.instantRPM,
-            "errorPercent": s.errorPercent ?? 0,
-            "nominalRPM": s.nominal?.rpm ?? 0,
+
             "sampleCount": s.sampleCount,
             "elapsedSeconds": s.elapsedSeconds,
             "effectiveSampleRate": s.effectiveSampleRate,
@@ -265,6 +266,10 @@ final class MotionEngine: ObservableObject {
             "rawMagneticMaxHorizontal": s.rawMagneticMaxHorizontal,
         ]
         d["fusedCalibration"] = s.calibrationEstimate ?? 0
+        // 標稱轉速辨識失敗時不要寫 0 —— 那會被讀成「偏差正好是 0%」。
+        // 沒有值就不寫這個鍵。（NaN 不是合法 JSON，JSONSerialization 會拋錯。）
+        if let e = s.errorPercent { d["errorPercent"] = e }
+        if let n = s.nominal { d["nominalRPM"] = n.rpm }
         if let r = s.refined {
             d["refinedTotalDegrees"] = r.totalDegrees
             d["refinedRevolutions"] = r.revolutions
@@ -336,8 +341,15 @@ final class MotionEngine: ObservableObject {
             magneticTotalDegrees: reading.magneticTotalDegrees,
             revolutions: reading.revolutions)
 
+        // 停止之後，平均轉速改用分析算出來的 —— 那是切掉加速段之後的值。
+        //
+        // 即時累積器算的是「全部樣本」，含加速段。實測「先按開始再放手機」的
+        // 情境：即時平均 30.02 RPM，真值 31.95，而且因為離 33⅓ 超過 8% 的辨識
+        // 容差，連標稱轉速都判不出來，偏差顯示成 0。分析頁是對的，主畫面卻不是
+        // —— 而主畫面才是使用者第一眼看到的數字。
+        let gatedRawRPM = (!isRunning ? analysis?.meanRPM : nil)
         if let meanOmega = reading.meanOmega, meanOmega > 0 {
-            let rawRPM = meanOmega / 6.0
+            let rawRPM = gatedRawRPM ?? (meanOmega / 6.0)
             next.rawMeanRPM = rawRPM
             // 對外的一切都用校準後的值，包含標稱辨識 —— 未修正的讀數不該拿來下判斷。
             let rpm = rawRPM * (k ?? 1.0)
