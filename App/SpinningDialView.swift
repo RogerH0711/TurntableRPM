@@ -135,6 +135,11 @@ struct SpinningDialView: View {
     }
 
     /// 會跟著反轉的內容。**全部必須落在內接圓內**，否則轉到某個角度就被切掉。
+    ///
+    /// **動態字型在這裡要設上限。** 使用者把系統字體調到最大時（年長使用者常這樣，
+    /// 而這正是目標族群），語意字級會撐高整欄內容，直接衝出內接圓 ——
+    /// 實測「12:34 · 247 圈」整行掉到圓外面還被截斷。
+    /// 主要數字本來就是固定 84pt，不靠動態字型，所以設上限不會讓它變難讀。
     private var dial: some View {
         VStack(spacing: 4) {
             Text(engine.snapshot.instantRPM > 0
@@ -182,10 +187,9 @@ struct SpinningDialView: View {
                     .padding(.top, 10)
             }
         }
-        // 內接圓的約束：對角線不能超過直徑，所以內容寬度限制在直徑的 0.7 倍
-        // （0.7 ≈ 1/√2，正方形內接於圓時的邊長比）。
         .frame(maxWidth: .infinity)
         .padding(.horizontal)
+        .dynamicTypeSize(...DynamicTypeSize.large)
     }
 
     /// 計時與圈數併成一行，用中點分隔。分兩行的話高度會多一截，

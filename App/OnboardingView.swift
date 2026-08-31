@@ -21,18 +21,34 @@ struct OnboardingView: View {
                 steps.tag(2)
                 limits.tag(3)
             }
-            .tabViewStyle(.page)
-            .indexViewStyle(.page(backgroundDisplayMode: .always))
+            // 關掉 TabView 自己的圓點，改畫在底部固定列。
+            // 內建的圓點是浮在內容上的 —— 字體調大之後內文變長，圓點就會壓在
+            // 文字上。目標族群正是會把字體調大的人。
+            .tabViewStyle(.page(indexDisplayMode: .never))
 
-            Button(page == lastPage ? "開始使用" : "下一步") {
-                if page == lastPage { dismiss() } else { withAnimation { page += 1 } }
+            // 底部固定列。**背景要不透明** —— TabView 的捲動內容不會被裁在邊界上，
+            // 字體調大之後內文會一路長到這裡，透明背景就會看到文字疊在圓點與按鈕上。
+            VStack(spacing: 16) {
+                HStack(spacing: 8) {
+                    ForEach(0 ... lastPage, id: \.self) { i in
+                        Circle()
+                            .fill(i == page ? Color.accentColor : Color.secondary.opacity(0.3))
+                            .frame(width: 8, height: 8)
+                    }
+                }
+                Button(page == lastPage ? "開始使用" : "下一步") {
+                    if page == lastPage { dismiss() } else { withAnimation { page += 1 } }
+                }
+                .font(.headline)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .buttonStyle(.borderedProminent)
+                .padding(.horizontal, 24)
             }
-            .font(.headline)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
-            .buttonStyle(.borderedProminent)
-            .padding(.horizontal, 24)
+            .padding(.top, 14)
             .padding(.bottom, 20)
+            .frame(maxWidth: .infinity)
+            .background(Color(.systemBackground))
         }
     }
 
@@ -100,7 +116,7 @@ struct OnboardingView: View {
             .font(.body)
             .padding(.horizontal, 28)
             .padding(.top, 44)
-            .padding(.bottom, 70)
+            .padding(.bottom, 40)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
