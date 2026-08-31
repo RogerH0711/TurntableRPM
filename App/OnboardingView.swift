@@ -52,7 +52,7 @@ struct OnboardingView: View {
 
     private var steps: some View {
         page(icon: "list.number", title: "怎麼量") {
-            step(1, "轉盤停著，把手機照上一頁的方式放好")
+            step(1, "轉盤停著，把手機照上一頁的方式放好，**對面記得配平**")
             step(2, "按下「準備好，開始偵測」")
             step(3, "啟動轉盤 —— 轉速穩了會自動開始，停下時自動結束")
             Text("量 90 秒以上，頻譜才夠清楚。")
