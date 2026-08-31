@@ -20,6 +20,12 @@
 
 量測時畫面會**反向旋轉**，內容在轉動中看起來是靜止的，不必把手機拿起來就能讀。
 
+| 分析結果 | 歷史與趨勢 | 手機怎麼擺 |
+|---|---|---|
+| ![分析](docs/screenshots/analysis.png) | ![歷史](docs/screenshots/history.png) | ![擺法](docs/screenshots/placement.png) |
+
+（模擬器截圖，資料為示範用的合成訊號。）
+
 ## 它看不到什麼
 
 **手機是跟著盤面一起轉的，量到的是盤的轉速。** 唱片中心孔沒對準造成的音高起伏，
@@ -33,6 +39,34 @@
 - iPhone，iOS 17 以上（不支援 iPad）
 - 唱盤大到放得下手機，速度 16⅔ / 33⅓ / 45 / 78 都支援
 - 開發需要 macOS + Xcode 16 以上、[XcodeGen](https://github.com/yonaskolb/XcodeGen)
+
+## 安裝
+
+### 選項 A：自己用 Xcode 建置（推薦）
+
+最可靠，也不必信任第三方工具。往下看「建置」。
+
+### 選項 B：下載 .ipa 自己簽章
+
+[Releases](https://github.com/RogerH0711/TurntableRPM/releases) 有 `TurntableRPM-unsigned.ipa`。
+
+**它是未簽章的，不能直接安裝。** iOS 只執行經過簽章的 App，而我目前沒有付費開發者
+帳號，所以無法提供 TestFlight 或可直接安裝的版本。你必須用**自己的 Apple ID** 簽章，
+常見的工具是 [AltStore](https://altstore.io) 或 [SideStore](https://sidestore.io)：
+
+1. 在 Mac 或 Windows 上安裝 **AltServer**
+2. iPhone 接上電腦，用 AltServer 把 **AltStore** 裝進 iPhone
+3. 下載上面的 `.ipa` 到 iPhone
+4. 打開 AltStore ▸ My Apps ▸ 左上角 **+** ▸ 選那個 `.ipa`
+5. 輸入你的 Apple ID（建議另外開一個，不要用主帳號）
+
+**免費 Apple ID 的限制：**
+
+- App **7 天後過期**，要重新簽章（AltStore 在同一個 Wi-Fi 下會自動續期）
+- 同時最多只能有 **3 個**這樣安裝的 App
+
+有付費開發者帳號（$99/年）的話簽章有效期是一年。等我有帳號會改成 TestFlight，
+那時候就只要點一個連結。
 
 ## 建置
 
