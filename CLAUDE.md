@@ -210,9 +210,13 @@ CI 另外還有 `.github/workflows/swift.yml`。
 - **M5 唱盤設定檔 / 載重補償** — 未開始。原始資料匯出（`MeasurementExport`）已完成，
   搭配 `tools/analyze_export.py`。
 
-`LiveMeasurementView` 目前有四個面板：碼錶校準、融合路徑校準（標示不可採信）、
-獨立校準（原始磁力計）、感測器診斷。**上架前要重排** —— 碼錶提到最上面，
-磁力計那兩塊收進「進階診斷」。
+畫面已重排完成。`LiveMeasurementView` 是主畫面（轉速讀數 → 安全提醒 → 碼錶校準
+→ 這次量測 → 匯出），兩條失敗的自動校準路徑收進 `AdvancedDiagnosticsView`
+（NavigationLink 進去）。`AboutView` 是說明頁，誠實交代「量的是盤不是音樂」、
+未校準時偏差% 不能用、以及安全事項。
+
+**還沒做的上架必要項目：App 圖示**（`AppIcon.appiconset` 是空的，這是硬性擋關條件）、
+付費開發者帳號、上架素材（截圖／描述／隱私問卷）。
 
 ## 延伸閱讀
 
