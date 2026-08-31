@@ -17,7 +17,7 @@ TurntableRPM/
 │   └── LiveMeasurementView.swift 畫面
 ├── Packages/TurntableCore/   演算法核心
 │   ├── Sources/                  純 Swift + Foundation，不 import UIKit/CoreMotion
-│   ├── Tests/                    82 個測試
+│   ├── Tests/                    94 個測試
 │   └── Reference/                Python 參考實作，黃金值的來源
 ├── tools/
 │   └── analyze_export.py     分析 App 匯出的量測 JSON（含分段圓擬合）
@@ -30,7 +30,7 @@ TurntableRPM/
 
 | 指令 | 用途 |
 |---|---|
-| `make test` | 演算法測試（82 個，約 2 秒，不需要模擬器或實機） |
+| `make test` | 演算法測試（94 個，約 3 秒，不需要模擬器或實機） |
 | `make docker-test` | 同一批測試在 Linux container 跑一次（`swift:5.10`） |
 | `make generate` | 新增/刪除 `App/` 底下的檔案後**必須**跑，重新產生 .xcodeproj |
 | `make open` | 產生並開啟 Xcode |
@@ -209,6 +209,9 @@ CI 另外還有 `.github/workflows/swift.yml`。
   抖晃率、**譜峰判讀**、頻譜圖、極座標熱圖、滾動偏差圖。
   **譜峰判讀是這個 App 的核心價值** —— 整數倍代表跟著盤面轉的東西（偏心、變形），
   非整數倍代表傳動鏈上轉速不同的零件。這正是先前用 Python 手動做的診斷。
+  `StabilityGate` 會自動切掉開頭的加速、尾端的減速與中途的干擾，並在畫面上
+  如實回報切了多少 —— 校準也改用切過的平均值，否則使用者拿含加速的資料
+  校準會把 k 永久寫錯。
   **SwiftData 歷史尚未做。**
 - **M5 唱盤設定檔 / 載重補償** — 未開始。原始資料匯出（`MeasurementExport`）已完成，
   搭配 `tools/analyze_export.py`。

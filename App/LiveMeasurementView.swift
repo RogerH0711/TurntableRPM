@@ -48,8 +48,10 @@ struct LiveMeasurementView: View {
                 engine.calibrationFactor = new?.factor
             }
             .sheet(isPresented: $showingCalibrationSheet) {
+                // 用分析算出來的平均（已切掉加速段），不是整段的原始平均。
+                // 拿含加速的資料去校準，k 會被永久寫錯。
                 StopwatchCalibrationSheet(
-                    measuredRPM: engine.snapshot.rawMeanRPM ?? 0
+                    measuredRPM: engine.analysis?.meanRPM ?? engine.snapshot.rawMeanRPM ?? 0
                 ) { store.save($0) }
             }
             .sheet(isPresented: $showingAbout) { AboutView() }

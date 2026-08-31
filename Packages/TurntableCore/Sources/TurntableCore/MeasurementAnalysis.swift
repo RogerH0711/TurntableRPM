@@ -63,6 +63,13 @@ public struct MeasurementAnalysis: Sendable {
     public let polarBins: [PolarBin]
     public let peakAngleDegrees: Double?
 
+    /// 實際拿來分析的區間。開頭的加速、尾端的減速、中途的干擾都在這裡被切掉。
+    /// **所有數字都是這個區間算出來的**，不是整段量測。
+    public let stableWindow: StableWindow
+    /// 被切掉的秒數（開頭、尾端）。要在畫面上如實告訴使用者。
+    public let trimmedStartSeconds: Double
+    public let trimmedEndSeconds: Double
+
     /// 每圈一次成分的振幅（%）。偏心的直接指標。
     public var onePerRevolutionPercent: Double {
         peaks.first { $0.isRotationHarmonic && Int($0.orderOfRotation.rounded()) == 1 }?
@@ -78,8 +85,16 @@ public struct MeasurementAnalysis: Sendable {
     public static func analyze(samples: [SpinSample],
                                sampleRate: Double = 100.0,
                                binCount: Int = 72) -> MeasurementAnalysis? {
-        guard samples.count > 64,
-              let resampled = UniformResampler.resample(samples, sampleRate: sampleRate),
+        // 先切出穩定區間再分析。少了這一步，一段從靜止開始的加速會在頻譜低頻端
+        // 灌進巨大能量，把每圈一次的偏心峰淹掉 —— 診斷會整個錯掉。
+        guard samples.count > 64, let window = StabilityGate.find(samples) else { return nil }
+        let trimmedStart = window.droppedAtStart > 0
+            ? samples[window.range.lowerBound].t - samples[0].t : 0
+        let trimmedEnd = window.droppedAtEnd > 0
+            ? samples[samples.count - 1].t - samples[window.range.upperBound - 1].t : 0
+        let stable = Array(samples[window.range])
+
+        guard let resampled = UniformResampler.resample(stable, sampleRate: sampleRate),
               let (meanOmega, deviation) = DeviationSeries.make(from: resampled.values),
               meanOmega > 0,
               let wf = WowFlutterAnalyzer.analyze(deviationPercent: deviation,
@@ -114,7 +129,10 @@ public struct MeasurementAnalysis: Sendable {
             spectrumAmplitudes: spectrum.amplitudes,
             peaks: peaks,
             polarBins: polar.bins,
-            peakAngleDegrees: polar.peakAngleDegrees)
+            peakAngleDegrees: polar.peakAngleDegrees,
+            stableWindow: window,
+            trimmedStartSeconds: trimmedStart,
+            trimmedEndSeconds: trimmedEnd)
     }
 
     /// 找局部極大值。

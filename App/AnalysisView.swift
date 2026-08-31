@@ -36,6 +36,7 @@ struct AnalysisView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
+                if !analysis.stableWindow.isPristine { trimBanner }
                 wowFlutterCard
                 peaksCard
                 spectrumCard
@@ -46,6 +47,42 @@ struct AnalysisView: View {
         }
         .navigationTitle("分析")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    /// 資料被裁切時一定要講。使用者有權知道分析用的不是他錄的全部 ——
+    /// 而且「開頭被切掉 8 秒」本身就是在告訴他操作順序可以改進。
+    private var trimBanner: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: "scissors")
+                .foregroundStyle(.orange)
+            VStack(alignment: .leading, spacing: 3) {
+                Text("已自動略過轉速不穩的區間")
+                    .font(.subheadline.weight(.medium))
+                Text(trimDescription)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer(minLength: 0)
+        }
+        .measurementCard()
+    }
+
+    private var trimDescription: String {
+        var parts: [String] = []
+        if analysis.trimmedStartSeconds > 0.05 {
+            parts.append(String(format: "開頭 %.1f 秒", analysis.trimmedStartSeconds))
+        }
+        if analysis.trimmedEndSeconds > 0.05 {
+            parts.append(String(format: "結尾 %.1f 秒", analysis.trimmedEndSeconds))
+        }
+        if analysis.stableWindow.droppedInMiddle > 0 {
+            parts.append(String(format: "中途 %.1f 秒",
+                                Double(analysis.stableWindow.droppedInMiddle) / analysis.sampleRate))
+        }
+        let what = parts.isEmpty ? "部分區間" : parts.joined(separator: "、")
+        return "\(what)的轉速偏離太多（放上手機、盤面加速或減速、量測中被碰到），"
+             + String(format: "已排除。下面所有數字都是剩下 %.0f 秒算出來的。",
+                      analysis.durationSeconds)
     }
 
     // MARK: - 抖晃率
