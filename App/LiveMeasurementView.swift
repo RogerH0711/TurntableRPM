@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 import TurntableCore
 
 /// 主畫面。
@@ -127,7 +128,12 @@ struct LiveMeasurementView: View {
                                                  snapshot: engine.snapshot,
                                                  calibration: store.calibration?.factor))
             }
-            .onReceive(Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()) { t in
+            // 只在凍結倒數時才需要每 0.5 秒更新。原本是無條件訂閱，
+            // 等於整個主畫面每 0.5 秒被重繪一次，App 開著就一直在做白工。
+            .onReceive(freezeUntil == nil
+                       ? Empty<Date, Never>().eraseToAnyPublisher()
+                       : Timer.publish(every: 0.5, on: .main, in: .common)
+                           .autoconnect().eraseToAnyPublisher()) { t in
                 now = t
                 if let until = freezeUntil, t >= until { dismissDial() }
             }
@@ -417,6 +423,14 @@ struct LiveMeasurementView: View {
                 .measurementCard()
             }
             .buttonStyle(.plain)
+        } else if let reason = engine.analysisFailureReason {
+            // 一定要有這個分支。少了它，分析失敗時畫面會永遠停在「分析中…」——
+            // 而「轉盤沒轉就按停止」是很常見的操作。
+            Label(reason, systemImage: "exclamationmark.triangle.fill")
+                .font(.caption)
+                .foregroundStyle(.orange)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .measurementCard()
         } else if hasMeasurement && !engine.isRunning {
             HStack(spacing: 8) {
                 ProgressView().controlSize(.small)

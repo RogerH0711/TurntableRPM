@@ -104,6 +104,9 @@ final class MotionEngine: ObservableObject {
     /// 每完成一次分析就換一個新值。畫面靠它知道「有新結果該存進歷史了」——
     /// `MeasurementAnalysis` 不是 Equatable，`onChange` 沒辦法直接觀察它。
     @Published private(set) var completedMeasurementID: UUID?
+    /// 分析失敗的原因。非 nil 時畫面要顯示它，**不能繼續轉圈圈** ——
+    /// 使用者沒把轉盤打開就按停止是很正常的事，那時分析本來就算不出來。
+    @Published private(set) var analysisFailureReason: String?
 
     /// 規格 §2.1：iOS 對第三方 App 的取樣率上限就是 100 Hz。
     let targetSampleRate: Double = 100.0
@@ -170,6 +173,7 @@ final class MotionEngine: ObservableObject {
         accumulator.resetDisplayAngle()   // 只有這裡歸零 —— 手機此刻還照指示擺著
         exportURL = nil
         analysis = nil
+        analysisFailureReason = nil
         phase = (mode == .automatic) ? .waitingForStability : .measuring
         stableSince = nil
         refineTick = 0
@@ -250,12 +254,23 @@ final class MotionEngine: ObservableObject {
     private func runAnalysis() {
         let samples = accumulator.snapshotSamples()
         // 樣本太少分析不了，但匯出還是要做 —— 短量測的原始資料一樣有診斷價值。
-        guard samples.count > 64 else { writeExport(); return }
+        guard samples.count > 64 else {
+            analysisFailureReason = "量測時間太短，只錄到 \(samples.count) 筆資料。"
+            writeExport()
+            return
+        }
         let rate = targetSampleRate
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             let result = MeasurementAnalysis.analyze(samples: samples, sampleRate: rate)
+            // 失敗的原因幾乎都是「找不到夠長的穩定區間」，講清楚比只說「失敗」有用。
+            let reason: String? = result == nil
+                ? (StabilityGate.find(samples) == nil
+                   ? "整段量測都沒有穩定的轉速。轉盤有轉起來嗎？至少要連續穩定 5 秒。"
+                   : "資料不足以分析。試著量久一點，90 秒以上比較可靠。")
+                : nil
             DispatchQueue.main.async {
                 self?.analysis = result
+                self?.analysisFailureReason = reason
                 // 重拉快照，主畫面的平均轉速才會換成切過的值。
                 self?.pullSnapshot()
                 if result != nil { self?.completedMeasurementID = UUID() }
