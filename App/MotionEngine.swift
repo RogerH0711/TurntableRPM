@@ -167,6 +167,7 @@ final class MotionEngine: ObservableObject {
         guard !isRunning else { return }
 
         accumulator.reset()
+        accumulator.resetDisplayAngle()   // 只有這裡歸零 —— 手機此刻還照指示擺著
         exportURL = nil
         analysis = nil
         phase = (mode == .automatic) ? .waitingForStability : .measuring
@@ -359,6 +360,7 @@ final class MotionEngine: ObservableObject {
             if let since = stableSince {
                 if now - since >= autoStableSeconds {
                     // 丟掉等待期間的資料，從乾淨的狀態開始記錄。
+                    // **不動顯示角度** —— 它的零點必須留在使用者按下開始的那一刻。
                     accumulator.reset()
                     phase = .measuring
                     statusMessage = "量測中"

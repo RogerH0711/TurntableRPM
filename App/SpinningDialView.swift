@@ -117,12 +117,17 @@ struct SpinningDialView: View {
                     .monospacedDigit()
             }
             HStack(spacing: 12) {
+                // 白底一定要配深色字。先前用 .tint(.white) 加 .borderedProminent，
+                // SwiftUI 自己挑的前景色也是白的 —— 白底白字，看起來就是一顆空白按鈕。
                 Button("完成") { onDismiss?() }
                     .buttonStyle(.borderedProminent)
+                    .tint(.white)
+                    .foregroundStyle(.black)
                 Button("繼續量測") { onResume?() }
                     .buttonStyle(.bordered)
+                    .tint(.white)
+                    .foregroundStyle(.white)
             }
-            .tint(.white)
         }
         .padding(.bottom, 28)
     }

@@ -61,6 +61,13 @@ final class SampleAccumulator {
     /// 未校準磁力計最新讀數。它走自己的回呼，跟 deviceMotion 不同步，
     /// 所以取「最近一筆」貼到當下的 frame 上。
     private var latestRawField: Vector3?
+    /// 反旋轉顯示用的累積角度。
+    ///
+    /// **刻意不被 `reset()` 清掉。** 自動模式在「等待轉穩 → 開始記錄」時會 reset
+    /// 累積器，若顯示角度跟著歸零，參考點就變成程式決定的隨機時刻 —— 那正是
+    /// 文字方向亂掉的原因。這個值只在使用者按下開始時歸零（`resetDisplayAngle()`），
+    /// 所以零點永遠是「手機還按照指示擺著」的那一刻。
+    private var displayAngleTotal: Double = 0
 
     func reset() {
         lock.lock()
@@ -88,7 +95,10 @@ final class SampleAccumulator {
         if startTime == nil { startTime = sample.t }
         if let last = previous {
             let dt = sample.t - last.t
-            if dt > 0 { trapezoidArea += dt * (sample.omega + last.omega) / 2.0 }
+            if dt > 0 {
+                trapezoidArea += dt * (sample.omega + last.omega) / 2.0
+                displayAngleTotal += dt * (sample.omega + last.omega) / 2.0
+            }
         }
         previous = sample
 
@@ -114,6 +124,14 @@ final class SampleAccumulator {
                                    field: field,
                                    rawField: latestRawField))
         }
+    }
+
+    /// 把反旋轉顯示的角度歸零。只在使用者按下開始時呼叫 —— 那時手機還照著
+    /// 指示擺著，方向是已知的。
+    func resetDisplayAngle() {
+        lock.lock()
+        defer { lock.unlock() }
+        displayAngleTotal = 0
     }
 
     /// 未校準磁力計的回呼。跟 `append` 是不同的感測器串流。
@@ -184,7 +202,7 @@ final class SampleAccumulator {
         defer { lock.unlock() }
         guard let last = previous else { return 0 }
         let dt = max(0, min(now - last.t, 0.1))   // 上限 0.1 s，避免暫停後爆衝
-        return phase.gyroTotalDegrees + last.omega * dt
+        return displayAngleTotal + last.omega * dt
     }
 
     /// 最近 N 秒的樣本。自動模式用它判斷轉速穩了沒。
