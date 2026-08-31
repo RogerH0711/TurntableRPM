@@ -16,7 +16,7 @@
 make test        # 等同 swift test
 ```
 
-74 個測試約 1 秒跑完。需要完整 Xcode，只裝 Command Line Tools 會出現 `no such module 'XCTest'`。
+97 個測試約 4 秒跑完。需要完整 Xcode，只裝 Command Line Tools 會出現 `no such module 'XCTest'`。
 
 ### B. Docker container（驗證跨平台，或在 Windows 上工作）
 
