@@ -21,7 +21,13 @@ struct SpinningDialView: View {
     /// 而高度是內接圓約束裡最吃緊的方向。
     var showsElapsed = false
     var showsRevolutions = false
+    /// 凍結狀態：量測已結束，讀數定住讓使用者拿起手機慢慢看。
+    var isFrozen = false
+    /// 凍結倒數剩幾秒。nil 代表不倒數。
+    var freezeRemaining: Int?
     let onStop: () -> Void
+    var onDismiss: (() -> Void)?
+    var onResume: (() -> Void)?
 
     var body: some View {
         GeometryReader { geo in
@@ -37,25 +43,54 @@ struct SpinningDialView: View {
                         // 這裡假設盤面是順時針（從上方看）。`SpinProjector` 取了
                         // 絕對值，所以角度不帶方向資訊 —— 逆時針的盤（實務上不存在）
                         // 會讓補償方向相反，看起來是兩倍速在轉。
-                        .rotationEffect(.degrees(-engine.displayAngleDegrees()))
+                        // 凍結時轉回正 —— 使用者已經把手機拿起來了，
+                        // 這時候還跟著最後一筆姿態歪著才是難讀。
+                        .rotationEffect(.degrees(isFrozen ? 0 : -engine.displayAngleDegrees()))
+                        .animation(.easeOut(duration: 0.4), value: isFrozen)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                // 不跟著轉的提示，放在角落。使用者的視角是靜止的，
-                // 所以這些字對他來說反而是在轉 —— 刻意做得很小、很淡。
                 VStack {
                     Spacer()
-                    Text("點一下畫面停止")
-                        .font(.caption2)
-                        .foregroundStyle(.white.opacity(0.35))
-                        .padding(.bottom, 8)
+                    if isFrozen {
+                        frozenControls
+                    } else {
+                        // 不跟著轉的提示。使用者的視角是靜止的，所以這些字對他來說
+                        // 反而是在轉 —— 刻意做得很小、很淡。
+                        Text("點一下畫面停止")
+                            .font(.caption2)
+                            .foregroundStyle(.white.opacity(0.35))
+                            .padding(.bottom, 8)
+                    }
                 }
             }
             .contentShape(Rectangle())
-            .onTapGesture(perform: onStop)      // 整片畫面都是停止鍵
+            // 整片畫面都是停止鍵（按鈕跟著轉很難按）。凍結後改由下方的按鈕操作，
+            // 這時手機已經拿在手上，一般的按鈕就夠用了。
+            .onTapGesture { if !isFrozen { onStop() } }
         }
         .statusBarHidden()
         .persistentSystemOverlays(.hidden)
+    }
+
+    /// 凍結期間的操作。此時手機在手上、畫面朝正，用一般按鈕即可。
+    private var frozenControls: some View {
+        VStack(spacing: 12) {
+            if let remaining = freezeRemaining {
+                Text("\(remaining) 秒後自動關閉")
+                    .font(.caption)
+                    .foregroundStyle(.white.opacity(0.4))
+                    .monospacedDigit()
+            }
+            HStack(spacing: 12) {
+                Button("完成") { onDismiss?() }
+                    .buttonStyle(.borderedProminent)
+                Button("繼續量測") { onResume?() }
+                    .buttonStyle(.bordered)
+            }
+            .tint(.white)
+        }
+        .padding(.bottom, 28)
     }
 
     /// 會跟著反轉的內容。**全部必須落在內接圓內**，否則轉到某個角度就被切掉。

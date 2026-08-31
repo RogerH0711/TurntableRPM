@@ -11,7 +11,7 @@
 TurntableRPM/
 ├── project.yml               XcodeGen 設定；.xcodeproj 不進版控
 ├── Config/Local.xcconfig     個人簽章設定（DEVELOPMENT_TEAM），不進版控
-├── App/                      iOS app —— 只有這層碰 CoreMotion / SwiftUI
+├── App/                      iOS app —— 只有這層碰 CoreMotion / SwiftUI / SwiftData
 │   ├── MotionEngine.swift        CMMotionManager 封裝
 │   ├── SampleAccumulator.swift   感測器佇列 <-> 主執行緒的交棒（NSLock）
 │   └── LiveMeasurementView.swift 畫面
@@ -207,7 +207,7 @@ CI 另外還有 `.github/workflows/swift.yml`。
 - **M0 演算法核心** — 完成，74 個測試全過（macOS 與 Linux container 都驗過）。
 - **M1 感測器接通** — 完成，實機驗證過（取樣率 100.1 Hz、重力投影、圈數正確）。
 - **M2 標稱辨識 / 反旋轉盤面 / 停止凍結** — 大部分完成。標稱辨識、畫面重整、
-  **反旋轉盤面**（`SpinningDialView`，規格 §6.2）都做好了。停止凍結未做。
+  **反旋轉盤面**（`SpinningDialView`，規格 §6.2）與**停止凍結**都做好了。
   另加**手動／自動兩種模式**：自動模式等轉速穩定才開始記錄、盤面停下時自己結束。
 - **M3 校準** — **完成。碼錶校準是唯一可信的路徑**
   （`StopwatchCalibration` + `CalibrationStore` + `StopwatchCalibrationSheet`）：
@@ -224,7 +224,10 @@ CI 另外還有 `.github/workflows/swift.yml`。
   `StabilityGate` 會自動切掉開頭的加速、尾端的減速與中途的干擾，並在畫面上
   如實回報切了多少 —— 校準也改用切過的平均值，否則使用者拿含加速的資料
   校準會把 k 永久寫錯。
-  **SwiftData 歷史尚未做。**
+  **SwiftData 歷史已完成**（`MeasurementRecord` + `HistoryView`）：分析一完成就
+  自動存檔，不做手動按鈕 —— 使用者不會記得按，而歷史的價值就在「調整前後能比較」，
+  漏存一次就斷了。**只存分析後的摘要，不存逐樣本原始資料**（一次 3 分鐘的量測是
+  兩萬筆、約 700 KB，存幾十次資料庫就肥了）；要原始資料就用匯出。
 - **M5 唱盤設定檔 / 載重補償** — 未開始。原始資料匯出（`MeasurementExport`）已完成，
   搭配 `tools/analyze_export.py`。
 

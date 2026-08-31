@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 @main
 struct TurntableRPMApp: App {
@@ -6,5 +7,6 @@ struct TurntableRPMApp: App {
         WindowGroup {
             LiveMeasurementView()
         }
+        .modelContainer(for: MeasurementRecord.self)
     }
 }

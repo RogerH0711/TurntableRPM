@@ -100,6 +100,9 @@ final class MotionEngine: ObservableObject {
     @Published private(set) var exportURL: URL?
     /// 停止之後的離線分析（頻譜、抖晃率、極座標）。在背景執行緒算。
     @Published private(set) var analysis: MeasurementAnalysis?
+    /// 每完成一次分析就換一個新值。畫面靠它知道「有新結果該存進歷史了」——
+    /// `MeasurementAnalysis` 不是 Equatable，`onChange` 沒辦法直接觀察它。
+    @Published private(set) var completedMeasurementID: UUID?
 
     /// 規格 §2.1：iOS 對第三方 App 的取樣率上限就是 100 Hz。
     let targetSampleRate: Double = 100.0
@@ -253,6 +256,7 @@ final class MotionEngine: ObservableObject {
                 self?.analysis = result
                 // 重拉快照，主畫面的平均轉速才會換成切過的值。
                 self?.pullSnapshot()
+                if result != nil { self?.completedMeasurementID = UUID() }
                 self?.writeExport()
             }
         }

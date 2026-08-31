@@ -9,11 +9,27 @@ import TurntableCore
 struct LiveMeasurementView: View {
     @StateObject private var engine = MotionEngine()
     @StateObject private var store = CalibrationStore()
+    @Environment(\.modelContext) private var context
     @State private var showingCalibrationSheet = false
     @State private var showingAbout = false
     @State private var showingDial = false
     @AppStorage("dialShowsElapsed") private var dialShowsElapsed = false
     @AppStorage("dialShowsRevolutions") private var dialShowsRevolutions = false
+    /// 停止後畫面凍結幾秒。0 = 不凍結。規格 §6.3 的預設值。
+    @AppStorage("freezeSeconds") private var freezeSeconds = 15
+    /// 凍結的截止時刻。非 nil 代表正在凍結。
+    @State private var freezeUntil: Date?
+    @State private var now = Date()
+
+    private var freezeRemaining: Int? {
+        guard let until = freezeUntil else { return nil }
+        return max(0, Int(until.timeIntervalSince(now).rounded(.up)))
+    }
+
+    private func dismissDial() {
+        freezeUntil = nil
+        showingDial = false
+    }
 
     /// 有沒有可以拿來校準或匯出的量測結果。
     private var hasMeasurement: Bool { (engine.snapshot.rawMeanRPM ?? 0) > 0 }
@@ -33,6 +49,7 @@ struct LiveMeasurementView: View {
                     if hasMeasurement { summaryPanel }
                     analysisLink
                     exportButton
+                    historyLink
                     advancedLink
                 }
                 .padding()
@@ -63,14 +80,37 @@ struct LiveMeasurementView: View {
             .fullScreenCover(isPresented: $showingDial) {
                 SpinningDialView(engine: engine,
                                  showsElapsed: dialShowsElapsed,
-                                 showsRevolutions: dialShowsRevolutions) {
-                    engine.stop()
-                    showingDial = false
+                                 showsRevolutions: dialShowsRevolutions,
+                                 isFrozen: freezeUntil != nil,
+                                 freezeRemaining: freezeRemaining,
+                                 onStop: { engine.stop() },
+                                 onDismiss: dismissDial,
+                                 onResume: {
+                                     freezeUntil = nil
+                                     engine.start()
+                                 })
+            }
+            // 停止之後不要立刻收掉畫面 —— 手機還在盤上轉，使用者根本來不及看。
+            // 凍結讀數，等他拿起手機（規格 §6.2）。
+            .onChange(of: engine.isRunning) { _, running in
+                guard !running, showingDial else { return }
+                if freezeSeconds > 0 {
+                    freezeUntil = Date().addingTimeInterval(Double(freezeSeconds))
+                } else {
+                    dismissDial()
                 }
             }
-            .onChange(of: engine.isRunning) { _, running in
-                // 盤面自己停下時（自動模式）也要收掉全螢幕。
-                if !running { showingDial = false }
+            // 分析一完成就自動存進歷史。不做成手動按鈕 —— 使用者不會記得按，
+            // 而歷史的價值在於「調整前後可以比較」，漏存一次就斷了。
+            .onChange(of: engine.completedMeasurementID) { _, id in
+                guard id != nil, let analysis = engine.analysis else { return }
+                context.insert(MeasurementRecord(analysis: analysis,
+                                                 snapshot: engine.snapshot,
+                                                 calibration: store.calibration?.factor))
+            }
+            .onReceive(Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()) { t in
+                now = t
+                if let until = freezeUntil, t >= until { dismissDial() }
             }
         }
     }
@@ -145,6 +185,12 @@ struct LiveMeasurementView: View {
                 DisclosureGroup("量測畫面顯示什麼") {
                     Toggle("經過時間", isOn: $dialShowsElapsed)
                     Toggle("累積圈數", isOn: $dialShowsRevolutions)
+                    Stepper("停止後凍結 \(freezeSeconds) 秒",
+                            value: $freezeSeconds, in: 0 ... 60, step: 5)
+                    Text("量測結束時畫面會定住，讓你把手機從轉盤上拿起來再看。"
+                         + "設 0 就是立刻關閉。")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
                     Text("量測畫面會反向旋轉，讓內容在轉動中看起來靜止。"
                          + "加的資訊愈多、字就得愈小，因為所有內容都必須落在螢幕的內接圓裡。")
                         .font(.caption2)
@@ -350,6 +396,21 @@ struct LiveMeasurementView: View {
             }
             .measurementCard()
         }
+    }
+
+    private var historyLink: some View {
+        NavigationLink { HistoryView() } label: {
+            HStack {
+                Label("歷史記錄", systemImage: "clock.arrow.circlepath")
+                    .font(.subheadline)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
+            }
+            .measurementCard()
+        }
+        .buttonStyle(.plain)
     }
 
     private var advancedLink: some View {
