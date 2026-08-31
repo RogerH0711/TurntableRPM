@@ -201,7 +201,8 @@ final class MotionEngine: ObservableObject {
         cachedRefined = accumulator.refined()
         pullSnapshot()
         statusMessage = "已停止"
-        writeExport()
+        // 分析先跑，寫檔在它完成之後 —— 匯出的摘要要帶上分析結果，
+        // 反過來的話寫檔時 analysis 還是 nil，那些欄位永遠不會出現。
         runAnalysis()
     }
 
@@ -213,11 +214,15 @@ final class MotionEngine: ObservableObject {
     /// 離線分析。FFT 加加權捲積在六萬筆樣本上要跑一下，不能擋主執行緒。
     private func runAnalysis() {
         let samples = accumulator.snapshotSamples()
-        guard samples.count > 64 else { return }
+        // 樣本太少分析不了，但匯出還是要做 —— 短量測的原始資料一樣有診斷價值。
+        guard samples.count > 64 else { writeExport(); return }
         let rate = targetSampleRate
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             let result = MeasurementAnalysis.analyze(samples: samples, sampleRate: rate)
-            DispatchQueue.main.async { self?.analysis = result }
+            DispatchQueue.main.async {
+                self?.analysis = result
+                self?.writeExport()
+            }
         }
     }
 
@@ -270,6 +275,24 @@ final class MotionEngine: ObservableObject {
         }
         // 碼錶同步量測的真值（三次，範圍 0.08%），寫進檔案好讓分析時直接對照。
         d["stopwatchReferenceK"] = 0.99915
+
+        // 分析結果也要寫進去。沒有這一段就只能靠截圖跟外部工具比對，
+        // 而 tools/analyze_export.py 用頻譜平方和估 WRMS 會被補零高估約 1.3 倍 ——
+        // App 走的是「加權後回到時域算 RMS」，兩邊要能並排才看得出誰對。
+        if let a = analysis {
+            d["analysisWrmsPercent"] = a.wowFlutter.wrmsPercent
+            d["analysisPeak2SigmaPercent"] = a.wowFlutter.peak2SigmaPercent
+            d["analysisPeakToRMSRatio"] = a.wowFlutter.peakToRMSRatio
+            d["analysisOnePerRevPercent"] = a.onePerRevolutionPercent
+            d["analysisRotationHz"] = a.rotationHz
+            d["analysisPeakAngleDegrees"] = a.peakAngleDegrees ?? -1
+            d["analysisPeaks"] = a.peaks.prefix(8).map {
+                ["hz": $0.frequencyHz,
+                 "percent": $0.amplitudePercent,
+                 "order": $0.orderOfRotation,
+                 "harmonic": $0.isRotationHarmonic]
+            }
+        }
         return d
     }
 
