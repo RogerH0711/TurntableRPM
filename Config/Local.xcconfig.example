@@ -1,0 +1,9 @@
+// 複製成 Local.xcconfig 後填入你的 Apple Developer Team ID。
+//
+// team ID 在 Xcode ▸ Settings ▸ Accounts ▸ 選你的 Apple ID ▸ 右下 Manage Certificates，
+// 或第一次在 Xcode 裡選好 Team 之後，從 .xcodeproj 的 build settings 抄出來。
+//
+// 這個檔案不進版控：team ID 不需要推到 GitHub，
+// 而且放在 xcconfig 裡的話，每次重跑 xcodegen generate 都不會被洗掉。
+
+DEVELOPMENT_TEAM =

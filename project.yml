@@ -1,0 +1,46 @@
+name: TurntableRPM
+
+options:
+  bundleIdPrefix: com.roger
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+packages:
+  TurntableCore:
+    path: Packages/TurntableCore
+
+targets:
+  TurntableRPM:
+    type: application
+    platform: iOS
+    sources:
+      - path: App
+    dependencies:
+      - package: TurntableCore
+        product: TurntableCore
+    configFiles:
+      Debug: Config/Local.xcconfig
+      Release: Config/Local.xcconfig
+    info:
+      path: Support/Info.plist
+      properties:
+        CFBundleDisplayName: RPM
+        UILaunchScreen: {}
+        UIRequiredDeviceCapabilities: [gyroscope]
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        NSMotionUsageDescription: 需要動作感測器來量測唱盤的轉速與抖晃。
+        # 匯出的量測檔要能在「檔案」App 的「我的 iPhone」底下直接拿到，
+        # 不然只能靠分享選單一次一次傳。
+        UIFileSharingEnabled: true
+        LSSupportsOpeningDocumentsInPlace: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.roger.turntablerpm
+        MARKETING_VERSION: "0.1"
+        CURRENT_PROJECT_VERSION: "1"
+        TARGETED_DEVICE_FAMILY: "1"
+        SWIFT_VERSION: "5.9"
+        GENERATE_INFOPLIST_FILE: NO
+        CODE_SIGN_STYLE: Automatic

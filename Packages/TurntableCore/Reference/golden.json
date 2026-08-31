@@ -1,0 +1,92 @@
+{
+ "projection_naive_z_error_pct": {
+  "0": 0.0,
+  "5": -0.3805,
+  "15": -3.4074,
+  "30": -13.3975
+ },
+ "classify_boundaries": {
+  "33.333_lo": 30.6667,
+  "33.333_hi": 36.0,
+  "45_lo": 41.4,
+  "78_lo": 71.76
+ },
+ "moving_average": {
+  "10": {
+   "null_hz": 10.0,
+   "minus3db_hz": 4.429
+  },
+  "25": {
+   "null_hz": 4.0,
+   "minus3db_hz": 1.7716
+  },
+  "50": {
+   "null_hz": 2.0,
+   "minus3db_hz": 0.8858
+  },
+  "100": {
+   "null_hz": 1.0,
+   "minus3db_hz": 0.4429
+  },
+  "300": {
+   "null_hz": 0.3333,
+   "minus3db_hz": 0.1476
+  }
+ },
+ "wrms_sine": [
+  {
+   "amp_pct": 0.5,
+   "freq_hz": 4.0,
+   "expected_wrms_pct": 0.35355
+  },
+  {
+   "amp_pct": 0.5,
+   "freq_hz": 0.8,
+   "expected_wrms_pct": 0.182987
+  },
+  {
+   "amp_pct": 0.5,
+   "freq_hz": 20.0,
+   "expected_wrms_pct": 0.179626
+  },
+  {
+   "amp_pct": 1.0,
+   "freq_hz": 4.0,
+   "expected_wrms_pct": 0.7071
+  },
+  {
+   "amp_pct": 0.2,
+   "freq_hz": 2.0,
+   "expected_wrms_pct": 0.130817
+  }
+ ],
+ "ratio_sine": 1.4114,
+ "ratio_gauss": 1.9687,
+ "polar_samples_per_bin_60s": 83,
+ "calibration": [
+  {
+   "scale_err": 0.03,
+   "expected_k": 0.970874
+  },
+  {
+   "scale_err": 0.01,
+   "expected_k": 0.990099
+  },
+  {
+   "scale_err": -0.015,
+   "expected_k": 1.015228
+  },
+  {
+   "scale_err": 0.001,
+   "expected_k": 0.999001
+  }
+ ],
+ "load": {
+  "rpm1": 33.3,
+  "rpm2": 33.24,
+  "delta_m_g": 100.0,
+  "phone_m_g": 170.0,
+  "expected_slope": -0.0006,
+  "expected_rpm0": 33.402
+ }
+}

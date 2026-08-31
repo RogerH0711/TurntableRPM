@@ -1,0 +1,21 @@
+# XcodeGen 產生的專案檔不進版控 —— 這正是用 XcodeGen 的理由
+*.xcodeproj
+*.xcworkspace
+
+# 個人簽章設定
+Config/Local.xcconfig
+
+# XcodeGen 產生的 Info.plist
+Support/Info.plist
+
+# 建置產物
+.build/
+.build-linux/
+DerivedData/
+.swiftpm/
+
+# Python
+__pycache__/
+.venv/
+
+.DS_Store

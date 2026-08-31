@@ -1,0 +1,42 @@
+name: Swift
+
+on:
+  push:
+  pull_request:
+
+# Swift package 在 Packages/TurntableCore/，不在 repo 根目錄 ——
+# 所有 swift 指令都要指定 working-directory，否則找不到 Package.swift。
+defaults:
+  run:
+    working-directory: Packages/TurntableCore
+
+jobs:
+  linux:
+    name: Linux (swift:5.10)
+    runs-on: ubuntu-latest
+    container: swift:5.10
+    steps:
+      - uses: actions/checkout@v4
+      - run: swift test
+
+  macos:
+    name: macOS
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - run: swift test
+
+  reference:
+    name: Python 參考實作
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install numpy
+      - run: python3 Reference/verify.py
+      # verify.py 會重新產生 golden.json。它若與版控中的不一致，代表 Python 參考
+      # 實作改了但 Swift 的黃金值沒同步 —— 那是 CLAUDE.md 坑 7 描述的流程被跳過了。
+      - name: 黃金值必須與版控一致
+        run: git diff --exit-code Reference/golden.json

@@ -1,0 +1,16 @@
+{
+  "name": "TurntableCore (Swift)",
+  "image": "swift:5.10",
+  "mounts": [
+    "source=turntablecore-devcontainer-build,target=/build,type=volume"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": ["swiftlang.swift-vscode"],
+      "settings": {
+        "swift.buildArguments": ["--scratch-path", "/build"]
+      }
+    }
+  },
+  "postCreateCommand": "swift --version"
+}
