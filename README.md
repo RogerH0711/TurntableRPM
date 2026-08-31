@@ -1,75 +1,86 @@
 # TurntableRPM
 
+**English** · [繁體中文](README.zh-TW.md)
+
 [![Swift](https://github.com/RogerH0711/TurntableRPM/actions/workflows/swift.yml/badge.svg)](https://github.com/RogerH0711/TurntableRPM/actions/workflows/swift.yml)
 
-用 iPhone 量測黑膠唱盤的轉速與抖晃率（wow & flutter）。目標精度 0.1%。
-把手機放在轉動的盤面上就能量，不需要頻閃盤或其他硬體。
+Measure a turntable's speed and wow & flutter with an iPhone, targeting 0.1% accuracy.
+Put the phone on the spinning platter — no strobe disc, no extra hardware.
 
-起因是一台閒置 20 年的 Thorens TD 235 EV 轉速偏慢，需要一個能量到 0.1% 的工具來診斷。
+It started with a Thorens TD 235 EV that had sat idle for 20 years and ran slow. Diagnosing
+that needed a tool accurate to 0.1%.
 
-## 它能告訴你什麼
+## What it tells you
 
-- **平均轉速與偏差 %** —— 盤到底快還是慢、差多少
-- **抖晃率**，IEC 386 / DIN 45507 加權的 WRMS，可以直接跟原廠規格比
-- **譜峰判讀** —— 這是跟其他測速 App 的主要差別。整數倍代表跟著盤面轉的東西
-  （偏心、盤面橢圓），非整數倍代表傳動鏈上轉速不同的零件（馬達、皮帶輪）。
-  填了傳動鏈尺寸還能直接指出「這根就是馬達」。
-- **極座標熱圖** —— 誤差集中在盤面的哪一段
-- **歷史與趨勢圖** —— 調整前後直接比較
-- **原始資料匯出** —— 逐樣本 JSON，搭配 `tools/analyze_export.py`
+- **Mean speed and error %** — whether the platter runs fast or slow, and by how much
+- **Wow & flutter**, IEC 386 / DIN 45507 weighted WRMS, directly comparable to the
+  factory spec
+- **Spectral peak interpretation** — the main thing that sets this apart from other RPM
+  apps. Integer multiples of platter rotation mean something turning *with* the platter
+  (eccentricity, an out-of-round platter); non-integer ones mean a part of the drive chain
+  running at a different speed (motor, pulley). Enter your drive-chain dimensions and it
+  will point at a peak and say *that one is the motor*.
+- **Polar heatmap** — which part of the platter the error concentrates on
+- **History and trend chart** — compare directly before and after an adjustment
+- **Raw data export** — per-sample JSON, for use with `tools/analyze_export.py`
 
-量測時畫面會**反向旋轉**，內容在轉動中看起來是靜止的，不必把手機拿起來就能讀。
+While measuring, the screen **counter-rotates**, so the content looks stationary as the
+platter turns and you can read it without picking the phone up.
 
-| 分析結果 | 歷史與趨勢 | 手機怎麼擺 |
+| Analysis | History & trend | Phone placement |
 |---|---|---|
-| ![分析](docs/screenshots/analysis.png) | ![歷史](docs/screenshots/history.png) | ![擺法](docs/screenshots/placement.png) |
+| ![Analysis](docs/screenshots/analysis.png) | ![History](docs/screenshots/history.png) | ![Placement](docs/screenshots/placement.png) |
 
-（模擬器截圖，資料為示範用的合成訊號。）
+(Simulator screenshots; the data is a synthetic signal for demonstration.)
 
-## 它看不到什麼
+## What it cannot see
 
-**手機是跟著盤面一起轉的，量到的是盤的轉速。** 唱片中心孔沒對準造成的音高起伏，
-這個方法完全偵測不到 —— 而那在實務上經常是你聽到的抖動裡最大的一項。
+**The phone turns with the platter, so what it measures is the platter's speed.** Pitch
+variation caused by an off-center record hole is completely invisible to this method — and
+in practice that is often the largest part of the wow you actually hear.
 
-**沒有校準之前，「偏差 %」不能拿來調唱盤。** 那是唱盤誤差與陀螺儀誤差相乘的結果，
-兩者分不開。校準用碼錶做，一支手機做一次就好。
+**Until you calibrate, the "error %" cannot be used to adjust your deck.** It is the
+turntable's error multiplied by the gyroscope's error, and the two cannot be separated.
+Calibration uses a stopwatch — once per phone is enough.
 
-## 需求
+## Requirements
 
-- iPhone，iOS 17 以上（不支援 iPad）
-- 介面語言：**繁體中文／English／日本語／Deutsch**（跟隨系統設定）
-- 唱盤大到放得下手機，速度 16⅔ / 33⅓ / 45 / 78 都支援
-- 開發需要 macOS + Xcode 16 以上、[XcodeGen](https://github.com/yonaskolb/XcodeGen)
+- iPhone, iOS 17 or later (iPad is not supported)
+- Interface languages: **English / 繁體中文 / 日本語 / Deutsch** (follows your system setting)
+- A platter large enough for the phone; 16⅔ / 33⅓ / 45 / 78 RPM are all supported
+- Development needs macOS, Xcode 16+, and [XcodeGen](https://github.com/yonaskolb/XcodeGen)
 
-## 安裝
+## Installing
 
-### 選項 A：自己用 Xcode 建置（推薦）
+### Option A: build it yourself in Xcode (recommended)
 
-最可靠，也不必信任第三方工具。往下看「建置」。
+Most reliable, and you don't have to trust a third-party tool. See **Building** below.
 
-### 選項 B：下載 .ipa 自己簽章
+### Option B: download the .ipa and sign it yourself
 
-[Releases](https://github.com/RogerH0711/TurntableRPM/releases) 有 `TurntableRPM-unsigned.ipa`。
+[Releases](https://github.com/RogerH0711/TurntableRPM/releases) has `TurntableRPM-unsigned.ipa`.
 
-**它是未簽章的，不能直接安裝。** iOS 只執行經過簽章的 App，而我目前沒有付費開發者
-帳號，所以無法提供 TestFlight 或可直接安裝的版本。你必須用**自己的 Apple ID** 簽章，
-常見的工具是 [AltStore](https://altstore.io) 或 [SideStore](https://sidestore.io)：
+**It is unsigned and cannot be installed directly.** iOS only runs signed apps, and I do
+not have a paid developer account, so there is no TestFlight build and no ready-to-install
+version. You have to sign it with **your own Apple ID**; the usual tools are
+[AltStore](https://altstore.io) or [SideStore](https://sidestore.io):
 
-1. 在 Mac 或 Windows 上安裝 **AltServer**
-2. iPhone 接上電腦，用 AltServer 把 **AltStore** 裝進 iPhone
-3. 下載上面的 `.ipa` 到 iPhone
-4. 打開 AltStore ▸ My Apps ▸ 左上角 **+** ▸ 選那個 `.ipa`
-5. 輸入你的 Apple ID（建議另外開一個，不要用主帳號）
+1. Install **AltServer** on a Mac or Windows PC
+2. Connect the iPhone and use AltServer to install **AltStore** on it
+3. Download the `.ipa` above to the iPhone
+4. Open AltStore ▸ My Apps ▸ **+** (top left) ▸ pick the `.ipa`
+5. Enter your Apple ID (a separate one is recommended — don't use your main account)
 
-**免費 Apple ID 的限制：**
+**Limits of a free Apple ID:**
 
-- App **7 天後過期**，要重新簽章（AltStore 在同一個 Wi-Fi 下會自動續期）
-- 同時最多只能有 **3 個**這樣安裝的 App
+- The app **expires after 7 days** and has to be re-signed (AltStore renews it
+  automatically on the same Wi-Fi)
+- At most **3** apps installed this way at a time
 
-有付費開發者帳號（$99/年）的話簽章有效期是一年。等我有帳號會改成 TestFlight，
-那時候就只要點一個連結。
+With a paid developer account ($99/year) signatures last a year. Once I have one this will
+move to TestFlight, and installing will be a single link.
 
-## 建置
+## Building
 
 ```sh
 brew install xcodegen
@@ -79,77 +90,81 @@ make setup
 make open
 ```
 
-在 Xcode 裡選 TurntableRPM target ▸ Signing & Capabilities ▸ Team 選你的 Apple ID，
-再把 Team ID 填進 `Config/Local.xcconfig`（這個檔案不進版控，所以 `make generate`
-重新產生專案時不會被洗掉）。
+In Xcode, select the TurntableRPM target ▸ Signing & Capabilities ▸ Team, choose your Apple
+ID, then put the Team ID in `Config/Local.xcconfig` (that file is not in version control,
+so `make generate` will not overwrite it).
 
-iPhone 要先開啟開發者模式：設定 ▸ 隱私權與安全性 ▸ 開發者模式。
-免費 Apple ID 的簽章 7 天過期，過期重新 ⌘R 一次即可。
+Enable Developer Mode on the iPhone first: Settings ▸ Privacy & Security ▸ Developer Mode.
+A free Apple ID's signature expires after 7 days — just ⌘R again when it does.
 
-| 指令 | 做什麼 |
+| Command | What it does |
 |---|---|
-| `make test` | 演算法測試（97 個，約 4 秒，不需要模擬器或實機） |
-| `make generate` | 新增／刪除 `App/` 底下的檔案後**必須**跑 |
-| `make open` | 產生並開啟 Xcode |
-| `make doctor` | 環境自我檢查 |
-| `make reference` | 跑 Python 參考實作，重新產生黃金向量 |
+| `make test` | Algorithm tests (97 of them, about 4 s; no simulator or device needed) |
+| `make generate` | **Required** after adding or deleting files under `App/` |
+| `make open` | Generate the project and open Xcode |
+| `make doctor` | Environment self-check |
+| `make reference` | Run the Python reference implementation, regenerating golden vectors |
 
-## 架構
+## Architecture
 
 ```
-Packages/TurntableCore/   演算法核心。純 Swift + Foundation
-  Sources/                  不 import UIKit 也不 import CoreMotion
-  Tests/                    97 個測試
-  Reference/                Python 參考實作，黃金值的來源
-App/                      唯一碰 CoreMotion / SwiftUI / SwiftData 的一層
-  Localizable.xcstrings     四語系字串，305 條
-tools/analyze_export.py   分析匯出的量測 JSON
-docs/spec.md              技術規格書
+Packages/TurntableCore/   Algorithm core. Plain Swift + Foundation
+  Sources/                  imports neither UIKit nor CoreMotion
+  Tests/                    97 tests
+  Reference/                Python reference implementation — source of the golden values
+App/                      The only layer that touches CoreMotion / SwiftUI / SwiftData
+  Localizable.xcstrings     305 strings in four languages
+tools/analyze_export.py   Analyzes exported measurement JSON
+docs/spec.md              Technical specification
 ```
 
-**核心跟平台切開是刻意的**：模擬器沒有陀螺儀，所以感測器相關的東西一定要實機測。
-把演算法抽成不依賴 iOS 框架的純 Swift，就能在 Mac 原生與 Linux container 上跑測試，
-CI 也才有意義。
+**Separating the core from the platform is deliberate**: the Simulator has no gyroscope, so
+anything sensor-related has to be tested on a real device. Extracting the algorithms into
+plain Swift with no iOS framework dependencies lets the tests run natively on macOS and in
+a Linux container — which is what makes CI meaningful.
 
-**黃金值來自 `Reference/` 的獨立 Python 實作**，不是 Swift 自己的輸出 ——
-改演算法的流程是先在 Python 改、確認數學、再同步到 Swift。CI 會擋住兩邊不同步。
+**Golden values come from the independent Python implementation in `Reference/`**, not from
+Swift's own output. Changing an algorithm means changing the Python first, confirming the
+maths, then porting to Swift. CI blocks the two from drifting apart.
 
-`.xcodeproj` 由 XcodeGen 從 `project.yml` 產生，**不進版控**，避免專案檔的 merge 衝突。
+`.xcodeproj` is generated by XcodeGen from `project.yml` and is **not in version control**,
+which avoids merge conflicts in the project file.
 
-## 開發筆記
+## Development notes
 
-[`CLAUDE.md`](CLAUDE.md) 記錄了 28 條踩過的坑，包含幾個花了很久才找到的：
+[`CLAUDE.md`](CLAUDE.md) records 30 pitfalls hit along the way, including several that took
+a long time to find (the file is in Traditional Chinese):
 
-- `CMDeviceMotion.attitude.yaw` 是融合結果，拿它校準陀螺儀是同義反覆
-- 移動平均只能用在顯示路徑；用在抖晃率計算會把 4 Hz 的加權峰值整個挖掉
-- 手機偏心放在盤上會拖慢轉速、放大抖動 —— 一定要配平
-- 記錄下來的實測值也可能是錯的；獨立證據跟它衝突時，要查的是記錄值
+- `CMDeviceMotion.attitude.yaw` is a fusion result — calibrating the gyroscope against it
+  is a tautology
+- Moving averages belong only on the display path; used in the wow & flutter calculation
+  they carve out the weighted peak at 4 Hz entirely
+- A phone sitting off-center on the platter slows it down and amplifies the wobble —
+  it must be counterbalanced
+- A recorded measurement can itself be wrong; when independent evidence contradicts it,
+  the recorded value is what needs checking
 
-[`docs/td235ev-maintenance.md`](docs/td235ev-maintenance.md) 是那台唱盤本身的維修記錄。
+[`docs/td235ev-maintenance.md`](docs/td235ev-maintenance.md) is the service log for that
+particular turntable.
 
-## 安全提醒
+## Safety
 
-- **拿掉磁吸手機殼／MagSafe 配件**，磁鐵靠近 MC 唱頭可能造成永久損傷
-- 唱臂鎖在臂座上，不要讓唱頭懸在盤面上方
-- 用轉盤原本的墊子（絨布／不織布／橡膠都可以，不必另外放唱片），
-  不要讓手機直接壓在裸露的盤面上
-- **對面放一個跟手機等重的東西配平** —— 不配平會讓轉速慢約 0.3%、抖動大三成
-- 78 轉時把手機放靠近中心，偏心的離心力比 33 轉大 5.5 倍
+- **Remove magnetic cases and MagSafe accessories** — a magnet near an MC cartridge can
+  damage it permanently
+- Lock the tonearm in its rest; never leave the cartridge hanging over the platter
+- Use the platter's own mat (felt, non-woven or rubber all work; no need to add a record)
+  and never press the phone onto the bare platter
+- **Put something the same weight as the phone opposite it** — without it the platter runs
+  about 0.3% slow and the wobble is a third larger
+- At 78 RPM keep the phone nearer the center: centrifugal force from off-center placement
+  is 5.5× what it is at 33
 
-## 授權
+## Translations
 
-MIT。見 [LICENSE](LICENSE)。
+The app ships in Traditional Chinese (the source language), English, Japanese and German.
+The Japanese and German translations have not yet been reviewed by a native speaker —
+corrections are very welcome.
 
----
+## Licence
 
-**English summary** — Measure a turntable's speed and wow & flutter with an iPhone,
-targeting 0.1% accuracy. Put the phone on the spinning platter; no strobe disc or extra
-hardware needed. Beyond RPM it computes IEC 386 / DIN 45507 weighted WRMS and reads the
-speed spectrum to tell you *which part* is at fault — integer multiples of platter
-rotation mean eccentricity, non-integer ones point at the drive chain. The display
-counter-rotates so it stays readable while spinning. Algorithm core is plain Swift with
-no Apple-framework dependencies, tested on macOS and Linux; golden values come from an
-independent Python implementation. Requires iOS 17+.
-Available in Traditional Chinese, English, Japanese and German — it follows your system
-language. The Japanese and German translations have not yet been checked by a native
-speaker; corrections are very welcome.
+MIT. See [LICENSE](LICENSE).

@@ -1,0 +1,148 @@
+# TurntableRPM
+
+[English](README.md) · **繁體中文**
+
+[![Swift](https://github.com/RogerH0711/TurntableRPM/actions/workflows/swift.yml/badge.svg)](https://github.com/RogerH0711/TurntableRPM/actions/workflows/swift.yml)
+
+用 iPhone 量測黑膠唱盤的轉速與抖晃率（wow & flutter）。目標精度 0.1%。
+把手機放在轉動的盤面上就能量，不需要頻閃盤或其他硬體。
+
+起因是一台閒置 20 年的 Thorens TD 235 EV 轉速偏慢，需要一個能量到 0.1% 的工具來診斷。
+
+## 它能告訴你什麼
+
+- **平均轉速與偏差 %** —— 盤到底快還是慢、差多少
+- **抖晃率**，IEC 386 / DIN 45507 加權的 WRMS，可以直接跟原廠規格比
+- **譜峰判讀** —— 這是跟其他測速 App 的主要差別。整數倍代表跟著盤面轉的東西
+  （偏心、盤面橢圓），非整數倍代表傳動鏈上轉速不同的零件（馬達、皮帶輪）。
+  填了傳動鏈尺寸還能直接指出「這根就是馬達」。
+- **極座標熱圖** —— 誤差集中在盤面的哪一段
+- **歷史與趨勢圖** —— 調整前後直接比較
+- **原始資料匯出** —— 逐樣本 JSON，搭配 `tools/analyze_export.py`
+
+量測時畫面會**反向旋轉**，內容在轉動中看起來是靜止的，不必把手機拿起來就能讀。
+
+| 分析結果 | 歷史與趨勢 | 手機怎麼擺 |
+|---|---|---|
+| ![分析](docs/screenshots/analysis.png) | ![歷史](docs/screenshots/history.png) | ![擺法](docs/screenshots/placement.png) |
+
+（模擬器截圖，資料為示範用的合成訊號。）
+
+## 它看不到什麼
+
+**手機是跟著盤面一起轉的，量到的是盤的轉速。** 唱片中心孔沒對準造成的音高起伏，
+這個方法完全偵測不到 —— 而那在實務上經常是你聽到的抖動裡最大的一項。
+
+**沒有校準之前，「偏差 %」不能拿來調唱盤。** 那是唱盤誤差與陀螺儀誤差相乘的結果，
+兩者分不開。校準用碼錶做，一支手機做一次就好。
+
+## 需求
+
+- iPhone，iOS 17 以上（不支援 iPad）
+- 介面語言：**繁體中文／English／日本語／Deutsch**（跟隨系統設定）
+- 唱盤大到放得下手機，速度 16⅔ / 33⅓ / 45 / 78 都支援
+- 開發需要 macOS + Xcode 16 以上、[XcodeGen](https://github.com/yonaskolb/XcodeGen)
+
+## 安裝
+
+### 選項 A：自己用 Xcode 建置（推薦）
+
+最可靠，也不必信任第三方工具。往下看「建置」。
+
+### 選項 B：下載 .ipa 自己簽章
+
+[Releases](https://github.com/RogerH0711/TurntableRPM/releases) 有 `TurntableRPM-unsigned.ipa`。
+
+**它是未簽章的，不能直接安裝。** iOS 只執行經過簽章的 App，而我目前沒有付費開發者
+帳號，所以無法提供 TestFlight 或可直接安裝的版本。你必須用**自己的 Apple ID** 簽章，
+常見的工具是 [AltStore](https://altstore.io) 或 [SideStore](https://sidestore.io)：
+
+1. 在 Mac 或 Windows 上安裝 **AltServer**
+2. iPhone 接上電腦，用 AltServer 把 **AltStore** 裝進 iPhone
+3. 下載上面的 `.ipa` 到 iPhone
+4. 打開 AltStore ▸ My Apps ▸ 左上角 **+** ▸ 選那個 `.ipa`
+5. 輸入你的 Apple ID（建議另外開一個，不要用主帳號）
+
+**免費 Apple ID 的限制：**
+
+- App **7 天後過期**，要重新簽章（AltStore 在同一個 Wi-Fi 下會自動續期）
+- 同時最多只能有 **3 個**這樣安裝的 App
+
+有付費開發者帳號（$99/年）的話簽章有效期是一年。等我有帳號會改成 TestFlight，
+那時候就只要點一個連結。
+
+## 建置
+
+```sh
+brew install xcodegen
+git clone https://github.com/RogerH0711/TurntableRPM.git
+cd TurntableRPM
+make setup
+make open
+```
+
+在 Xcode 裡選 TurntableRPM target ▸ Signing & Capabilities ▸ Team 選你的 Apple ID，
+再把 Team ID 填進 `Config/Local.xcconfig`（這個檔案不進版控，所以 `make generate`
+重新產生專案時不會被洗掉）。
+
+iPhone 要先開啟開發者模式：設定 ▸ 隱私權與安全性 ▸ 開發者模式。
+免費 Apple ID 的簽章 7 天過期，過期重新 ⌘R 一次即可。
+
+| 指令 | 做什麼 |
+|---|---|
+| `make test` | 演算法測試（97 個，約 4 秒，不需要模擬器或實機） |
+| `make generate` | 新增／刪除 `App/` 底下的檔案後**必須**跑 |
+| `make open` | 產生並開啟 Xcode |
+| `make doctor` | 環境自我檢查 |
+| `make reference` | 跑 Python 參考實作，重新產生黃金向量 |
+
+## 架構
+
+```
+Packages/TurntableCore/   演算法核心。純 Swift + Foundation
+  Sources/                  不 import UIKit 也不 import CoreMotion
+  Tests/                    97 個測試
+  Reference/                Python 參考實作，黃金值的來源
+App/                      唯一碰 CoreMotion / SwiftUI / SwiftData 的一層
+  Localizable.xcstrings     四語系字串，305 條
+tools/analyze_export.py   分析匯出的量測 JSON
+docs/spec.md              技術規格書
+```
+
+**核心跟平台切開是刻意的**：模擬器沒有陀螺儀，所以感測器相關的東西一定要實機測。
+把演算法抽成不依賴 iOS 框架的純 Swift，就能在 Mac 原生與 Linux container 上跑測試，
+CI 也才有意義。
+
+**黃金值來自 `Reference/` 的獨立 Python 實作**，不是 Swift 自己的輸出 ——
+改演算法的流程是先在 Python 改、確認數學、再同步到 Swift。CI 會擋住兩邊不同步。
+
+`.xcodeproj` 由 XcodeGen 從 `project.yml` 產生，**不進版控**，避免專案檔的 merge 衝突。
+
+## 開發筆記
+
+[`CLAUDE.md`](CLAUDE.md) 記錄了 30 條踩過的坑，包含幾個花了很久才找到的：
+
+- `CMDeviceMotion.attitude.yaw` 是融合結果，拿它校準陀螺儀是同義反覆
+- 移動平均只能用在顯示路徑；用在抖晃率計算會把 4 Hz 的加權峰值整個挖掉
+- 手機偏心放在盤上會拖慢轉速、放大抖動 —— 一定要配平
+- 記錄下來的實測值也可能是錯的；獨立證據跟它衝突時，要查的是記錄值
+
+[`docs/td235ev-maintenance.md`](docs/td235ev-maintenance.md) 是那台唱盤本身的維修記錄。
+
+## 安全提醒
+
+- **拿掉磁吸手機殼／MagSafe 配件**，磁鐵靠近 MC 唱頭可能造成永久損傷
+- 唱臂鎖在臂座上，不要讓唱頭懸在盤面上方
+- 用轉盤原本的墊子（絨布／不織布／橡膠都可以，不必另外放唱片），
+  不要讓手機直接壓在裸露的盤面上
+- **對面放一個跟手機等重的東西配平** —— 不配平會讓轉速慢約 0.3%、抖動大三成
+- 78 轉時把手機放靠近中心，偏心的離心力比 33 轉大 5.5 倍
+
+## 翻譯
+
+App 有繁體中文（來源語言）、英文、日文、德文。日文與德文還沒有母語者審過，
+歡迎指正。
+
+## 授權
+
+MIT。見 [LICENSE](LICENSE)。
