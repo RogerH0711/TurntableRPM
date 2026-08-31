@@ -56,7 +56,7 @@ struct OnboardingView: View {
             step(2, "按下「準備好，開始偵測」")
             step(3, "啟動轉盤 —— 轉速穩了會自動開始，停下時自動結束")
             Text("量 90 秒以上，頻譜才夠清楚。")
-                .font(.subheadline)
+                .font(.body)
                 .foregroundStyle(.secondary)
                 .padding(.top, 4)
         }
@@ -75,7 +75,7 @@ struct OnboardingView: View {
                     .foregroundStyle(.secondary)
             }
             Text("詳細說明在右上角的「說明」裡。")
-                .font(.footnote)
+                .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .padding(.top, 6)
         }
@@ -108,7 +108,7 @@ struct OnboardingView: View {
     private func step(_ n: Int, _ text: String) -> some View {
         HStack(alignment: .top, spacing: 12) {
             Text("\(n)")
-                .font(.subheadline.weight(.bold))
+                .font(.body.weight(.bold))
                 .foregroundStyle(.white)
                 .frame(width: 26, height: 26)
                 .background(Circle().fill(.tint))

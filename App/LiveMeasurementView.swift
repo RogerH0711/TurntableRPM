@@ -160,11 +160,11 @@ struct LiveMeasurementView: View {
                     .foregroundStyle(.secondary)
                 if engine.snapshot.appliedFactor != nil {
                     Label("已校準", systemImage: "checkmark.seal.fill")
-                        .font(.caption)
+                        .font(.footnote)
                         .foregroundStyle(.green)
                 } else {
                     Label("未校準", systemImage: "exclamationmark.circle")
-                        .font(.caption)
+                        .font(.footnote)
                         .foregroundStyle(.orange)
                 }
             }
@@ -176,12 +176,12 @@ struct LiveMeasurementView: View {
                     .foregroundStyle(abs(error) <= 0.3 ? Color.green : Color.orange)
             } else if engine.isRunning {
                 Text("轉速尚未穩定或不在標稱範圍內")
-                    .font(.subheadline)
+                    .font(.body)
                     .foregroundStyle(.secondary)
             }
 
             Text(engine.statusMessage)
-                .font(.footnote)
+                .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.top, 4)
@@ -205,7 +205,7 @@ struct LiveMeasurementView: View {
                      ? "按下按鈕後把手機放上轉盤，程式會等轉速穩定才開始記錄，"
                        + "盤面停下時自動結束。"
                      : "自己按開始與停止。記得先讓轉盤轉起來、手機放好，再按開始。")
-                    .font(.caption)
+                    .font(.footnote)
                     .foregroundStyle(.secondary)
 
                 DisclosureGroup("量測畫面顯示什麼") {
@@ -215,14 +215,14 @@ struct LiveMeasurementView: View {
                             value: $freezeSeconds, in: 0 ... 60, step: 5)
                     Text("量測結束時畫面會定住，讓你把手機從轉盤上拿起來再看。"
                          + "設 0 就是立刻關閉。")
-                        .font(.caption2)
+                        .font(.caption)
                         .foregroundStyle(.secondary)
                     Text("量測畫面會反向旋轉，讓內容在轉動中看起來靜止。"
                          + "加的資訊愈多、字就得愈小，因為所有內容都必須落在螢幕的內接圓裡。")
-                        .font(.caption2)
+                        .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-                .font(.subheadline)
+                .font(.body)
                 .padding(.top, 4)
             }
         }
@@ -249,7 +249,7 @@ struct LiveMeasurementView: View {
             Text(controlLabel)
                 .font(.title3.weight(.semibold))
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
+                .padding(.vertical, 20)          // 主要動作，做大一點
         }
         .buttonStyle(.borderedProminent)
         .tint(engine.isRunning ? .red : .accentColor)
@@ -264,15 +264,15 @@ struct LiveMeasurementView: View {
                     .foregroundStyle(.orange)
                 VStack(alignment: .leading, spacing: 3) {
                     Text("放上唱盤之前")
-                        .font(.subheadline.weight(.medium))
+                        .font(.body.weight(.medium))
                     Text("拿掉磁吸配件與含磁鐵的手機殼、鎖好唱臂、墊一張唱片再放手機。")
-                        .font(.caption)
+                        .font(.footnote)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.leading)
                 }
                 Spacer(minLength: 0)
                 Image(systemName: "chevron.right")
-                    .font(.caption)
+                    .font(.footnote)
                     .foregroundStyle(.tertiary)
             }
             .measurementCard()
@@ -290,12 +290,12 @@ struct LiveMeasurementView: View {
                 Spacer()
                 if let c = store.calibration {
                     Label(String(format: "k = %.5f", c.factor), systemImage: "checkmark.seal.fill")
-                        .font(.subheadline)
+                        .font(.body)
                         .monospacedDigit()
                         .foregroundStyle(.green)
                 } else {
                     Text("未校準")
-                        .font(.subheadline)
+                        .font(.body)
                         .foregroundStyle(.orange)
                 }
             }
@@ -306,16 +306,16 @@ struct LiveMeasurementView: View {
                 DiagnosticRow("校準精度", String(format: "±%.3f", c.precision() * 100), "%")
                 DiagnosticRow("校準時間", c.recordedAt.formatted(date: .abbreviated, time: .shortened))
                 Text("所有轉速讀數都已套用這個倍率。")
-                    .font(.caption)
+                    .font(.footnote)
                     .foregroundStyle(.secondary)
             } else if store.mismatched != nil {
                 Label(mismatchText, systemImage: "exclamationmark.triangle.fill")
-                    .font(.caption)
+                    .font(.footnote)
                     .foregroundStyle(.orange)
             } else {
                 Text("還沒校準。目前的「偏差 %」是唱盤誤差與陀螺儀誤差相乘的結果，"
                      + "兩者分不開，還不能拿來調唱盤。")
-                    .font(.caption)
+                    .font(.footnote)
                     .foregroundStyle(.secondary)
             }
 
@@ -324,19 +324,21 @@ struct LiveMeasurementView: View {
                     showingCalibrationSheet = true
                 }
                 .buttonStyle(.bordered)
+                .controlSize(.large)
                 .disabled(engine.isRunning || !hasMeasurement)
 
                 if store.calibration != nil {
                     Spacer()
                     Button("清除", role: .destructive) { store.clear() }
                         .buttonStyle(.bordered)
+                        .controlSize(.large)
                 }
             }
             .padding(.top, 4)
 
             if !hasMeasurement {
                 Text("要先完成一次量測，才有可以拿來比對的轉速。")
-                    .font(.caption)
+                    .font(.footnote)
                     .foregroundStyle(.secondary)
             }
         }
@@ -375,7 +377,7 @@ struct LiveMeasurementView: View {
             Label("讀不到動作感測器", systemImage: "exclamationmark.triangle.fill")
                 .font(.headline)
             Text("模擬器沒有陀螺儀，這個 App 必須用實機測試。")
-                .font(.subheadline)
+                .font(.body)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
@@ -389,7 +391,7 @@ struct LiveMeasurementView: View {
             ShareLink(item: url) {
                 Label("匯出原始資料（\(engine.snapshot.sampleCount) 筆）",
                       systemImage: "square.and.arrow.up")
-                    .font(.subheadline)
+                    .font(.body)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
             }
@@ -408,16 +410,16 @@ struct LiveMeasurementView: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
                         Label("分析結果", systemImage: "waveform.path.ecg")
-                            .font(.subheadline.weight(.medium))
+                            .font(.body.weight(.medium))
                         Text(String(format: "抖晃率 %.3f%% WRMS  ·  每圈一次 %.3f%%",
                                     analysis.wowFlutter.wrmsPercent,
                                     analysis.onePerRevolutionPercent))
-                            .font(.caption)
+                            .font(.footnote)
                             .foregroundStyle(.secondary)
                     }
                     Spacer()
                     Image(systemName: "chevron.right")
-                        .font(.caption)
+                        .font(.footnote)
                         .foregroundStyle(.tertiary)
                 }
                 .measurementCard()
@@ -427,14 +429,14 @@ struct LiveMeasurementView: View {
             // 一定要有這個分支。少了它，分析失敗時畫面會永遠停在「分析中…」——
             // 而「轉盤沒轉就按停止」是很常見的操作。
             Label(reason, systemImage: "exclamationmark.triangle.fill")
-                .font(.caption)
+                .font(.footnote)
                 .foregroundStyle(.orange)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .measurementCard()
         } else if hasMeasurement && !engine.isRunning {
             HStack(spacing: 8) {
                 ProgressView().controlSize(.small)
-                Text("分析中…").font(.subheadline).foregroundStyle(.secondary)
+                Text("分析中…").font(.body).foregroundStyle(.secondary)
                 Spacer()
             }
             .measurementCard()
@@ -445,10 +447,10 @@ struct LiveMeasurementView: View {
         NavigationLink { HistoryView() } label: {
             HStack {
                 Label("歷史記錄", systemImage: "clock.arrow.circlepath")
-                    .font(.subheadline)
+                    .font(.body)
                 Spacer()
                 Image(systemName: "chevron.right")
-                    .font(.caption)
+                    .font(.footnote)
                     .foregroundStyle(.tertiary)
             }
             .measurementCard()
@@ -462,10 +464,10 @@ struct LiveMeasurementView: View {
         } label: {
             HStack {
                 Label("進階診斷", systemImage: "wrench.and.screwdriver")
-                    .font(.subheadline)
+                    .font(.body)
                 Spacer()
                 Image(systemName: "chevron.right")
-                    .font(.caption)
+                    .font(.footnote)
                     .foregroundStyle(.tertiary)
             }
             .measurementCard()

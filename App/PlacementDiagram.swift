@@ -49,7 +49,7 @@ struct PlacementDiagram: View {
             arrow.addLine(to: CGPoint(x: c.x, y: c.y + r + 30))
             ctx.stroke(arrow, with: .color(.orange),
                        style: StrokeStyle(lineWidth: 2, lineCap: .round))
-            ctx.draw(Text("你").font(.caption.weight(.semibold)).foregroundStyle(.orange),
+            ctx.draw(Text("你").font(.footnote.weight(.semibold)).foregroundStyle(.orange),
                      at: CGPoint(x: c.x, y: c.y + r + 44))
         }
     }
@@ -70,7 +70,7 @@ struct PlacementGuide: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             Text("照這個擺法，量測畫面的文字就會正對著你。")
-                .font(.caption)
+                .font(.footnote)
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -81,7 +81,7 @@ struct PlacementGuide: View {
             Text("・").foregroundStyle(.secondary)
             Text(.init(text))
         }
-        .font(.subheadline)
+        .font(.body)
     }
 }
 

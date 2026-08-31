@@ -57,9 +57,9 @@ struct AnalysisView: View {
                 .foregroundStyle(.orange)
             VStack(alignment: .leading, spacing: 3) {
                 Text("已自動略過轉速不穩的區間")
-                    .font(.subheadline.weight(.medium))
+                    .font(.body.weight(.medium))
                 Text(trimDescription)
-                    .font(.caption)
+                    .font(.footnote)
                     .foregroundStyle(.secondary)
             }
             Spacer(minLength: 0)
@@ -98,7 +98,7 @@ struct AnalysisView: View {
                     .font(.system(size: 40, weight: .semibold, design: .rounded))
                     .monospacedDigit()
                 Text("% WRMS")
-                    .font(.subheadline)
+                    .font(.body)
                     .foregroundStyle(.secondary)
             }
 
@@ -112,7 +112,7 @@ struct AnalysisView: View {
                           String(format: "%.3f", analysis.onePerRevolutionPercent), "%")
 
             Text(ratioInterpretation)
-                .font(.caption)
+                .font(.footnote)
                 .foregroundStyle(.secondary)
         }
         .measurementCard()
@@ -149,23 +149,23 @@ struct AnalysisView: View {
 
             if analysis.peaks.isEmpty {
                 Text("沒有找到顯著的週期性成分 —— 這是好事，代表沒有單一零件在主導誤差。")
-                    .font(.subheadline)
+                    .font(.body)
                     .foregroundStyle(.secondary)
             } else {
                 ForEach(Array(analysis.peaks.prefix(5).enumerated()), id: \.offset) { _, peak in
                     VStack(alignment: .leading, spacing: 3) {
                         HStack {
                             Text(String(format: "%.3f Hz", peak.frequencyHz))
-                                .font(.subheadline.weight(.medium))
+                                .font(.body.weight(.medium))
                                 .monospacedDigit()
                             Spacer()
                             Text(String(format: "%.3f %%", peak.amplitudePercent))
-                                .font(.subheadline)
+                                .font(.body)
                                 .monospacedDigit()
                                 .foregroundStyle(.secondary)
                         }
                         Text(peak.interpretation)
-                            .font(.caption)
+                            .font(.footnote)
                             .foregroundStyle(peak.isRotationHarmonic ? .orange : .secondary)
                     }
                     .padding(.vertical, 3)
@@ -173,7 +173,7 @@ struct AnalysisView: View {
                 }
                 Text("整數倍 = 跟著盤面轉的東西（偏心、變形）。非整數倍 = 傳動鏈上"
                      + "轉速不同的零件（馬達、皮帶輪）。")
-                    .font(.caption2)
+                    .font(.caption)
                     .foregroundStyle(.secondary)
             }
         }
@@ -213,7 +213,7 @@ struct AnalysisView: View {
             .frame(height: 180)
 
             Text("橫軸對數，Hz。橘點是轉盤諧波，灰點不是。")
-                .font(.caption2)
+                .font(.caption)
                 .foregroundStyle(.secondary)
         }
         .measurementCard()
@@ -258,17 +258,17 @@ struct AnalysisView: View {
             if let peak = analysis.peakAngleDegrees {
                 Text(String(format: "誤差最大的角度在 %.0f°（指針處）。顏色只集中在一邊"
                             + "代表偏心；均勻散開代表隨機抖動。", peak))
-                    .font(.caption)
+                    .font(.footnote)
                     .foregroundStyle(.secondary)
             }
             // 單一字串字面值 —— Text 的 markdown 只在字面值生效（今晚第三次踩到）。
             Text("**角度不能跨次量測比較。** 0° 是「按下開始的那一瞬間」盤面所在的位置，而那是隨機的。要能比較，盤面貼一個記號，每次都等記號轉到同一個位置（例如唱臂那側）才按開始。")
-                .font(.caption2)
+                .font(.caption)
                 .foregroundStyle(.secondary)
             if heatScaleExpanded {
                 Text("色階已放大到容納最大值 —— 跟別次量測比較時要看圖例上的數字，"
                      + "不能只比顏色深淺。")
-                    .font(.caption2)
+                    .font(.caption)
                     .foregroundStyle(.orange)
             }
         }
@@ -295,7 +295,7 @@ struct AnalysisView: View {
 
             Text("未平滑的原始偏差，%。分析路徑一律不套移動平均 —— 平滑會把 4 Hz"
                  + "附近的抖晃挖掉，數字會漂亮得沒有意義。")
-                .font(.caption2)
+                .font(.caption)
                 .foregroundStyle(.secondary)
         }
         .measurementCard()

@@ -32,7 +32,7 @@ struct StopwatchCalibrationSheet: View {
                     LabeledContent("App 量到的轉速",
                                    value: String(format: "%.4f RPM", measuredRPM))
                     Text("碼錶要量的是**同一段轉動**。中途調過速度或換過轉速檔位，這個 k 就不對了。")
-                        .font(.caption)
+                        .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
 
@@ -66,14 +66,14 @@ struct StopwatchCalibrationSheet: View {
                                   + "MEMS 陀螺儀的比例因子誤差是百分之幾的等級，不會到這種程度 —— "
                                   + "檢查圈數或秒數是不是打錯了。",
                                   systemImage: "exclamationmark.triangle.fill")
-                                .font(.caption)
+                                .font(.footnote)
                                 .foregroundStyle(.orange)
                         }
                     }
                 } else {
                     Section {
                         Text("填入圈數與秒數就會算出倍率。")
-                            .font(.caption)
+                            .font(.footnote)
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -87,7 +87,7 @@ struct StopwatchCalibrationSheet: View {
                     100 圈在 33⅓ 轉大約 3 分鐘，精度 ±0.17%；200 圈約 6 分鐘，±0.08%。
                     圈數太少不值得做 —— 10 圈只有 1.7%，比不校準好不了多少。
                     """)
-                    .font(.caption)
+                    .font(.footnote)
                     .foregroundStyle(.secondary)
                 }
             }

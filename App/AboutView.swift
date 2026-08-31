@@ -21,12 +21,12 @@ struct AboutView: View {
                     取樣率 100 Hz（iOS 對第三方 App 的上限），時間戳用感測器自己的時鐘，\
                     不假設每筆間隔相等。
                     """)
-                    .font(.subheadline)
+                    .font(.body)
                 }
 
                 Section("這個方法看不到什麼") {
                     Label {
-                        Text("**唱片本身的偏心**").font(.subheadline)
+                        Text("**唱片本身的偏心**").font(.body)
                     } icon: {
                         Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
                     }
@@ -37,13 +37,13 @@ struct AboutView: View {
                     換句話說：這裡讀到很漂亮的數字，不保證放起來就不抖。它能告訴你的是\
                     「唱盤本身好不好」，不是「這張唱片放起來好不好」。
                     """)
-                    .font(.subheadline)
+                    .font(.body)
 
                     Text("""
                     另外，抖晃率（W&F）的「最大偏差」這種數字一定要連同平滑視窗一起看，\
                     否則不同工具之間無法比較。這個 App 報的是 IEC 386 / DIN 45507 加權的 WRMS。
                     """)
-                    .font(.subheadline)
+                    .font(.body)
                 }
 
                 Section("關於校準") {
@@ -57,13 +57,13 @@ struct AboutView: View {
 
                     校準結果綁定在這一台裝置上（不同手機的陀螺儀不一樣），換手機要重做。
                     """)
-                    .font(.subheadline)
+                    .font(.body)
 
                     Text("""
                     參考值：開發用的這支 iPhone 15 Pro Max 校準倍率是 0.99915，\
                     也就是陀螺儀本身準到 0.085% —— 幾乎不需要修正。你的裝置可能不同。
                     """)
-                    .font(.caption)
+                    .font(.footnote)
                     .foregroundStyle(.secondary)
                 }
 
@@ -96,13 +96,13 @@ struct AboutView: View {
                     • 校準時碼錶跟 App 要同步 —— 同一段轉動才算得準
                     • 量測中不要碰唱盤或桌子
                     """)
-                    .font(.subheadline)
+                    .font(.body)
                 }
 
                 Section {
                     Text("量測資料只留在這台裝置上，不會上傳到任何地方。"
                          + "「匯出原始資料」產生的檔案由你自己決定要不要分享。")
-                        .font(.caption)
+                        .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
             }
@@ -119,9 +119,9 @@ struct AboutView: View {
     private func safetyRow(_ icon: String, _ title: String, _ detail: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Label(title, systemImage: icon)
-                .font(.subheadline.weight(.medium))
+                .font(.body.weight(.medium))
             Text(detail)
-                .font(.caption)
+                .font(.footnote)
                 .foregroundStyle(.secondary)
         }
         .padding(.vertical, 2)

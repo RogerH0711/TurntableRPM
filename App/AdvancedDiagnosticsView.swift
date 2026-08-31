@@ -28,7 +28,7 @@ struct AdvancedDiagnosticsView: View {
         // 一定要是單一字串字面值 —— Text 的 markdown 只在字面值上生效，
         // 用 + 串接的話 ** 會原樣印出來。
         Text("下面兩區是**已經證實失敗**的自動校準嘗試，留著只為診斷用途。唯一可信的校準是主畫面的碼錶校準。")
-            .font(.caption)
+            .font(.footnote)
             .foregroundStyle(.secondary)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -77,7 +77,7 @@ struct AdvancedDiagnosticsView: View {
                     .font(.headline)
                 Spacer()
                 Text("\(engine.snapshot.revolutions) 圈")
-                    .font(.subheadline)
+                    .font(.body)
                     .monospacedDigit()
                     .foregroundStyle(.secondary)
             }
@@ -92,7 +92,7 @@ struct AdvancedDiagnosticsView: View {
                 }
             } else {
                 Text("還沒滿一圈")
-                    .font(.subheadline)
+                    .font(.body)
                     .foregroundStyle(.secondary)
             }
 
@@ -106,20 +106,20 @@ struct AdvancedDiagnosticsView: View {
         switch engine.snapshot.confidence {
         case .insufficient:
             Text("還不滿一圈，算不出倍率。")
-                .font(.caption)
+                .font(.footnote)
                 .foregroundStyle(.secondary)
 
         case .indistinguishable(let divergence, let floor):
             Label(indistinguishableText(divergence, floor),
                   systemImage: "exclamationmark.triangle.fill")
-                .font(.caption)
+                .font(.footnote)
                 .foregroundStyle(.orange)
 
         case .usable(let precision):
             Label("兩條路徑確實分歧了，這個倍率可以採信。精度 ±"
                   + String(format: "%.3f", precision * 100) + "%",
                   systemImage: "checkmark.circle.fill")
-                .font(.caption)
+                .font(.footnote)
                 .foregroundStyle(.green)
         }
     }
@@ -139,7 +139,7 @@ struct AdvancedDiagnosticsView: View {
                     .font(.headline)
                 Spacer()
                 Text("\(engine.snapshot.refined?.revolutions ?? 0) 圈")
-                    .font(.subheadline)
+                    .font(.body)
                     .monospacedDigit()
                     .foregroundStyle(.secondary)
             }
@@ -162,11 +162,11 @@ struct AdvancedDiagnosticsView: View {
                 }
 
                 Text(refined.isTrustworthy ? refinedOKText : refinedBadText)
-                    .font(.caption)
+                    .font(.footnote)
                     .foregroundStyle(refined.isTrustworthy ? Color.secondary : Color.orange)
             } else {
                 Text("樣本還不夠擬合圓心。")
-                    .font(.subheadline)
+                    .font(.body)
                     .foregroundStyle(.secondary)
             }
         }
@@ -192,7 +192,7 @@ struct AdvancedDiagnosticsView: View {
                     .font(.headline)
                 Spacer()
                 Text("\(engine.snapshot.rawMagneticRevolutions) 圈")
-                    .font(.subheadline)
+                    .font(.body)
                     .monospacedDigit()
                     .foregroundStyle(.secondary)
             }
@@ -221,13 +221,13 @@ struct AdvancedDiagnosticsView: View {
                 Text(engine.snapshot.revolutions >= 3
                      ? "地磁沒有跟著盤面繞圈，這條路徑目前算不出有意義的倍率。"
                      : "還沒滿一圈")
-                    .font(.subheadline)
+                    .font(.body)
                     .foregroundStyle(.secondary)
             }
 
             if let warning = magnetWarning {
                 Label(warning, systemImage: "exclamationmark.triangle.fill")
-                    .font(.caption)
+                    .font(.footnote)
                     .foregroundStyle(.orange)
             }
         }

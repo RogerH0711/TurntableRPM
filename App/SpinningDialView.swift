@@ -82,12 +82,12 @@ struct SpinningDialView: View {
     private var turnControls: some View {
         VStack(spacing: 6) {
             Text("點上方畫面停止")
-                .font(.caption2)
+                .font(.caption)
                 .foregroundStyle(.white.opacity(0.35))
             HStack(spacing: 28) {
                 turnButton("rotate.left", by: -15)
                 Text("轉向")
-                    .font(.caption)
+                    .font(.footnote)
                     .foregroundStyle(.white.opacity(0.4))
                 turnButton("rotate.right", by: 15)
             }
@@ -102,7 +102,7 @@ struct SpinningDialView: View {
             Image(systemName: icon)
                 .font(.title2)
                 .foregroundStyle(.white.opacity(0.75))
-                .frame(width: 64, height: 52)      // 大一點，轉動中才按得到
+                .frame(width: 76, height: 60)      // 大一點，轉動中才按得到
                 .contentShape(Rectangle())
         }
     }
@@ -112,7 +112,7 @@ struct SpinningDialView: View {
         VStack(spacing: 12) {
             if let remaining = freezeRemaining {
                 Text("\(remaining) 秒後自動關閉")
-                    .font(.caption)
+                    .font(.footnote)
                     .foregroundStyle(.white.opacity(0.4))
                     .monospacedDigit()
             }
@@ -121,10 +121,12 @@ struct SpinningDialView: View {
                 // SwiftUI 自己挑的前景色也是白的 —— 白底白字，看起來就是一顆空白按鈕。
                 Button("完成") { onDismiss?() }
                     .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
                     .tint(.white)
                     .foregroundStyle(.black)
                 Button("繼續量測") { onResume?() }
                     .buttonStyle(.bordered)
+                    .controlSize(.large)
                     .tint(.white)
                     .foregroundStyle(.white)
             }
@@ -151,7 +153,7 @@ struct SpinningDialView: View {
             if let nominal = engine.snapshot.nominal,
                let error = engine.snapshot.errorPercent {
                 Text("\(nominal.label) 轉")
-                    .font(.subheadline)
+                    .font(.body)
                     .foregroundStyle(.white.opacity(0.5))
                     .padding(.top, 6)
                 Text("\(error >= 0 ? "+" : "")\(String(format: "%.2f", error))%")
@@ -167,14 +169,14 @@ struct SpinningDialView: View {
 
             if engine.snapshot.appliedFactor == nil {
                 Text("未校準")
-                    .font(.caption)
+                    .font(.footnote)
                     .foregroundStyle(.orange.opacity(0.8))
                     .padding(.top, 4)
             }
 
             if !extraInfo.isEmpty {
                 Text(extraInfo)
-                    .font(.subheadline)
+                    .font(.body)
                     .monospacedDigit()
                     .foregroundStyle(.white.opacity(0.45))
                     .padding(.top, 10)

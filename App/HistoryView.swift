@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import Charts
 
 /// 量測歷史。
 ///
@@ -19,6 +20,11 @@ struct HistoryView: View {
                                        description: Text("完成一次量測之後會自動存進來。"))
             } else {
                 List {
+                    if records.count >= 2 {
+                        Section {
+                            TrendChart(records: records.reversed())
+                        }
+                    }
                     ForEach(records) { record in
                         NavigationLink {
                             HistoryDetailView(record: record)
@@ -44,38 +50,140 @@ struct HistoryView: View {
                     .font(.headline)
                     .monospacedDigit()
                 Text("RPM")
-                    .font(.caption)
+                    .font(.footnote)
                     .foregroundStyle(.secondary)
                 if let e = r.errorPercent {
                     Text("\(e >= 0 ? "+" : "")\(String(format: "%.3f", e))%")
-                        .font(.subheadline)
+                        .font(.body)
                         .monospacedDigit()
                         .foregroundStyle(abs(e) <= 0.3 ? .green : .orange)
                 }
                 Spacer()
                 if !r.isCalibrated {
                     Image(systemName: "exclamationmark.circle")
-                        .font(.caption)
+                        .font(.footnote)
                         .foregroundStyle(.orange)
                 }
             }
             HStack(spacing: 10) {
-                Text(r.date.formatted(date: .abbreviated, time: .shortened))
+                // 字級放大後 .abbreviated 會換行成兩行。年份對這個用途沒有意義，
+                // 月日時分就夠。
+                Text(r.date.formatted(.dateTime.month(.abbreviated).day()
+                                        .hour().minute()))
                 Text(String(format: "W&F %.3f%%", r.wrmsPercent))
                 Text(String(format: "偏心 %.3f%%", r.onePerRevPercent))
             }
-            .font(.caption)
+            .font(.footnote)
             .foregroundStyle(.secondary)
             .monospacedDigit()
 
             if !r.note.isEmpty {
                 Text(r.note)
-                    .font(.caption)
+                    .font(.footnote)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
             }
         }
         .padding(.vertical, 2)
+    }
+}
+
+/// 歷次量測的趨勢。
+///
+/// 這張圖回答的是「**我調完之後有沒有變好**」。清單看得到單次的數字，
+/// 但看不出方向 —— 而調唱盤本來就是反覆量、反覆調的過程。
+struct TrendChart: View {
+    /// 由舊到新。
+    let records: [MeasurementRecord]
+    @State private var metric: Metric = .error
+
+    enum Metric: String, CaseIterable, Identifiable {
+        case error, wow, eccentricity
+        var id: String { rawValue }
+        var label: String {
+            switch self {
+            case .error: return "偏差"
+            case .wow: return "抖晃率"
+            case .eccentricity: return "偏心"
+            }
+        }
+        var unit: String { "%" }
+        /// 偏差有正負、目標是 0；另外兩個恆為正、愈小愈好。
+        var hasZeroTarget: Bool { self == .error }
+    }
+
+    private func value(_ r: MeasurementRecord) -> Double? {
+        switch metric {
+        case .error: return r.errorPercent
+        case .wow: return r.wrmsPercent
+        case .eccentricity: return r.onePerRevPercent
+        }
+    }
+
+    private var points: [(date: Date, value: Double, calibrated: Bool, note: String)] {
+        records.compactMap { r in
+            value(r).map { (r.date, $0, r.isCalibrated, r.note) }
+        }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Picker("指標", selection: $metric) {
+                ForEach(Metric.allCases) { Text($0.label).tag($0) }
+            }
+            .pickerStyle(.segmented)
+
+            if points.count < 2 {
+                Text("這個指標還沒有足夠的資料。")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .frame(height: 60)
+            } else {
+                Chart {
+                    ForEach(Array(points.enumerated()), id: \.offset) { _, p in
+                        LineMark(x: .value("時間", p.date), y: .value(metric.label, p.value))
+                            .foregroundStyle(.blue)
+                            .interpolationMethod(.monotone)
+                        PointMark(x: .value("時間", p.date), y: .value(metric.label, p.value))
+                            // 未校準的點用空心 —— 它的偏差不可採信，不該跟其他點
+                            // 看起來一樣有份量。
+                            .symbol(p.calibrated ? .circle : .diamond)
+                            .foregroundStyle(p.calibrated ? .blue : .orange)
+                    }
+                    if metric.hasZeroTarget {
+                        RuleMark(y: .value("標稱", 0))
+                            .foregroundStyle(.green.opacity(0.6))
+                            .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
+                    }
+                }
+                .chartYAxisLabel("%")
+                .frame(height: 170)
+
+                if points.contains(where: { !$0.calibrated }) {
+                    Label("橘色菱形是未校準的量測，那些數字不能拿來比較。",
+                          systemImage: "exclamationmark.circle")
+                        .font(.subheadline)
+                        .foregroundStyle(.orange)
+                }
+                if let change = changeDescription {
+                    Text(change)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .padding(.vertical, 4)
+    }
+
+    /// 直接講出「變好還是變差」。看圖要自己判讀，寫出來就不用。
+    private var changeDescription: String? {
+        let usable = points.filter { $0.calibrated }
+        guard let first = usable.first, let last = usable.last, usable.count >= 2 else { return nil }
+        let delta = abs(last.value) - abs(first.value)
+        guard abs(delta) > 0.001 else { return "跟第一次相比幾乎沒有變化。" }
+        let word = delta < 0 ? "改善" : "變差"
+        return String(format: "跟第一次相比%@了 %.3f 個百分點（%.3f%% → %.3f%%）。",
+                      word, abs(delta), first.value, last.value)
     }
 }
 
@@ -95,7 +203,7 @@ struct HistoryDetailView: View {
                 } else {
                     Label("這次量測沒有校準，偏差不能拿來調唱盤。",
                           systemImage: "exclamationmark.triangle.fill")
-                        .font(.caption)
+                        .font(.footnote)
                         .foregroundStyle(.orange)
                 }
             }
@@ -122,9 +230,9 @@ struct HistoryDetailView: View {
                                     .monospacedDigit()
                                     .foregroundStyle(.secondary)
                             }
-                            .font(.subheadline)
+                            .font(.body)
                             Text(p.interpretation)
-                                .font(.caption)
+                                .font(.footnote)
                                 .foregroundStyle(p.isHarmonic ? .orange : .secondary)
                         }
                     }

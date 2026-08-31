@@ -87,7 +87,7 @@ struct HeatmapLegend: View {
                 Spacer()
                 Text(String(format: "+%.2f%%", scale))
             }
-            .font(.caption2)
+            .font(.caption)
             .foregroundStyle(.secondary)
         }
     }

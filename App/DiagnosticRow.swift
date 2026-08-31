@@ -21,11 +21,11 @@ struct DiagnosticRow: View {
                 .monospacedDigit()
             if !unit.isEmpty {
                 Text(unit)
-                    .font(.caption)
+                    .font(.footnote)
                     .foregroundStyle(.secondary)
             }
         }
-        .font(.subheadline)
+        .font(.body)
         .padding(.vertical, 4)
     }
 }
