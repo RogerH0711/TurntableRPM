@@ -112,7 +112,7 @@ Xcode ▸ File ▸ Add Package Dependencies ▸ Add Local… ▸ 選這個資料
 改演算法時的流程：先在 Python 改、跑 `python3 verify.py` 確認數學，再同步到 Swift、跑 `swift test`。
 
 ```sh
-cd ~/code/TurntableCore/Reference
+cd ~/TurntableRPM/Packages/TurntableCore/Reference
 pip install numpy scipy
 python3 verify.py
 ```

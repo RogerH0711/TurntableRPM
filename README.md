@@ -1,5 +1,7 @@
 # TurntableRPM
 
+[![Swift](https://github.com/RogerH0711/TurntableRPM/actions/workflows/swift.yml/badge.svg)](https://github.com/RogerH0711/TurntableRPM/actions/workflows/swift.yml)
+
 用 iPhone 量測黑膠唱盤的轉速與抖晃率。
 
 - `Packages/TurntableCore` — 演算法核心。純 Swift + Foundation，不碰 UIKit 也不碰 CoreMotion，
@@ -13,7 +15,7 @@
 
 ```sh
 brew install xcodegen
-cd ~/code/TurntableRPM
+cd ~/TurntableRPM
 make setup
 make open
 ```

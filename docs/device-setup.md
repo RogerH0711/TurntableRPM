@@ -55,7 +55,7 @@ xcodegen --version
 **步驟 2.1** 進到專案資料夾，跑一次環境自我檢查：
 
 ```sh
-cd ~/code/TurntableRPM
+cd ~/TurntableRPM
 make doctor
 ```
 
@@ -113,7 +113,7 @@ make teamid
 請把 Config/Local.xcconfig 裡的那一行改成：DEVELOPMENT_TEAM = A1B2C3D4E5
 ```
 
-**步驟 3.9** 照著做。用任何編輯器打開 `~/code/TurntableRPM/Config/Local.xcconfig`，把最後那行 `DEVELOPMENT_TEAM =` 補上你的 ID，存檔。
+**步驟 3.9** 照著做。用任何編輯器打開 `~/TurntableRPM/Config/Local.xcconfig`，把最後那行 `DEVELOPMENT_TEAM =` 補上你的 ID，存檔。
 
 **為什麼要多這一步？**
 
