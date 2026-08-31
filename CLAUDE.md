@@ -274,6 +274,45 @@ CI 另外還有 `.github/workflows/swift.yml`。
     **修正量測方法優於事後補償** —— 所以解法是把配平寫進 SOP 與擺放圖，
     不是加一個補償係數。
 
+29. **在地化的字串抽取有四個各自獨立的失效方式，每一個都是靜默的。**
+    App 已支援繁中／英／日／德四語，字串放在 `App/Localizable.xcstrings`（String Catalog）。
+
+    (a) **自訂 View 的文字參數宣告成 `String` 就不會被抽取。** `DiagnosticRow(_ label: String, …)`
+    一口氣讓五十幾條標籤消失 —— 編譯得過、畫面正常，只是永遠不會被翻譯。
+    改成 `LocalizedStringKey` 後呼叫端的字面值自動進 catalog，零成本。
+    `optionalNumber`／`picker`／`stepperRow`／`safetyRow`／`step`／`line` 全部同一個問題。
+    附帶：`Text(.init(someString))` 也是假在地化 —— 它在執行期才組 key。
+
+    (b) **`String(localized:)` 的參數必須是字面值，三元運算式抽不出來。**
+    `String(localized: cond ? "甲" : "乙")` 編得過但兩條都不進 catalog；
+    要寫成 `cond ? String(localized: "甲") : String(localized: "乙")`。
+    **但 `Text(cond ? "甲" : "乙")` 是可以的** —— 那裡每個分支各自轉成 `LocalizedStringKey`。
+    兩者長得像，行為不同。
+
+    (c) **語序會變的字串一定要用位置參數。** `String(format:)` 按出現順序填，
+    而日文／德文常常要換順序：「相比%@了 %.3f 個百分點」在日文是
+    「%2$.3f ポイント%1$@ました」。不用 `%n$` 就會把數字填到動詞的位置。
+    驗證要自己寫 printf 掃描器，**正規表示式會誤判** —— `%%` 後面接空白再接 `d`
+    （例如 "%% davon"）會被當成 `% d` 轉換符。
+
+    (d) **`xcodebuild` CLI 不會把字串合併進 `.xcstrings`**（那步只在 Xcode IDE 跑）。
+    但編譯器有產 `.stringsdata`，是 JSON，`tables.Localizable` 底下一個
+    `{comment, key, location}` 的陣列 —— 掃 DerivedData 收集起來就能自己組 catalog。
+    注意 DerivedData 可能有多個 `TurntableRPM-*` 目錄，挑最新的那個，
+    否則會混進舊的鍵。
+
+    另外兩件設定：**XcodeGen 的 `developmentRegion` 預設是 `en`**，只設
+    `DEVELOPMENT_LANGUAGE` 建置設定沒有用 —— 要用 `options.developmentLanguage: zh-Hant`，
+    否則不會產生 `zh-Hant.lproj`，中文裝置反而拿到英文。`knownRegions` 則會自動
+    從 catalog 讀出來，不用手動維護。
+
+30. **翻完要實際跑一遍，德文會撐爆版面。** 德文平均比中文長一倍以上
+    （「Durchmesser des Motorpulleys」對「馬達皮帶輪直徑」）。實測四語系都跑過模擬器：
+    導覽頁在 ScrollView 裡所以安全，設定檔表單的長標籤會自動換兩行、數值與步進器仍放得下。
+    **唯一真的要縮短的是反旋轉盤面裡的字** —— 那裡有內接圓約束（坑 26），
+    「等待轉速穩定」的英文直譯 "Waiting for a steady speed" 太寬，縮成 "Waiting for speed"。
+    盤面裡的字在每個語言都要當成「儀表板讀數」來寫，不是句子。
+
 ## 設計原則
 
 - **比例因子校準原本被當成成敗關鍵，實測後證明不是。**
@@ -331,6 +370,10 @@ App 圖示已完成（`tools/make_icon.py` 產生，可重跑）—— 唱片加
 那道刻度就是碼錶校準要你做的事。**檢查圖示要先看 60px 再看 1024**：
 頻閃盤與抖晃波兩個概念上更貼切的方案都是在小尺寸糊掉才被淘汰的，
 失敗原因記在 `tools/make_icon.py` 的檔頭。
+
+**在地化** — 完成。繁體中文（來源）／英文／日文／德文，305 條字串，
+`App/Localizable.xcstrings`。四語系都在模擬器上實際跑過版面。日文與德文由 Claude 翻譯，
+還沒有母語者審過。
 
 **還沒做的上架必要項目**：付費開發者帳號、上架素材（截圖／描述／隱私問卷）。
 截圖必須用實機拍 —— 模擬器沒有陀螺儀，畫面永遠是空狀態。

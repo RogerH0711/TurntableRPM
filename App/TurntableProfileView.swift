@@ -43,10 +43,10 @@ struct TurntableProfileListView: View {
                     .font(.headline)
                 HStack(spacing: 10) {
                     if let spec = p.specWowFlutterPercent {
-                        Text(String(format: "規格 W&F %.3f%%", spec))
+                        Text(String(format: String(localized: "規格 W&F %.3f%%"), spec))
                     }
                     if let ratio = p.expectedDriveRatio {
-                        Text(String(format: "傳動比 %.1f×", ratio))
+                        Text(String(format: String(localized: "傳動比 %.1f×"), ratio))
                     }
                     if p.hasLoadTest { Text("已測載重") }
                 }
@@ -110,9 +110,7 @@ struct TurntableProfileEditor: View {
             } header: {
                 Text("傳動鏈尺寸（選填）")
             } footer: {
-                Text("量了這幾個，頻譜上「非諧波的某某倍」就能對上實體零件 —— "
-                     + "剛好等於傳動比的那根峰就是馬達。皮帶跑在外盤緣就量外盤，"
-                     + "跑在內盤就量內盤。")
+                Text("量了這幾個，頻譜上「非諧波的某某倍」就能對上實體零件 —— 剛好等於傳動比的那根峰就是馬達。皮帶跑在外盤緣就量外盤，跑在內盤就量內盤。")
             }
 
             Section {
@@ -150,7 +148,7 @@ struct TurntableProfileEditor: View {
     }
 
     /// 可以留白的數值欄位。留白代表「還沒量」，跟「量到 0」是不同的意思。
-    private func optionalNumber(_ title: String, value: Binding<Double?>,
+    private func optionalNumber(_ title: LocalizedStringKey, value: Binding<Double?>,
                                 unit: String, format: String, step: Double) -> some View {
         HStack {
             Text(title)

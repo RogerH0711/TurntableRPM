@@ -62,9 +62,7 @@ struct StopwatchCalibrationSheet: View {
                                        value: String(format: "±%.3f %%", result.precision() * 100))
 
                         if !result.isPlausible {
-                            Label("k = \(String(format: "%.3f", result.factor)) 不合理。"
-                                  + "MEMS 陀螺儀的比例因子誤差是百分之幾的等級，不會到這種程度 —— "
-                                  + "檢查圈數或秒數是不是打錯了。",
+                            Label("k = \(String(format: "%.3f", result.factor)) 不合理。MEMS 陀螺儀的比例因子誤差是百分之幾的等級，不會到這種程度 —— 檢查圈數或秒數是不是打錯了。",
                                   systemImage: "exclamationmark.triangle.fill")
                                 .font(.footnote)
                                 .foregroundStyle(.orange)

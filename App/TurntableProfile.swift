@@ -53,7 +53,7 @@ final class TurntableProfile {
 
     var displayName: String {
         let full = [maker, name].filter { !$0.isEmpty }.joined(separator: " ")
-        return full.isEmpty ? "未命名唱盤" : full
+        return full.isEmpty ? String(localized: "未命名唱盤") : full
     }
 
     var hasLoadTest: Bool { loadSlopeRPMPerGram != nil }

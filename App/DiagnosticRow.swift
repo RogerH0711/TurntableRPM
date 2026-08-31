@@ -2,11 +2,13 @@ import SwiftUI
 
 /// 「標籤 —— 數值 單位」這一列，三個畫面共用。
 struct DiagnosticRow: View {
-    let label: String
+    // 標籤是 LocalizedStringKey，呼叫端的字面值才會被抽進 String Catalog。
+    // 數值與單位是執行期算出來的字串，不翻譯。
+    let label: LocalizedStringKey
     let value: String
     var unit: String = ""
 
-    init(_ label: String, _ value: String, _ unit: String = "") {
+    init(_ label: LocalizedStringKey, _ value: String, _ unit: String = "") {
         self.label = label
         self.value = value
         self.unit = unit

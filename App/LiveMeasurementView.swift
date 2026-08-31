@@ -203,8 +203,7 @@ struct LiveMeasurementView: View {
                 .pickerStyle(.segmented)
 
                 Text(engine.mode == .automatic
-                     ? "按下按鈕後把手機放上轉盤，程式會等轉速穩定才開始記錄，"
-                       + "盤面停下時自動結束。"
+                     ? "按下按鈕後把手機放上轉盤，程式會等轉速穩定才開始記錄，盤面停下時自動結束。"
                      : "自己按開始與停止。記得先讓轉盤轉起來、手機放好，再按開始。")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
@@ -214,12 +213,10 @@ struct LiveMeasurementView: View {
                     Toggle("累積圈數", isOn: $dialShowsRevolutions)
                     Stepper("停止後凍結 \(freezeSeconds) 秒",
                             value: $freezeSeconds, in: 0 ... 60, step: 5)
-                    Text("量測結束時畫面會定住，讓你把手機從轉盤上拿起來再看。"
-                         + "設 0 就是立刻關閉。")
+                    Text("量測結束時畫面會定住，讓你把手機從轉盤上拿起來再看。設 0 就是立刻關閉。")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Text("量測畫面會反向旋轉，讓內容在轉動中看起來靜止。"
-                         + "加的資訊愈多、字就得愈小，因為所有內容都必須落在螢幕的內接圓裡。")
+                    Text("量測畫面會反向旋轉，讓內容在轉動中看起來靜止。加的資訊愈多、字就得愈小，因為所有內容都必須落在螢幕的內接圓裡。")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -233,9 +230,11 @@ struct LiveMeasurementView: View {
     /// 已經在錄了 —— 使用者原本就會困惑自動模式到底要不要按這個鈕。
     private var controlLabel: String {
         if engine.isRunning {
-            return engine.phase == .waitingForStability ? "取消" : "停止"
+            return engine.phase == .waitingForStability
+                ? String(localized: "取消") : String(localized: "停止")
         }
-        return engine.mode == .automatic ? "準備好，開始偵測" : "開始量測"
+        return engine.mode == .automatic
+            ? String(localized: "準備好，開始偵測") : String(localized: "開始量測")
     }
 
     private var controlButton: some View {
@@ -303,7 +302,7 @@ struct LiveMeasurementView: View {
 
             if let c = store.calibration {
                 DiagnosticRow("陀螺儀偏差", String(format: "%+.3f", (1.0 / c.factor - 1.0) * 100), "%")
-                DiagnosticRow("依據", "\(c.revolutions) 圈 / " + String(format: "%.2f", c.seconds), "s")
+                DiagnosticRow("依據", String(localized: "\(c.revolutions) 圈 / \(String(format: "%.2f", c.seconds))"), "s")
                 DiagnosticRow("校準精度", String(format: "±%.3f", c.precision() * 100), "%")
                 DiagnosticRow("校準時間", c.recordedAt.formatted(date: .abbreviated, time: .shortened))
                 Text("所有轉速讀數都已套用這個倍率。")
@@ -314,8 +313,7 @@ struct LiveMeasurementView: View {
                     .font(.footnote)
                     .foregroundStyle(.orange)
             } else {
-                Text("還沒校準。目前的「偏差 %」是唱盤誤差與陀螺儀誤差相乘的結果，"
-                     + "兩者分不開，還不能拿來調唱盤。")
+                Text("還沒校準。目前的「偏差 %」是唱盤誤差與陀螺儀誤差相乘的結果，兩者分不開，還不能拿來調唱盤。")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -348,9 +346,9 @@ struct LiveMeasurementView: View {
 
     /// k 綁定在特定一支陀螺儀上，換機或從備份還原之後不能沿用。
     private var mismatchText: String {
-        let was = store.mismatched?.deviceModel ?? "另一台裝置"
-        return "先前的校準是在 \(was) 上做的，這台是 \(CalibrationStore.deviceModel)"
-             + " —— 校準倍率綁定在特定一支陀螺儀上，不能沿用。請重新校準。"
+        let was = store.mismatched?.deviceModel ?? String(localized: "另一台裝置")
+        let now = CalibrationStore.deviceModel
+        return String(localized: "先前的校準是在 \(was) 上做的，這台是 \(now) —— 校準倍率綁定在特定一支陀螺儀上，不能沿用。請重新校準。")
     }
 
     // MARK: - 量測摘要
@@ -412,7 +410,7 @@ struct LiveMeasurementView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Label("分析結果", systemImage: "waveform.path.ecg")
                             .font(.body.weight(.medium))
-                        Text(String(format: "抖晃率 %.3f%% WRMS  ·  每圈一次 %.3f%%",
+                        Text(String(format: String(localized: "抖晃率 %.3f%% WRMS  ·  每圈一次 %.3f%%"),
                                     analysis.wowFlutter.wrmsPercent,
                                     analysis.onePerRevolutionPercent))
                             .font(.footnote)

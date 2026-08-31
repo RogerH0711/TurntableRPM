@@ -70,7 +70,10 @@ final class MotionEngine: ObservableObject {
         /// 等轉盤到達穩定轉速才真正開始記錄，盤面停下時自動結束。
         case automatic
         var id: String { rawValue }
-        var label: String { self == .manual ? "手動" : "自動" }
+        var label: String {
+            // 三元式不是字面值，String(localized:) 收到它就抽不出字串 —— 要拆開寫。
+            self == .manual ? String(localized: "手動") : String(localized: "自動")
+        }
     }
 
     /// 量測的階段。自動模式會多一個「等待轉速穩定」的階段。
@@ -151,15 +154,15 @@ final class MotionEngine: ObservableObject {
     func refreshAvailability() {
         guard manager.isDeviceMotionAvailable else {
             availability = .unavailable
-            statusMessage = "這台裝置讀不到動作感測器。模擬器沒有陀螺儀，必須用實機測試。"
+            statusMessage = String(localized: "這台裝置讀不到動作感測器。模擬器沒有陀螺儀，必須用實機測試。")
             return
         }
         let hasMagneticNorth = CMMotionManager.availableAttitudeReferenceFrames()
             .contains(.xMagneticNorthZVertical)
         availability = .ready(magneticNorth: hasMagneticNorth)
         statusMessage = hasMagneticNorth
-            ? "把手機放上唱盤，靠近中心即可，然後按開始。"
-            : "這台裝置沒有磁北參考，之後的自動校準會需要改用碼錶手動校準。"
+            ? String(localized: "把手機放上唱盤，靠近中心即可，然後按開始。")
+            : String(localized: "這台裝置沒有磁北參考，之後的自動校準會需要改用碼錶手動校準。")
     }
 
     func start() {
@@ -225,7 +228,9 @@ final class MotionEngine: ObservableObject {
         }
         UIApplication.shared.isIdleTimerDisabled = true
         isRunning = true
-        statusMessage = mode == .automatic ? "等待轉速穩定…" : "量測中"
+        statusMessage = mode == .automatic
+            ? String(localized: "等待轉速穩定…")
+            : String(localized: "量測中")
     }
 
     func stop() {
@@ -239,7 +244,7 @@ final class MotionEngine: ObservableObject {
         phase = .stopped
         cachedRefined = accumulator.refined()
         pullSnapshot()
-        statusMessage = "已停止"
+        statusMessage = String(localized: "已停止")
         // 分析先跑，寫檔在它完成之後 —— 匯出的摘要要帶上分析結果，
         // 反過來的話寫檔時 analysis 還是 nil，那些欄位永遠不會出現。
         runAnalysis()
@@ -255,7 +260,7 @@ final class MotionEngine: ObservableObject {
         let samples = accumulator.snapshotSamples()
         // 樣本太少分析不了，但匯出還是要做 —— 短量測的原始資料一樣有診斷價值。
         guard samples.count > 64 else {
-            analysisFailureReason = "量測時間太短，只錄到 \(samples.count) 筆資料。"
+            analysisFailureReason = String(localized: "量測時間太短，只錄到 \(samples.count) 筆資料。")
             writeExport()
             return
         }
@@ -265,8 +270,8 @@ final class MotionEngine: ObservableObject {
             // 失敗的原因幾乎都是「找不到夠長的穩定區間」，講清楚比只說「失敗」有用。
             let reason: String? = result == nil
                 ? (StabilityGate.find(samples) == nil
-                   ? "整段量測都沒有穩定的轉速。轉盤有轉起來嗎？至少要連續穩定 5 秒。"
-                   : "資料不足以分析。試著量久一點，90 秒以上比較可靠。")
+                   ? String(localized: "整段量測都沒有穩定的轉速。轉盤有轉起來嗎？至少要連續穩定 5 秒。")
+                   : String(localized: "資料不足以分析。試著量久一點，90 秒以上比較可靠。"))
                 : nil
             DispatchQueue.main.async {
                 self?.analysis = result
@@ -378,11 +383,11 @@ final class MotionEngine: ObservableObject {
                     // **不動顯示角度** —— 它的零點必須留在使用者按下開始的那一刻。
                     accumulator.reset()
                     phase = .measuring
-                    statusMessage = "量測中"
+                    statusMessage = String(localized: "量測中")
                 }
             } else {
                 stableSince = now
-                statusMessage = "轉速穩定中…"
+                statusMessage = String(localized: "轉速穩定中…")
             }
 
         case .measuring:

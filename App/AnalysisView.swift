@@ -75,19 +75,21 @@ struct AnalysisView: View {
     private var trimDescription: String {
         var parts: [String] = []
         if analysis.trimmedStartSeconds > 0.05 {
-            parts.append(String(format: "開頭 %.1f 秒", analysis.trimmedStartSeconds))
+            parts.append(String(format: String(localized: "開頭 %.1f 秒"), analysis.trimmedStartSeconds))
         }
         if analysis.trimmedEndSeconds > 0.05 {
-            parts.append(String(format: "結尾 %.1f 秒", analysis.trimmedEndSeconds))
+            parts.append(String(format: String(localized: "結尾 %.1f 秒"), analysis.trimmedEndSeconds))
         }
         if analysis.stableWindow.droppedInMiddle > 0 {
-            parts.append(String(format: "中途 %.1f 秒",
+            parts.append(String(format: String(localized: "中途 %.1f 秒"),
                                 Double(analysis.stableWindow.droppedInMiddle) / analysis.sampleRate))
         }
-        let what = parts.isEmpty ? "部分區間" : parts.joined(separator: "、")
-        return "\(what)的轉速偏離太多（放上手機、盤面加速或減速、量測中被碰到），"
-             + String(format: "已排除。下面所有數字都是剩下 %.0f 秒算出來的。",
-                      analysis.durationSeconds)
+        // 分隔號在中文是「、」，其他語言是逗號 —— 一起交給翻譯決定。
+        let what = parts.isEmpty
+            ? String(localized: "部分區間")
+            : parts.joined(separator: String(localized: "、"))
+        let seconds = String(format: "%.0f", analysis.durationSeconds)
+        return String(localized: "\(what)的轉速偏離太多（放上手機、盤面加速或減速、量測中被碰到），已排除。下面所有數字都是剩下 \(seconds) 秒算出來的。")
     }
 
     // MARK: - 抖晃率
@@ -121,8 +123,8 @@ struct AnalysisView: View {
                 DiagnosticRow("原廠規格", String(format: "%.3f", spec), "%")
                 let ratio = analysis.wowFlutter.wrmsPercent / spec
                 Label(ratio <= 1
-                      ? String(format: "在規格內（規格的 %.0f%%）。", ratio * 100)
-                      : String(format: "超出規格 %.2f 倍。", ratio),
+                      ? String(format: String(localized: "在規格內（規格的 %.0f%%）。"), ratio * 100)
+                      : String(format: String(localized: "超出規格 %.2f 倍。"), ratio),
                       systemImage: ratio <= 1 ? "checkmark.circle.fill"
                                               : "exclamationmark.triangle.fill")
                     .font(.footnote)
@@ -143,19 +145,17 @@ struct AnalysisView: View {
     private var ratioInterpretation: String {
         let share = analysis.dominantPeakShare
         guard let top = analysis.peaks.first else {
-            return "沒有找到顯著的週期性成分。"
+            return String(localized: "沒有找到顯著的週期性成分。")
         }
         let hz = String(format: "%.3f Hz", top.frequencyHz)
         let pct = Int((share * 100).rounded())
         if share > 0.6 {
-            return "抖動由 \(hz) 這一根主導（佔譜峰功率 \(pct)%）—— 是某個零件的"
-                 + "週期性問題，不是隨機雜訊。看下面的判讀。"
+            return String(localized: "抖動由 \(hz) 這一根主導（佔譜峰功率 \(pct)%）—— 是某個零件的週期性問題，不是隨機雜訊。看下面的判讀。")
         }
         if share < 0.3 {
-            return "沒有單一主導的頻率（最強的 \(hz) 只佔 \(pct)%），"
-                 + "抖動比較像分散的隨機雜訊。"
+            return String(localized: "沒有單一主導的頻率（最強的 \(hz) 只佔 \(pct)%），抖動比較像分散的隨機雜訊。")
         }
-        return "\(hz) 是最強的成分（佔 \(pct)%），但還有其他來源，兩種成分都有。"
+        return String(localized: "\(hz) 是最強的成分（佔 \(pct)%），但還有其他來源，兩種成分都有。")
     }
 
     // MARK: - 譜峰判讀（這是最有價值的一區）
@@ -205,8 +205,7 @@ struct AnalysisView: View {
                     .padding(.vertical, 3)
                     Divider()
                 }
-                Text("整數倍 = 跟著盤面轉的東西（偏心、變形）。非整數倍 = 傳動鏈上"
-                     + "轉速不同的零件（馬達、皮帶輪）。")
+                Text("整數倍 = 跟著盤面轉的東西（偏心、變形）。非整數倍 = 傳動鏈上轉速不同的零件（馬達、皮帶輪）。")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -218,10 +217,9 @@ struct AnalysisView: View {
     private func driveChainNote(_ order: Double, _ ratio: Double) -> String {
         let diff = (order / ratio - 1) * 100
         if abs(diff) < 8 {
-            return String(format: "符合這台盤的傳動比（%.1f×）—— 這是馬達。", ratio)
+            return String(format: String(localized: "符合這台盤的傳動比（%.1f×）—— 這是馬達。"), ratio)
         }
-        return String(format: "這台盤的傳動比是 %.1f×，量到 %.1f×（差 %+.0f%%）—— "
-                      + "可能是傳動鏈尺寸填得不夠準，也可能這根不是馬達。",
+        return String(format: String(localized: "這台盤的傳動比是 %.1f×，量到 %.1f×（差 %+.0f%%）—— 可能是傳動鏈尺寸填得不夠準，也可能這根不是馬達。"),
                       ratio, order, diff)
     }
 
@@ -301,8 +299,7 @@ struct AnalysisView: View {
             HeatmapLegend(scale: heatScale)
 
             if let peak = analysis.peakAngleDegrees {
-                Text(String(format: "誤差最大的角度在 %.0f°（指針處）。顏色只集中在一邊"
-                            + "代表偏心；均勻散開代表隨機抖動。", peak))
+                Text(String(format: String(localized: "誤差最大的角度在 %.0f°（指針處）。顏色只集中在一邊代表偏心；均勻散開代表隨機抖動。"), peak))
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -311,8 +308,7 @@ struct AnalysisView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
             if heatScaleExpanded {
-                Text("色階已放大到容納最大值 —— 跟別次量測比較時要看圖例上的數字，"
-                     + "不能只比顏色深淺。")
+                Text("色階已放大到容納最大值 —— 跟別次量測比較時要看圖例上的數字，不能只比顏色深淺。")
                     .font(.caption)
                     .foregroundStyle(.orange)
             }
@@ -338,8 +334,7 @@ struct AnalysisView: View {
             }
             .frame(height: 140)
 
-            Text("未平滑的原始偏差，%。分析路徑一律不套移動平均 —— 平滑會把 4 Hz"
-                 + "附近的抖晃挖掉，數字會漂亮得沒有意義。")
+            Text("未平滑的原始偏差，%。分析路徑一律不套移動平均 —— 平滑會把 4 Hz附近的抖晃挖掉，數字會漂亮得沒有意義。")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

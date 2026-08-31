@@ -2,6 +2,7 @@ name: TurntableRPM
 
 options:
   bundleIdPrefix: com.roger
+  developmentLanguage: zh-Hant
   deploymentTarget:
     iOS: "17.0"
   createIntermediateGroups: true
@@ -37,6 +38,9 @@ targets:
         LSSupportsOpeningDocumentsInPlace: true
     settings:
       base:
+        # 原始語言是繁體中文，其他語言在 Localizable.xcstrings 裡當翻譯。
+        DEVELOPMENT_LANGUAGE: zh-Hant
+        SWIFT_EMIT_LOC_STRINGS: YES
         PRODUCT_BUNDLE_IDENTIFIER: com.roger.turntablerpm
         MARKETING_VERSION: "0.1"
         CURRENT_PROJECT_VERSION: "1"

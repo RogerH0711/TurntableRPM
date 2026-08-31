@@ -83,17 +83,4 @@ struct StoredPeak: Codable, Identifiable {
         isHarmonic = p.isRotationHarmonic
     }
 
-    /// 判讀文字用存下來的欄位重建，不依賴核心的型別。
-    var interpretation: String {
-        let n = Int(orderOfRotation.rounded())
-        if isHarmonic {
-            switch n {
-            case 1:  return "每圈一次 —— 偏心"
-            case 2:  return "每圈兩次 —— 盤面橢圓"
-            default: return "轉盤 \(n)× 諧波"
-            }
-        }
-        if orderOfRotation < 1 { return "比一圈還慢 —— 皮帶循環" }
-        return String(format: "非諧波（%.1f 倍）—— 傳動鏈", orderOfRotation)
-    }
 }

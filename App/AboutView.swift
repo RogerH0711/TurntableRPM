@@ -76,15 +76,11 @@ struct AboutView: View {
 
                 Section("安全") {
                     safetyRow("magnet", "拿掉磁吸配件",
-                              "MagSafe 配件、含磁鐵的手機殼都要拿掉。磁鐵靠近 MC 唱頭可能造成永久損傷，"
-                              + "而且會干擾磁力計的診斷功能。Apple 原廠矽膠殼也內含磁鐵環。")
+                              "MagSafe 配件、含磁鐵的手機殼都要拿掉。磁鐵靠近 MC 唱頭可能造成永久損傷，而且會干擾磁力計的診斷功能。Apple 原廠矽膠殼也內含磁鐵環。")
                     safetyRow("hand.raised", "唱臂鎖好",
-                              "把唱臂鎖在臂座上，不要讓唱頭懸在盤面上方。手機在盤上時碰到唱針，"
-                              + "壞的是唱針。")
+                              "把唱臂鎖在臂座上，不要讓唱頭懸在盤面上方。手機在盤上時碰到唱針，壞的是唱針。")
                     safetyRow("record.circle", "用轉盤原本的墊子",
-                              "絨布墊、不織布墊、橡膠墊都可以，不需要另外放一張唱片。"
-                              + "重點是不要讓手機直接壓在裸露的盤面上 —— 兩邊都會刮。"
-                              + "放之前確認手機背面和墊子上沒有沙粒。")
+                              "絨布墊、不織布墊、橡膠墊都可以，不需要另外放一張唱片。重點是不要讓手機直接壓在裸露的盤面上 —— 兩邊都會刮。放之前確認手機背面和墊子上沒有沙粒。")
                     safetyRow("arrow.clockwise", "78 轉時放靠近中心",
                               "偏心擺放的離心力在 78 轉時是 33 轉的 5.5 倍。")
                 }
@@ -108,8 +104,7 @@ struct AboutView: View {
                 }
 
                 Section {
-                    Text("量測資料只留在這台裝置上，不會上傳到任何地方。"
-                         + "「匯出原始資料」產生的檔案由你自己決定要不要分享。")
+                    Text("量測資料只留在這台裝置上，不會上傳到任何地方。「匯出原始資料」產生的檔案由你自己決定要不要分享。")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
@@ -124,7 +119,8 @@ struct AboutView: View {
         }
     }
 
-    private func safetyRow(_ icon: String, _ title: String, _ detail: String) -> some View {
+    private func safetyRow(_ icon: String, _ title: LocalizedStringKey,
+                           _ detail: LocalizedStringKey) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Label(title, systemImage: icon)
                 .font(.body.weight(.medium))

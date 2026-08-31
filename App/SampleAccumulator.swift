@@ -228,11 +228,11 @@ final class SampleAccumulator {
     /// 要在畫面上講清楚，不能讓使用者拿去調唱盤。
     private static func label(for accuracy: CMMagneticFieldCalibrationAccuracy) -> String {
         switch accuracy {
-        case .uncalibrated: return "未校準（不可信）"
-        case .low: return "低"
-        case .medium: return "中"
-        case .high: return "高"
-        @unknown default: return "未知"
+        case .uncalibrated: return String(localized: "未校準（不可信）")
+        case .low: return String(localized: "低")
+        case .medium: return String(localized: "中")
+        case .high: return String(localized: "高")
+        @unknown default: return String(localized: "未知")
         }
     }
 

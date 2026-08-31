@@ -53,8 +53,7 @@ struct LoadTestView: View {
                 Section("重量") {
                     stepperRow("手機重量", value: $phoneMassGrams, step: 1, range: 100 ... 400)
                     stepperRow("加上去的配重", value: $addedMassGrams, step: 10, range: 10 ... 1000)
-                    Text("iPhone 15 Pro Max 是 221 g。配重用食譜秤量一下就好，"
-                         + "不必很精確 —— 誤差只會等比例反映在斜率上。")
+                    Text("iPhone 15 Pro Max 是 221 g。配重用食譜秤量一下就好，不必很精確 —— 誤差只會等比例反映在斜率上。")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
@@ -107,13 +106,11 @@ struct LoadTestView: View {
     /// 斜率有沒有超過量測雜訊，決定要不要當一回事。
     private func verdict(_ r: LoadCompensationResult) -> String {
         guard r.isSignificant else {
-            return "斜率在量測雜訊以內 —— 這台唱盤對載重不敏感，手機的重量不影響讀數。"
+            return String(localized: "斜率在量測雜訊以內 —— 這台唱盤對載重不敏感，手機的重量不影響讀數。")
         }
         let pct = abs(r.phoneEffectRPM / max(r.zeroLoadRPM, 0.001)) * 100
-        let dir = r.phoneEffectRPM < 0 ? "拖慢" : "加快"
-        return String(format: "手機的重量把轉速%@了 %.4f RPM（%.3f%%）。"
-                      + "這是量測方法本身造成的偏差，不是唱盤的問題 —— "
-                      + "真實的無載轉速是 %.4f RPM。", dir, abs(r.phoneEffectRPM), pct,
+        let dir = r.phoneEffectRPM < 0 ? String(localized: "拖慢") : String(localized: "加快")
+        return String(format: String(localized: "手機的重量把轉速%@了 %.4f RPM（%.3f%%）。這是量測方法本身造成的偏差，不是唱盤的問題 —— 真實的無載轉速是 %.4f RPM。"), dir, abs(r.phoneEffectRPM), pct,
                       r.zeroLoadRPM)
     }
 
@@ -126,7 +123,7 @@ struct LoadTestView: View {
     }
 
     @ViewBuilder
-    private func picker(_ title: String,
+    private func picker(_ title: LocalizedStringKey,
                         selection: Binding<PersistentIdentifier?>) -> some View {
         Picker(title, selection: selection) {
             Text("尚未選擇").tag(PersistentIdentifier?.none)
@@ -138,7 +135,7 @@ struct LoadTestView: View {
         }
     }
 
-    private func stepperRow(_ title: String, value: Binding<Double>,
+    private func stepperRow(_ title: LocalizedStringKey, value: Binding<Double>,
                             step: Double, range: ClosedRange<Double>) -> some View {
         Stepper(value: value, in: range, step: step) {
             HStack {

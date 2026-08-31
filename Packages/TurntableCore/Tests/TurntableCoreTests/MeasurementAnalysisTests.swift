@@ -26,7 +26,7 @@ final class MeasurementAnalysisTests: XCTestCase {
         XCTAssertTrue(top!.isRotationHarmonic)
         XCTAssertEqual(top!.amplitudePercent, 0.40, accuracy: 0.04)
         XCTAssertEqual(a!.onePerRevolutionPercent, 0.40, accuracy: 0.04)
-        XCTAssertTrue(top!.interpretation.contains("偏心"))
+        XCTAssertEqual(top!.kind, .eccentricity)
     }
 
     /// 非整數倍的峰要被判成傳動鏈零件，不能誤認成轉盤諧波。
@@ -45,7 +45,7 @@ final class MeasurementAnalysisTests: XCTestCase {
         XCTAssertNotNil(drive, "傳動鏈那根峰要找得到")
         XCTAssertFalse(drive!.isRotationHarmonic)
         XCTAssertEqual(drive!.orderOfRotation, 35.32, accuracy: 0.1)
-        XCTAssertTrue(drive!.interpretation.contains("非諧波"))
+        XCTAssertEqual(drive!.kind, .driveChain)
 
         let one = a.peaks.first { $0.isRotationHarmonic }
         XCTAssertNotNil(one)
@@ -61,7 +61,7 @@ final class MeasurementAnalysisTests: XCTestCase {
         let top = a.peaks.first!
         XCTAssertEqual(top.orderOfRotation, 2.0, accuracy: 0.04)
         XCTAssertTrue(top.isRotationHarmonic)
-        XCTAssertTrue(top.interpretation.contains("橢圓"))
+        XCTAssertEqual(top.kind, .ovality)
     }
 
     // MARK: - 抖晃率

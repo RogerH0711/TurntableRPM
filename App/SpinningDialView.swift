@@ -201,7 +201,7 @@ struct SpinningDialView: View {
             parts.append(String(format: "%d:%02d", s / 60, s % 60))
         }
         if showsRevolutions {
-            parts.append("\(engine.snapshot.revolutions) 圈")
+            parts.append(String(localized: "\(engine.snapshot.revolutions) 圈"))
         }
         return parts.joined(separator: "  ·  ")
     }

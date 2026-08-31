@@ -18,21 +18,33 @@ public struct SpectralPeak: Sendable, Equatable {
         return n >= 1 && abs(orderOfRotation - n) < 0.04
     }
 
-    /// 給使用者看的一句判讀。
-    public var interpretation: String {
+    /// 這根峰代表什麼零件。**回傳分類，不回傳文字。**
+    ///
+    /// 核心刻意不產生使用者可見的字串：文案屬於 UI 層，而且要能本地化 ——
+    /// 把中文寫死在演算法核心裡，等於逼這個純 Swift 套件去背本地化資源。
+    public var kind: Kind {
         let n = Int(orderOfRotation.rounded())
         if isRotationHarmonic {
             switch n {
-            case 1:  return "每圈一次 —— 偏心（盤面、主軸或皮帶接觸面沒對正）"
-            case 2:  return "每圈兩次 —— 盤面橢圓或主軸兩點磨損"
-            default: return "轉盤 \(n)× 諧波"
+            case 1:  return .eccentricity
+            case 2:  return .ovality
+            default: return .harmonic(order: n)
             }
         }
-        if orderOfRotation < 1 {
-            return "比一圈還慢 —— 皮帶循環或長週期漂移"
-        }
-        return String(format: "非諧波（轉盤的 %.1f 倍）—— 傳動鏈上的零件，"
-                      + "馬達或皮帶輪的候選", orderOfRotation)
+        return orderOfRotation < 1 ? .slowerThanRotation : .driveChain
+    }
+
+    public enum Kind: Sendable, Equatable {
+        /// 每圈一次 —— 盤面、主軸或皮帶接觸面沒對正。
+        case eccentricity
+        /// 每圈兩次 —— 盤面橢圓或主軸兩點磨損。
+        case ovality
+        /// 轉盤的第 n 次諧波。
+        case harmonic(order: Int)
+        /// 比一圈還慢 —— 皮帶循環或長週期漂移。
+        case slowerThanRotation
+        /// 非諧波 —— 傳動鏈上轉速不同的零件。
+        case driveChain
     }
 }
 

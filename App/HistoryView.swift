@@ -71,7 +71,7 @@ struct HistoryView: View {
                 Text(r.date.formatted(.dateTime.month(.abbreviated).day()
                                         .hour().minute()))
                 Text(String(format: "W&F %.3f%%", r.wrmsPercent))
-                Text(String(format: "偏心 %.3f%%", r.onePerRevPercent))
+                Text(String(format: String(localized: "偏心 %.3f%%"), r.onePerRevPercent))
             }
             .font(.footnote)
             .foregroundStyle(.secondary)
@@ -180,9 +180,9 @@ struct TrendChart: View {
         let usable = points.filter { $0.calibrated }
         guard let first = usable.first, let last = usable.last, usable.count >= 2 else { return nil }
         let delta = abs(last.value) - abs(first.value)
-        guard abs(delta) > 0.001 else { return "跟第一次相比幾乎沒有變化。" }
-        let word = delta < 0 ? "改善" : "變差"
-        return String(format: "跟第一次相比%@了 %.3f 個百分點（%.3f%% → %.3f%%）。",
+        guard abs(delta) > 0.001 else { return String(localized: "跟第一次相比幾乎沒有變化。") }
+        let word = delta < 0 ? String(localized: "改善") : String(localized: "變差")
+        return String(format: String(localized: "跟第一次相比%@了 %.3f 個百分點（%.3f%% → %.3f%%）。"),
                       word, abs(delta), first.value, last.value)
     }
 }
@@ -194,7 +194,7 @@ struct HistoryDetailView: View {
         List {
             Section("轉速") {
                 DiagnosticRow("平均轉速", String(format: "%.4f", record.meanRPM), "RPM")
-                if let n = record.nominalLabel { DiagnosticRow("標稱", "\(n) 轉") }
+                if let n = record.nominalLabel { DiagnosticRow("標稱", String(localized: "\(n) 轉")) }
                 if let e = record.errorPercent {
                     DiagnosticRow("偏差", String(format: "%+.3f", e), "%")
                 }

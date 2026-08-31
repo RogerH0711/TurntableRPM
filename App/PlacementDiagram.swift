@@ -90,8 +90,7 @@ struct PlacementGuide: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            Text("配平很重要：手機偏在一邊會在軸承產生側向負載，實測會讓轉速慢 0.3%、"
-                 + "每圈一次的抖動大三成。小馬克杯加水到跟手機等重就很好用。")
+            Text("配平很重要：手機偏在一邊會在軸承產生側向負載，實測會讓轉速慢 0.3%、每圈一次的抖動大三成。小馬克杯加水到跟手機等重就很好用。")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -103,10 +102,10 @@ struct PlacementGuide: View {
         }
     }
 
-    private func line(_ text: String) -> some View {
+    private func line(_ text: LocalizedStringKey) -> some View {
         HStack(alignment: .top, spacing: 8) {
             Text("・").foregroundStyle(.secondary)
-            Text(.init(text))
+            Text(text)
         }
         .font(.body)
     }

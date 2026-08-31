@@ -47,12 +47,12 @@ struct AdvancedDiagnosticsView: View {
             DiagnosticRow("平均轉速（未修正）",
                           engine.snapshot.rawMeanRPM.map { String(format: "%.4f", $0) } ?? "—", "RPM")
             DiagnosticRow("實際取樣率", formatted(engine.snapshot.effectiveSampleRate, "%.1f"),
-                          "Hz  (目標 \(Int(engine.targetSampleRate)))")
+                          String(localized: "Hz  (目標 \(Int(engine.targetSampleRate)))"))
             DiagnosticRow("圈內相位", formatted(engine.snapshot.phaseDegrees, "%.1f"), "°")
             DiagnosticRow("陀螺儀總轉角", formatted(engine.snapshot.gyroTotalDegrees, "%.0f"), "°")
             DiagnosticRow("磁北總轉角", formatted(engine.snapshot.magneticTotalDegrees, "%.0f"), "°")
             DiagnosticRow("磁北 yaw",
-                          engine.snapshot.latestYawDegrees.map { String(format: "%.1f", $0) } ?? "不可用", "°")
+                          engine.snapshot.latestYawDegrees.map { String(format: "%.1f", $0) } ?? String(localized: "不可用"), "°")
 
             if let g = engine.snapshot.latestGravity {
                 DiagnosticRow("重力向量", String(format: "%.3f, %.3f, %.3f", g.x, g.y, g.z), "g")
@@ -116,18 +116,21 @@ struct AdvancedDiagnosticsView: View {
                 .foregroundStyle(.orange)
 
         case .usable(let precision):
-            Label("兩條路徑確實分歧了，這個倍率可以採信。精度 ±"
-                  + String(format: "%.3f", precision * 100) + "%",
-                  systemImage: "checkmark.circle.fill")
+            Label(usableText(precision), systemImage: "checkmark.circle.fill")
                 .font(.footnote)
                 .foregroundStyle(.green)
         }
     }
 
+    private func usableText(_ precision: Double) -> String {
+        let value = String(format: "%.3f", precision * 100)
+        return String(localized: "兩條路徑確實分歧了，這個倍率可以採信。精度 ±\(value)%")
+    }
+
     private func indistinguishableText(_ divergence: Double, _ floor: Double) -> String {
-        "這個倍率不可採信。磁北與陀螺儀兩條路徑只差 \(String(format: "%.0f", divergence))°"
-        + "（雜訊底線 \(String(format: "%.0f", floor))°）——「陀螺儀很準」和"
-        + "「yaw 根本就是陀螺儀積分」這兩件事無法區分。"
+        let d = String(format: "%.0f", divergence)
+        let f = String(format: "%.0f", floor)
+        return String(localized: "這個倍率不可採信。磁北與陀螺儀兩條路徑只差 \(d)°（雜訊底線 \(f)°）——「陀螺儀很準」和「yaw 根本就是陀螺儀積分」這兩件事無法區分。")
     }
 
     // MARK: - 扣掉圓心偏移後
@@ -174,13 +177,11 @@ struct AdvancedDiagnosticsView: View {
     }
 
     private var refinedOKText: String {
-        "擬合殘差遠小於半徑，這個圓是可信的。"
+        String(localized: "擬合殘差遠小於半徑，這個圓是可信的。")
     }
 
     private var refinedBadText: String {
-        "擬合殘差偏大 —— 軌跡不是一個穩定的圓。實測上這通常是每圈一次的空間磁場失真"
-        + "（房間裡的靜止磁源 + 磁力計離轉軸有距離），失真振幅可以大過訊號本身。"
-        + "這次的倍率不要用。"
+        String(localized: "擬合殘差偏大 —— 軌跡不是一個穩定的圓。實測上這通常是每圈一次的空間磁場失真（房間裡的靜止磁源 + 磁力計離轉軸有距離），失真振幅可以大過訊號本身。這次的倍率不要用。")
     }
 
     // MARK: - 原始磁力計
@@ -250,8 +251,7 @@ struct AdvancedDiagnosticsView: View {
               engine.snapshot.revolutions >= 3 else { return nil }
         let local = String(format: "%.0f", range.larger)
         let earth = String(format: "%.0f", range.smaller)
-        return "盤面轉了 \(engine.snapshot.revolutions) 圈，地磁卻繞不起來："
-             + "本地磁場 \(local) µT 蓋過地磁的 \(earth) µT，圓心被推出半徑之外。"
-             + "最常見的來源是手機殼裡的 MagSafe 磁鐵環。"
+        let turns = engine.snapshot.revolutions
+        return String(localized: "盤面轉了 \(turns) 圈，地磁卻繞不起來：本地磁場 \(local) µT 蓋過地磁的 \(earth) µT，圓心被推出半徑之外。最常見的來源是手機殼裡的 MagSafe 磁鐵環。")
     }
 }

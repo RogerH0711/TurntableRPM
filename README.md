@@ -37,6 +37,7 @@
 ## 需求
 
 - iPhone，iOS 17 以上（不支援 iPad）
+- 介面語言：**繁體中文／English／日本語／Deutsch**（跟隨系統設定）
 - 唱盤大到放得下手機，速度 16⅔ / 33⅓ / 45 / 78 都支援
 - 開發需要 macOS + Xcode 16 以上、[XcodeGen](https://github.com/yonaskolb/XcodeGen)
 
@@ -101,6 +102,7 @@ Packages/TurntableCore/   演算法核心。純 Swift + Foundation
   Tests/                    97 個測試
   Reference/                Python 參考實作，黃金值的來源
 App/                      唯一碰 CoreMotion / SwiftUI / SwiftData 的一層
+  Localizable.xcstrings     四語系字串，305 條
 tools/analyze_export.py   分析匯出的量測 JSON
 docs/spec.md              技術規格書
 ```
@@ -148,3 +150,6 @@ rotation mean eccentricity, non-integer ones point at the drive chain. The displ
 counter-rotates so it stays readable while spinning. Algorithm core is plain Swift with
 no Apple-framework dependencies, tested on macOS and Linux; golden values come from an
 independent Python implementation. Requires iOS 17+.
+Available in Traditional Chinese, English, Japanese and German — it follows your system
+language. The Japanese and German translations have not yet been checked by a native
+speaker; corrections are very welcome.

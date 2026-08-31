@@ -99,7 +99,7 @@ struct OnboardingView: View {
 
     // MARK: - 版面
 
-    private func page<Content: View>(icon: String?, title: String,
+    private func page<Content: View>(icon: String?, title: LocalizedStringKey,
                                      @ViewBuilder content: () -> Content) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
@@ -121,14 +121,14 @@ struct OnboardingView: View {
         }
     }
 
-    private func step(_ n: Int, _ text: String) -> some View {
+    private func step(_ n: Int, _ text: LocalizedStringKey) -> some View {
         HStack(alignment: .top, spacing: 12) {
             Text("\(n)")
                 .font(.body.weight(.bold))
                 .foregroundStyle(.white)
                 .frame(width: 26, height: 26)
                 .background(Circle().fill(.tint))
-            Text(.init(text))
+            Text(text)
         }
     }
 }
