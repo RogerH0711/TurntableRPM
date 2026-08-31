@@ -7,6 +7,6 @@ struct TurntableRPMApp: App {
         WindowGroup {
             LiveMeasurementView()
         }
-        .modelContainer(for: MeasurementRecord.self)
+        .modelContainer(for: [MeasurementRecord.self, TurntableProfile.self])
     }
 }

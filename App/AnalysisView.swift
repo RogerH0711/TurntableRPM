@@ -1,5 +1,6 @@
 import SwiftUI
 import Charts
+import SwiftData
 import TurntableCore
 
 /// 量測結束後的分析結果。
@@ -8,6 +9,10 @@ import TurntableCore
 /// 平均轉速只告訴你盤轉得快不快；頻譜與極座標告訴你**問題出在哪個零件**。
 struct AnalysisView: View {
     let analysis: MeasurementAnalysis
+    /// 使用中的唱盤。有規格就拿來比對，有傳動鏈尺寸就用來認出馬達那根峰。
+    @Query(filter: #Predicate<TurntableProfile> { $0.isActive })
+    private var activeProfiles: [TurntableProfile]
+    private var profile: TurntableProfile? { activeProfiles.first }
     /// 標稱轉速，用來標示規格線。
     var nominal: TurntableSpeed?
 
@@ -111,6 +116,19 @@ struct AnalysisView: View {
             DiagnosticRow("每圈一次成分",
                           String(format: "%.3f", analysis.onePerRevolutionPercent), "%")
 
+            if let spec = profile?.specWowFlutterPercent, spec > 0 {
+                Divider().padding(.vertical, 2)
+                DiagnosticRow("原廠規格", String(format: "%.3f", spec), "%")
+                let ratio = analysis.wowFlutter.wrmsPercent / spec
+                Label(ratio <= 1
+                      ? String(format: "在規格內（規格的 %.0f%%）。", ratio * 100)
+                      : String(format: "超出規格 %.2f 倍。", ratio),
+                      systemImage: ratio <= 1 ? "checkmark.circle.fill"
+                                              : "exclamationmark.triangle.fill")
+                    .font(.footnote)
+                    .foregroundStyle(ratio <= 1 ? .green : .orange)
+            }
+
             Text(ratioInterpretation)
                 .font(.footnote)
                 .foregroundStyle(.secondary)
@@ -167,6 +185,22 @@ struct AnalysisView: View {
                         Text(peak.interpretation)
                             .font(.footnote)
                             .foregroundStyle(peak.isRotationHarmonic ? .orange : .secondary)
+                        // 傳動比的比對**永遠顯示，不做二分判定**。
+                        //
+                        // 皮帶輪很小的時候，有效傳動比對皮帶厚度極度敏感：
+                        // d=8.5 mm 配 t=0.5 mm，光是厚度就讓比值差 5.6%。
+                        // 用「符合／不符合」的門檻會因為使用者量厚度差一點就整個消失，
+                        // 而「預期 33.4×、量到 35.3×」這個資訊本身就有用 ——
+                        // 它同時可能是「尺寸量錯了」或「這根不是馬達」。
+                        if let ratio = profile?.expectedDriveRatio,
+                           !peak.isRotationHarmonic, peak.orderOfRotation > 3 {
+                            Label(driveChainNote(peak.orderOfRotation, ratio),
+                                  systemImage: "gearshape.fill")
+                                .font(.footnote)
+                                .foregroundStyle(
+                                    abs(peak.orderOfRotation / ratio - 1) < 0.08
+                                    ? .blue : .secondary)
+                        }
                     }
                     .padding(.vertical, 3)
                     Divider()
@@ -178,6 +212,17 @@ struct AnalysisView: View {
             }
         }
         .measurementCard()
+    }
+
+    /// 把量到的倍數跟這台盤的傳動比並排講出來。
+    private func driveChainNote(_ order: Double, _ ratio: Double) -> String {
+        let diff = (order / ratio - 1) * 100
+        if abs(diff) < 8 {
+            return String(format: "符合這台盤的傳動比（%.1f×）—— 這是馬達。", ratio)
+        }
+        return String(format: "這台盤的傳動比是 %.1f×，量到 %.1f×（差 %+.0f%%）—— "
+                      + "可能是傳動鏈尺寸填得不夠準，也可能這根不是馬達。",
+                      ratio, order, diff)
     }
 
     // MARK: - 頻譜

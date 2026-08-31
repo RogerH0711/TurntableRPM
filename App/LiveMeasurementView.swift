@@ -57,6 +57,7 @@ struct LiveMeasurementView: View {
                     analysisLink
                     exportButton
                     historyLink
+                    profileLink
                     stopwatchPanel
                     advancedLink
                 }
@@ -447,6 +448,21 @@ struct LiveMeasurementView: View {
         NavigationLink { HistoryView() } label: {
             HStack {
                 Label("歷史記錄", systemImage: "clock.arrow.circlepath")
+                    .font(.body)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.footnote)
+                    .foregroundStyle(.tertiary)
+            }
+            .measurementCard()
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var profileLink: some View {
+        NavigationLink { TurntableProfileListView() } label: {
+            HStack {
+                Label("唱盤設定", systemImage: "hifispeaker")
                     .font(.body)
                 Spacer()
                 Image(systemName: "chevron.right")
