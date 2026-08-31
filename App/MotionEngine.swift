@@ -76,6 +76,8 @@ final class MotionEngine: ObservableObject {
     @Published private(set) var statusMessage = ""
     /// 停止之後產生的匯出檔。給 ShareLink 用。
     @Published private(set) var exportURL: URL?
+    /// 停止之後的離線分析（頻譜、抖晃率、極座標）。在背景執行緒算。
+    @Published private(set) var analysis: MeasurementAnalysis?
 
     /// 規格 §2.1：iOS 對第三方 App 的取樣率上限就是 100 Hz。
     let targetSampleRate: Double = 100.0
@@ -135,6 +137,7 @@ final class MotionEngine: ObservableObject {
 
         accumulator.reset()
         exportURL = nil
+        analysis = nil
         refineTick = 0
         cachedRefined = nil
         manager.deviceMotionUpdateInterval = 1.0 / targetSampleRate
@@ -199,11 +202,23 @@ final class MotionEngine: ObservableObject {
         pullSnapshot()
         statusMessage = "已停止"
         writeExport()
+        runAnalysis()
     }
 
     /// 交出目前累積的樣本，供之後的分析路徑（M4）使用。
     func collectedSamples() -> [SpinSample] {
         accumulator.snapshotSamples()
+    }
+
+    /// 離線分析。FFT 加加權捲積在六萬筆樣本上要跑一下，不能擋主執行緒。
+    private func runAnalysis() {
+        let samples = accumulator.snapshotSamples()
+        guard samples.count > 64 else { return }
+        let rate = targetSampleRate
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            let result = MeasurementAnalysis.analyze(samples: samples, sampleRate: rate)
+            DispatchQueue.main.async { self?.analysis = result }
+        }
     }
 
     /// 把整包原始資料寫成 JSON。放背景執行緒 —— 10 分鐘的量測是六萬筆樣本，

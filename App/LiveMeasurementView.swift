@@ -27,6 +27,7 @@ struct LiveMeasurementView: View {
                     if !engine.isRunning && !hasMeasurement { safetyBanner }
                     stopwatchPanel
                     if hasMeasurement { summaryPanel }
+                    analysisLink
                     exportButton
                     advancedLink
                 }
@@ -255,6 +256,42 @@ struct LiveMeasurementView: View {
                     .padding(.vertical, 10)
             }
             .buttonStyle(.bordered)
+        }
+    }
+
+    /// 分析結果。這是這個 App 真正的價值所在 —— 平均轉速只說盤轉得快不快，
+    /// 頻譜與極座標才說得出問題在哪個零件。
+    @ViewBuilder
+    private var analysisLink: some View {
+        if let analysis = engine.analysis {
+            NavigationLink {
+                AnalysisView(analysis: analysis, nominal: engine.snapshot.nominal)
+            } label: {
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Label("分析結果", systemImage: "waveform.path.ecg")
+                            .font(.subheadline.weight(.medium))
+                        Text(String(format: "抖晃率 %.3f%% WRMS  ·  每圈一次 %.3f%%",
+                                    analysis.wowFlutter.wrmsPercent,
+                                    analysis.onePerRevolutionPercent))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                }
+                .measurementCard()
+            }
+            .buttonStyle(.plain)
+        } else if hasMeasurement && !engine.isRunning {
+            HStack(spacing: 8) {
+                ProgressView().controlSize(.small)
+                Text("分析中…").font(.subheadline).foregroundStyle(.secondary)
+                Spacer()
+            }
+            .measurementCard()
         }
     }
 

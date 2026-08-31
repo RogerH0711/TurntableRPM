@@ -17,7 +17,7 @@ TurntableRPM/
 │   └── LiveMeasurementView.swift 畫面
 ├── Packages/TurntableCore/   演算法核心
 │   ├── Sources/                  純 Swift + Foundation，不 import UIKit/CoreMotion
-│   ├── Tests/                    74 個測試
+│   ├── Tests/                    82 個測試
 │   └── Reference/                Python 參考實作，黃金值的來源
 ├── tools/
 │   └── analyze_export.py     分析 App 匯出的量測 JSON（含分段圓擬合）
@@ -30,7 +30,7 @@ TurntableRPM/
 
 | 指令 | 用途 |
 |---|---|
-| `make test` | 演算法測試（74 個，約 1 秒，不需要模擬器或實機） |
+| `make test` | 演算法測試（82 個，約 2 秒，不需要模擬器或實機） |
 | `make docker-test` | 同一批測試在 Linux container 跑一次（`swift:5.10`） |
 | `make generate` | 新增/刪除 `App/` 底下的檔案後**必須**跑，重新產生 .xcodeproj |
 | `make open` | 產生並開啟 Xcode |
@@ -203,10 +203,13 @@ CI 另外還有 `.github/workflows/swift.yml`。
   機型對不上（換機／備份還原）就失效並在畫面上說明；離譜的 k（0.8–1.25 之外）
   會被擋，那幾乎一定是輸入打錯。
   **指南針自動校準兩條路都失敗**（見坑 11、15），降為診斷工具，畫面上明確標示不可採信。
-- **M4 滾動圖 / 熱圖 / 頻譜 / SwiftData 歷史** — 未開始。
-  **但核心已經齊全**：`FFT`、`PolarAccumulator`、`WowFlutterAnalyzer` 都寫好也測過，
-  只差接到畫面上。用 Python 對匯出資料做過的分析（找到傳動鏈的 18.82 Hz、
-  W&F 0.12%、1× 偏心 0.40%）證明這些能力是有價值的。
+- **M4 滾動圖 / 熱圖 / 頻譜 / 歷史** — 大部分完成。
+  `MeasurementAnalysis`（核心，所以能在 Linux CI 上測）把重取樣、偏差序列、
+  加權抖晃率、FFT、譜峰判讀、極座標分箱組合成一次分析。`AnalysisView` 呈現：
+  抖晃率、**譜峰判讀**、頻譜圖、極座標熱圖、滾動偏差圖。
+  **譜峰判讀是這個 App 的核心價值** —— 整數倍代表跟著盤面轉的東西（偏心、變形），
+  非整數倍代表傳動鏈上轉速不同的零件。這正是先前用 Python 手動做的診斷。
+  **SwiftData 歷史尚未做。**
 - **M5 唱盤設定檔 / 載重補償** — 未開始。原始資料匯出（`MeasurementExport`）已完成，
   搭配 `tools/analyze_export.py`。
 
@@ -221,6 +224,7 @@ App 圖示已完成（`tools/make_icon.py` 產生，可重跑）—— 唱片加
 失敗原因記在 `tools/make_icon.py` 的檔頭。
 
 **還沒做的上架必要項目**：付費開發者帳號、上架素材（截圖／描述／隱私問卷）。
+截圖必須用實機拍 —— 模擬器沒有陀螺儀，畫面永遠是空狀態。
 
 ## 延伸閱讀
 
