@@ -92,8 +92,9 @@ final class MotionEngine: ObservableObject {
     @Published private(set) var snapshot = Snapshot()
     @Published private(set) var isRunning = false
     @Published private(set) var phase: Phase = .idle
-    /// 量測模式。自動模式會自己等轉速穩定、自己在盤面停下時結束。
-    @Published var mode: Mode = .manual
+    /// 量測模式。**預設自動** —— 它會等轉速穩定才記錄、盤面停下時自己結束，
+    /// 對第一次用的人比較不容易做錯。手動模式留給要精確控制區間的人。
+    @Published var mode: Mode = .automatic
     @Published private(set) var availability: Availability = .unavailable
     @Published private(set) var statusMessage = ""
     /// 停止之後產生的匯出檔。給 ShareLink 用。

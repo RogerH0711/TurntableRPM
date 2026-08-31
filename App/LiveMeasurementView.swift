@@ -20,6 +20,11 @@ struct LiveMeasurementView: View {
     /// 凍結的截止時刻。非 nil 代表正在凍結。
     @State private var freezeUntil: Date?
     @State private var now = Date()
+    /// 量測畫面的轉向。跨次保留 —— 使用者站的位置通常不變，
+    /// 上次調好的角度下次多半還是對的。
+    @AppStorage("dialRotationOffset") private var dialRotationOffset = 0.0
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
+    @State private var showingOnboarding = false
 
     private var freezeRemaining: Int? {
         guard let until = freezeUntil else { return nil }
@@ -45,11 +50,13 @@ struct LiveMeasurementView: View {
                     modePicker
                     controlButton
                     if !engine.isRunning && !hasMeasurement { safetyBanner }
-                    stopwatchPanel
+                    // 量測結果放在最上面 —— 那是使用者每次打開 app 要看的東西。
+                    // 校準是設定性質的，一台裝置做一次就好，放下面。
                     if hasMeasurement { summaryPanel }
                     analysisLink
                     exportButton
                     historyLink
+                    stopwatchPanel
                     advancedLink
                 }
                 .padding()
@@ -58,7 +65,10 @@ struct LiveMeasurementView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button { showingAbout = true } label: {
+                    Menu {
+                        Button("說明", systemImage: "info.circle") { showingAbout = true }
+                        Button("重看操作導覽", systemImage: "book") { showingOnboarding = true }
+                    } label: {
                         Image(systemName: "info.circle")
                     }
                     .accessibilityLabel("說明")
@@ -76,6 +86,14 @@ struct LiveMeasurementView: View {
                 ) { store.save($0) }
             }
             .sheet(isPresented: $showingAbout) { AboutView() }
+            .sheet(isPresented: $showingOnboarding) {
+                OnboardingView().onDisappear { hasSeenOnboarding = true }
+            }
+            .task {
+                // 第一次開啟就顯示。放 .task 而不是 .onAppear —— onAppear 在
+                // sheet 關閉時也會再觸發一次。
+                if !hasSeenOnboarding { showingOnboarding = true }
+            }
             // 反旋轉盤面。全螢幕，因為它要佔滿內接圓。
             .fullScreenCover(isPresented: $showingDial) {
                 SpinningDialView(engine: engine,
@@ -83,6 +101,7 @@ struct LiveMeasurementView: View {
                                  showsRevolutions: dialShowsRevolutions,
                                  isFrozen: freezeUntil != nil,
                                  freezeRemaining: freezeRemaining,
+                                 rotationOffset: $dialRotationOffset,
                                  onStop: { engine.stop() },
                                  onDismiss: dismissDial,
                                  onResume: {
@@ -177,8 +196,9 @@ struct LiveMeasurementView: View {
                 .pickerStyle(.segmented)
 
                 Text(engine.mode == .automatic
-                     ? "等轉盤到達穩定轉速才開始記錄，盤面停下時自動結束。"
-                     : "自己按開始與停止。記得先讓轉盤轉起來再按開始。")
+                     ? "按下按鈕後把手機放上轉盤，程式會等轉速穩定才開始記錄，"
+                       + "盤面停下時自動結束。"
+                     : "自己按開始與停止。記得先讓轉盤轉起來、手機放好，再按開始。")
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
@@ -202,6 +222,15 @@ struct LiveMeasurementView: View {
         }
     }
 
+    /// 按鈕文案。自動模式按下去之後還要等轉速穩定，寫「開始量測」會讓人以為
+    /// 已經在錄了 —— 使用者原本就會困惑自動模式到底要不要按這個鈕。
+    private var controlLabel: String {
+        if engine.isRunning {
+            return engine.phase == .waitingForStability ? "取消" : "停止"
+        }
+        return engine.mode == .automatic ? "準備好，開始偵測" : "開始量測"
+    }
+
     private var controlButton: some View {
         Button {
             if engine.isRunning {
@@ -211,7 +240,7 @@ struct LiveMeasurementView: View {
                 showingDial = true
             }
         } label: {
-            Text(engine.isRunning ? "停止" : "開始量測")
+            Text(controlLabel)
                 .font(.title3.weight(.semibold))
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)

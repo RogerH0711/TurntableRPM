@@ -25,6 +25,12 @@ struct SpinningDialView: View {
     var isFrozen = false
     /// 凍結倒數剩幾秒。nil 代表不倒數。
     var freezeRemaining: Int?
+    /// 內容的額外轉向，度。
+    ///
+    /// **這個控制是必要的，不是方便。** 反旋轉把內容鎖在「開始記錄那一瞬間手機的
+    /// 物理方向」—— 自動模式下那個瞬間由程式決定，完全隨機；手動模式也得剛好在
+    /// 正確的角度按下才行。App 無從知道使用者站在轉盤的哪一側，所以只能讓他自己轉。
+    @Binding var rotationOffset: Double
     let onStop: () -> Void
     var onDismiss: (() -> Void)?
     var onResume: (() -> Void)?
@@ -45,32 +51,60 @@ struct SpinningDialView: View {
                         // 會讓補償方向相反，看起來是兩倍速在轉。
                         // 凍結時轉回正 —— 使用者已經把手機拿起來了，
                         // 這時候還跟著最後一筆姿態歪著才是難讀。
-                        .rotationEffect(.degrees(isFrozen ? 0 : -engine.displayAngleDegrees()))
+                        .rotationEffect(.degrees(isFrozen
+                                                 ? 0
+                                                 : rotationOffset - engine.displayAngleDegrees()))
                         .animation(.easeOut(duration: 0.4), value: isFrozen)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                VStack {
-                    Spacer()
+                VStack(spacing: 0) {
+                    // 上半部：點一下停止。刻意做成很大的區域 —— 手機在轉，
+                    // 小按鈕根本按不到。
+                    Color.clear
+                        .contentShape(Rectangle())
+                        .onTapGesture { if !isFrozen { onStop() } }
+
                     if isFrozen {
                         frozenControls
                     } else {
-                        // 不跟著轉的提示。使用者的視角是靜止的，所以這些字對他來說
-                        // 反而是在轉 —— 刻意做得很小、很淡。
-                        Text("點一下畫面停止")
-                            .font(.caption2)
-                            .foregroundStyle(.white.opacity(0.35))
-                            .padding(.bottom, 8)
+                        turnControls
                     }
                 }
             }
-            .contentShape(Rectangle())
-            // 整片畫面都是停止鍵（按鈕跟著轉很難按）。凍結後改由下方的按鈕操作，
-            // 這時手機已經拿在手上，一般的按鈕就夠用了。
-            .onTapGesture { if !isFrozen { onStop() } }
         }
         .statusBarHidden()
         .persistentSystemOverlays(.hidden)
+    }
+
+    /// 轉向控制。**固定在螢幕下緣，不跟著內容轉** —— 手機在轉的時候，
+    /// 只有位置固定的東西按得到。按鈕本身會吃掉點擊，不會誤觸停止。
+    private var turnControls: some View {
+        VStack(spacing: 6) {
+            Text("點上方畫面停止")
+                .font(.caption2)
+                .foregroundStyle(.white.opacity(0.35))
+            HStack(spacing: 28) {
+                turnButton("rotate.left", by: -15)
+                Text("轉向")
+                    .font(.caption)
+                    .foregroundStyle(.white.opacity(0.4))
+                turnButton("rotate.right", by: 15)
+            }
+        }
+        .padding(.bottom, 22)
+    }
+
+    private func turnButton(_ icon: String, by degrees: Double) -> some View {
+        Button {
+            withAnimation(.easeOut(duration: 0.15)) { rotationOffset += degrees }
+        } label: {
+            Image(systemName: icon)
+                .font(.title2)
+                .foregroundStyle(.white.opacity(0.75))
+                .frame(width: 64, height: 52)      // 大一點，轉動中才按得到
+                .contentShape(Rectangle())
+        }
     }
 
     /// 凍結期間的操作。此時手機在手上、畫面朝正，用一般按鈕即可。
