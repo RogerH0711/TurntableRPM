@@ -44,6 +44,10 @@ data class EngineState(
     val errorPercent: Double? = null,
     /** 陀螺儀積分的累積圈數。 */
     val revolutions: Int = 0,
+    /** 未修正的平均轉速。校準倍率只影響對外讀數，診斷要看原始值。 */
+    val rawMeanRPM: Double? = null,
+    /** 目前生效的校準倍率。null 代表未校準 —— 那時偏差 % 不能拿來調唱盤。 */
+    val appliedFactor: Double? = null,
     /** 停止之後的離線分析。 */
     val analysis: MeasurementAnalysis? = null,
     /** 分析失敗的原因。「載入中」是最容易變成死路的狀態，每條失敗路徑都要有畫面。 */
@@ -86,6 +90,12 @@ class SensorEngine(context: Context) : SensorEventListener {
      * 感測器回呼只負責丟一個工作進來，重活在這條執行緒上做。
      */
     private val publisher = Executors.newSingleThreadExecutor()
+
+    /**
+     * 碼錶校準倍率。設進來之後所有對外讀數都會套用，**包含標稱辨識**：
+     * 未修正的讀數可能落在辨識窗外，套用之後才認得出來。
+     */
+    @Volatile var calibrationFactor: Double? = null
 
     private var thread: HandlerThread? = null
     private var handler: Handler? = null
@@ -169,7 +179,13 @@ class SensorEngine(context: Context) : SensorEventListener {
      * 網格間距與原生一致，內插幾乎是恆等映射。
      */
     private fun runAnalysis() {
-        val snapshot = snapshotSamples()
+        // **分析要吃校準後的 ω。** 譜峰倍數 = 峰值頻率 ÷ 轉盤基頻，而基頻是從 ω 算的、
+        // 峰值頻率是從時間戳算的。只修正其中一邊，倍數就會整體偏 1/k
+        // （k≈0.999 時是 0.1%，遠在 4% 諧波容差內，但沒有理由留著這個偏差）。
+        val factor = calibrationFactor ?: 1.0
+        val snapshot = snapshotSamples().let { raw ->
+            if (factor == 1.0) raw else raw.map { it.copy(omega = it.omega * factor) }
+        }
         val rate = _state.value.stats?.effectiveRateHz
         if (snapshot.size <= 64 || rate == null || rate <= 0) {
             _state.value = _state.value.copy(
@@ -280,15 +296,19 @@ class SensorEngine(context: Context) : SensorEventListener {
         val snapshot = snap.samples
         val times = snap.times
         val base = snap.base
-        val mean = SpeedStatistics.meanRPM(snapshot)
+        val raw = SpeedStatistics.meanRPM(snapshot)
+        val factor = calibrationFactor
+        val mean = if (raw != null && factor != null) raw * factor else raw
         val nominal = mean?.let { SpeedStatistics.classify(it) }
         val previous = _state.value
         _state.value = previous.copy(
             running = running,
             sampleCount = snapshot.size,
             elapsedSeconds = if (snapshot.size >= 2) snapshot.last().t - snapshot.first().t else 0.0,
-            instantRPM = (snapshot.lastOrNull()?.omega ?: 0.0) / 6.0,
+            instantRPM = (snapshot.lastOrNull()?.omega ?: 0.0) / 6.0 * (factor ?: 1.0),
             meanRPM = mean,
+            rawMeanRPM = raw,
+            appliedFactor = factor,
             nominal = nominal,
             errorPercent = if (mean != null && nominal != null) {
                 SpeedStatistics.errorPercent(mean, nominal)

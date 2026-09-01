@@ -17,7 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.roger.turntablerpm.calibration.CalibrationStore
 import com.roger.turntablerpm.sensor.SensorEngine
+import com.roger.turntablerpm.ui.CalibrationScreen
 import com.roger.turntablerpm.ui.MeasurementScreen
 import com.roger.turntablerpm.ui.SamplingDiagnostics
 import com.roger.turntablerpm.ui.theme.TurntableRPMTheme
@@ -36,7 +38,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private enum class Screen { Measure, Diagnostics }
+private enum class Screen { Measure, Diagnostics, Calibration }
 
 /**
  * 兩個畫面共用**同一個** SensorEngine —— 兩份引擎會各自註冊監聽器，
@@ -46,7 +48,15 @@ private enum class Screen { Measure, Diagnostics }
 private fun AppRoot(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val engine = remember { SensorEngine(context) }
+    val store = remember { CalibrationStore(context) }
     val state by engine.state.collectAsStateWithLifecycle()
+    val calibration by store.calibration.collectAsStateWithLifecycle()
+    val mismatched by store.mismatched.collectAsStateWithLifecycle()
+
+    // 校準倍率一改就要立刻反映在讀數上。
+    androidx.compose.runtime.LaunchedEffect(calibration) {
+        engine.calibrationFactor = calibration?.factor
+    }
     var screen by remember { mutableStateOf(Screen.Measure) }
 
     DisposableEffect(Unit) { onDispose { engine.stop() } }
@@ -66,6 +76,17 @@ private fun AppRoot(modifier: Modifier = Modifier) {
             onStart = { engine.start() },
             onStop = { engine.stop() },
             onOpenDiagnostics = { screen = Screen.Diagnostics },
+            onOpenCalibration = { screen = Screen.Calibration },
+            modifier = modifier,
+        )
+        Screen.Calibration -> CalibrationScreen(
+            // 校準要拿**未修正**的讀數去比，否則會把已經套過的 k 再算一次。
+            measuredRPM = state.rawMeanRPM,
+            current = calibration,
+            mismatched = mismatched,
+            onSave = { store.save(it) },
+            onClear = { store.clear() },
+            onBack = { screen = Screen.Measure },
             modifier = modifier,
         )
         Screen.Diagnostics -> SamplingDiagnostics(

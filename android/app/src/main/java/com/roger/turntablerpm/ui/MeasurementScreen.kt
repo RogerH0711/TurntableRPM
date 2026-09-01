@@ -45,6 +45,7 @@ fun MeasurementScreen(
     onStart: () -> Unit,
     onStop: () -> Unit,
     onOpenDiagnostics: () -> Unit,
+    onOpenCalibration: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -110,6 +111,29 @@ fun MeasurementScreen(
         }
         state.analysis?.let { AnalysisCard(it) }
 
+        Card(Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text("碼錶校準", style = MaterialTheme.typography.titleSmall)
+                    Text(
+                        if (state.appliedFactor != null) "已校準" else "未校準",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = if (state.appliedFactor != null) Green else Orange,
+                    )
+                }
+                Text(
+                    state.appliedFactor?.let {
+                        "倍率 k = %.5f，所有轉速讀數都已套用。".format(it)
+                    } ?: "還沒校準。目前的偏差 % 是唱盤誤差與陀螺儀誤差相乘的結果，" +
+                        "兩者分不開，還不能拿來調唱盤。",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                OutlinedButton(onClick = onOpenCalibration, modifier = Modifier.fillMaxWidth()) {
+                    Text(if (state.appliedFactor != null) "重新校準" else "開始碼錶校準")
+                }
+            }
+        }
+
         OutlinedButton(onClick = onOpenDiagnostics, modifier = Modifier.fillMaxWidth()) {
             Text("取樣特性診斷")
         }
@@ -130,8 +154,12 @@ private fun SpeedReadout(state: EngineState) {
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Text("RPM", style = MaterialTheme.typography.titleMedium)
             // **未校準的偏差不能拿來調唱盤。** 那是唱盤誤差與陀螺儀誤差相乘的結果，
-            // 兩者分不開。Android 版還沒做碼錶校準，所以一律標成未校準。
-            Text("未校準", style = MaterialTheme.typography.titleMedium, color = Orange)
+            // 兩者分不開，所以未校準時要明確標出來。
+            if (state.appliedFactor != null) {
+                Text("已校準", style = MaterialTheme.typography.titleMedium, color = Green)
+            } else {
+                Text("未校準", style = MaterialTheme.typography.titleMedium, color = Orange)
+            }
         }
         if (state.nominal != null && state.errorPercent != null) {
             val e = state.errorPercent
