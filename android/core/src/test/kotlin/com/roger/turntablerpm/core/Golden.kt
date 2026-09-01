@@ -29,6 +29,16 @@ object Golden {
         Json.parseToJsonElement(f.readText()) as JsonObject
     }
 
+    /** 取一個陣列，例如 `array("wrms_sine")`。 */
+    fun array(key: String): List<JsonObject> {
+        val node = json[key] ?: fail("golden.json 裡沒有 $key")
+        return (node as kotlinx.serialization.json.JsonArray).map { it as JsonObject }
+    }
+
+    /** 從一個 JSON 物件取數值。 */
+    fun number(obj: JsonObject, key: String): Double =
+        (obj[key] ?: fail("缺少 $key")).jsonPrimitive.content.toDouble()
+
     /** 取一個巢狀的數值，例如 `number("projection_naive_z_error_pct", "5")`。 */
     fun number(vararg path: String): Double {
         var node: Any = json
