@@ -8,10 +8,12 @@ import android.hardware.SensorManager
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.SystemClock
+import com.roger.turntablerpm.core.MeasurementAnalysis
 import com.roger.turntablerpm.core.SamplingStats
 import com.roger.turntablerpm.core.SpinProjector
 import com.roger.turntablerpm.core.SpinSample
 import com.roger.turntablerpm.core.SpeedStatistics
+import com.roger.turntablerpm.core.TurntableSpeed
 import com.roger.turntablerpm.core.Vector3
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,6 +36,18 @@ data class EngineState(
     val gravityName: String? = null,
     val gravityIsFused: Boolean = true,
     val error: String? = null,
+
+    /** 標稱轉速的自動辨識結果，認不出來是 null。 */
+    val nominal: TurntableSpeed? = null,
+    /** 相對標稱值的偏差 %。 */
+    val errorPercent: Double? = null,
+    /** 陀螺儀積分的累積圈數。 */
+    val revolutions: Int = 0,
+    /** 停止之後的離線分析。 */
+    val analysis: MeasurementAnalysis? = null,
+    /** 分析失敗的原因。「載入中」是最容易變成死路的狀態，每條失敗路徑都要有畫面。 */
+    val analysisFailureReason: String? = null,
+    val analyzing: Boolean = false,
 )
 
 /**
@@ -74,6 +88,9 @@ class SensorEngine(context: Context) : SensorEventListener {
     private var baseNanos: Long = 0
     private var baseWallNanos: Long = 0
     private var latestWallNanos: Long = 0
+    private var totalDegrees: Double = 0.0
+    private var lastSampleTime: Double? = null
+    private var lastOmega: Double = 0.0
     private var timestampBase: String? = null
 
     private val _state = MutableStateFlow(EngineState())
@@ -103,6 +120,9 @@ class SensorEngine(context: Context) : SensorEventListener {
             baseNanos = 0
             baseWallNanos = 0
             latestWallNanos = 0
+            totalDegrees = 0.0
+            lastSampleTime = null
+            lastOmega = 0.0
             timestampBase = null
         }
         // 防禦性解除：萬一有殘留的註冊（例如上一輪的競態），先清乾淨再註冊。
@@ -129,6 +149,40 @@ class SensorEngine(context: Context) : SensorEventListener {
         thread = null
         handler = null
         publish(running = false)
+        runAnalysis()
+    }
+
+    /**
+     * 離線分析。FFT 加加權捲積在兩萬筆樣本上要跑一下，不能擋主執行緒。
+     *
+     * **取樣率傳實測的有效速率，不要寫死 100。** XZ Premium 原生是 107.92 Hz，
+     * 往下重取樣到 100 會讓線性內插對 50 Hz 以上的雜訊產生疊頻；用實測值的話
+     * 網格間距與原生一致，內插幾乎是恆等映射。
+     */
+    private fun runAnalysis() {
+        val snapshot = snapshotSamples()
+        val rate = _state.value.stats?.effectiveRateHz
+        if (snapshot.size <= 64 || rate == null || rate <= 0) {
+            _state.value = _state.value.copy(
+                analysisFailureReason = "量測時間太短，只錄到 ${snapshot.size} 筆資料。",
+            )
+            return
+        }
+        _state.value = _state.value.copy(analyzing = true, analysisFailureReason = null)
+        Thread {
+            val result = MeasurementAnalysis.analyze(snapshot, sampleRate = rate)
+            // 失敗的原因幾乎都是「找不到夠長的穩定區間」，講清楚比只說「失敗」有用。
+            val reason = if (result == null) {
+                if (com.roger.turntablerpm.core.StabilityGate.find(snapshot) == null) {
+                    "整段量測都沒有穩定的轉速。轉盤有轉起來嗎？至少要連續穩定 5 秒。"
+                } else {
+                    "資料不足以分析。試著量久一點，90 秒以上比較可靠。"
+                }
+            } else null
+            _state.value = _state.value.copy(
+                analysis = result, analysisFailureReason = reason, analyzing = false,
+            )
+        }.start()
     }
 
     /** 交出目前累積的樣本，供離線分析。 */
@@ -170,6 +224,12 @@ class SensorEngine(context: Context) : SensorEventListener {
                     }
                     // **一律用感測器自己的時間戳**，不要用 System.nanoTime()。
                     val t = (event.timestamp - baseNanos) / 1e9
+                    // 梯形積分累積轉角。用真實時間戳的間隔，不假設等間隔。
+                    lastSampleTime?.let { previous ->
+                        totalDegrees += (t - previous) * (omega + lastOmega) / 2.0
+                    }
+                    lastSampleTime = t
+                    lastOmega = omega
                     samples += SpinSample(t = t, omega = omega)
                     rawTimestamps += t
                     latestWallNanos = wall
@@ -192,24 +252,32 @@ class SensorEngine(context: Context) : SensorEventListener {
     private fun publish(running: Boolean) {
         data class Snap(
             val samples: List<SpinSample>, val times: DoubleArray,
-            val base: String?, val wallSpan: Double,
+            val base: String?, val wallSpan: Double, val degrees: Double,
         )
         val snap = synchronized(lock) {
             Snap(
                 ArrayList(samples), rawTimestamps.toDoubleArray(), timestampBase,
                 if (baseWallNanos > 0) (latestWallNanos - baseWallNanos) / 1e9 else 0.0,
+                totalDegrees,
             )
         }
         val snapshot = snap.samples
         val times = snap.times
         val base = snap.base
+        val mean = SpeedStatistics.meanRPM(snapshot)
+        val nominal = mean?.let { SpeedStatistics.classify(it) }
         val previous = _state.value
         _state.value = previous.copy(
             running = running,
             sampleCount = snapshot.size,
             elapsedSeconds = if (snapshot.size >= 2) snapshot.last().t - snapshot.first().t else 0.0,
             instantRPM = (snapshot.lastOrNull()?.omega ?: 0.0) / 6.0,
-            meanRPM = SpeedStatistics.meanRPM(snapshot),
+            meanRPM = mean,
+            nominal = nominal,
+            errorPercent = if (mean != null && nominal != null) {
+                SpeedStatistics.errorPercent(mean, nominal)
+            } else null,
+            revolutions = (snap.degrees / 360.0).toInt(),
             stats = SamplingStats.from(times),
             timestampBase = base,
             wallElapsedSeconds = snap.wallSpan,
