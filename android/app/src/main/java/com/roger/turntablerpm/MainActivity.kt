@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -68,6 +69,14 @@ fun SamplingDiagnostics(modifier: Modifier = Modifier) {
     var periodUs by remember { mutableIntStateOf(10_000) }
 
     DisposableEffect(Unit) { onDispose { engine.stop() } }
+
+    // 量測中不讓螢幕睡著。3 分鐘的量測遠長於預設的螢幕逾時，睡著就等於量測中斷 ——
+    // iOS 版用 isIdleTimerDisabled 做同一件事。
+    val view = LocalView.current
+    DisposableEffect(state.running) {
+        view.keepScreenOn = state.running
+        onDispose { view.keepScreenOn = false }
+    }
 
     Column(
         modifier = modifier
@@ -156,7 +165,11 @@ private fun StatsCard(state: EngineState) {
             // 平均轉速兩種情況都看不出差別，只有拿牆鐘對照才分得開。
             StatRow("牆鐘時長", "%.2f s".format(state.wallElapsedSeconds))
             StatRow("時間戳 ÷ 牆鐘", state.clockRatio?.let { "%.5f".format(it) } ?: "—")
-            state.clockRatio?.let { r ->
+            // **比值需要夠長的時間才有意義。** 第一筆事件的時間戳與牆鐘讀數之間有幾毫秒的
+            // 派送延遲，那個固定偏移除以短時距會被放大成假的漂移 ——
+            // 實測 0.69 秒的量測會顯示 1.00547 並誤報「時基有問題」。
+            val ratioTrustworthy = state.wallElapsedSeconds >= 10.0
+            state.clockRatio?.takeIf { ratioTrustworthy }?.let { r ->
                 Text(
                     if (kotlin.math.abs(r - 1.0) < 0.002) {
                         "時間戳誠實（與牆鐘差 %.3f%%）—— 取樣率比要求值高只是感測器本來就跑比較快，".format((r - 1) * 100) +
@@ -165,6 +178,12 @@ private fun StatsCard(state: EngineState) {
                         "⚠ 時間戳與牆鐘差 %.2f%% —— 頻域結果會整體偏移同樣的量，".format((r - 1) * 100) +
                             "譜峰的倍數判讀不可信，必須先校正時基。"
                     },
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+            if (state.clockRatio != null && !ratioTrustworthy) {
+                Text(
+                    "時間戳比值要量滿 10 秒才有意義（第一筆事件的派送延遲會被短時距放大）。",
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
