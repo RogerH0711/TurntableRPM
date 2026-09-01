@@ -210,8 +210,23 @@ class SensorEngine(context: Context) : SensorEventListener {
                         "資料不足以分析。試著量久一點，90 秒以上比較可靠。"
                 }
             } else null
+            // **分析完成後，對外讀數換成切過的平均值。**
+            // 大字讀數原本是整段量測的平均，含開頭的加速段；分析用的是穩定區間。
+            // 兩個數字不一致本來就會讓人困惑，但真正危險的是**校準拿到污染的值** ——
+            // 那個 k 會被永久寫進 SharedPreferences，之後每一次讀數都錯。
+            // 實測：整段平均 31.546 RPM，切掉 1.4 秒加速後是 32.15，差 1.9%。
             _state.value = _state.value.copy(
-                analysis = result, analysisFailureReason = reason, analyzing = false,
+                analysis = result,
+                analysisFailureReason = reason,
+                analyzing = false,
+                meanRPM = result?.meanRPM ?: _state.value.meanRPM,
+                rawMeanRPM = result?.let { it.meanRPM / factor } ?: _state.value.rawMeanRPM,
+                nominal = result?.let { SpeedStatistics.classify(it.meanRPM) } ?: _state.value.nominal,
+                errorPercent = result?.let { a ->
+                    SpeedStatistics.classify(a.meanRPM)?.let {
+                        SpeedStatistics.errorPercent(a.meanRPM, it)
+                    }
+                } ?: _state.value.errorPercent,
             )
         }.start()
     }

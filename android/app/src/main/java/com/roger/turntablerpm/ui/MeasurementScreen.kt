@@ -217,6 +217,7 @@ private fun AnalysisCard(a: MeasurementAnalysis) {
             StatRow("DIN 2σ 峰值", "%.3f %%".format(a.wowFlutter.peak2SigmaPercent))
             StatRow("每圈一次成分", "%.3f %%".format(a.onePerRevolutionPercent))
             StatRow("最強成分佔比", "%.0f %%".format(a.dominantPeakShare * 100))
+            StatRow("平均轉速（切過）", "%.4f RPM".format(a.meanRPM))
             StatRow("分析時長", "%.1f s".format(a.durationSeconds))
             StatRow("重取樣頻率", "%.2f Hz".format(a.sampleRate))
 
