@@ -18,4 +18,7 @@ DerivedData/
 __pycache__/
 .venv/
 
+# 個人規劃文件 —— repo 是公開的，這份寫了學經歷與求職目標
+HANDOFF-android-port.md
+
 .DS_Store
