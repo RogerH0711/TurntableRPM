@@ -36,6 +36,9 @@ android {
 }
 
 dependencies {
+    // 演算法核心。app 是唯一碰 Android framework 的一層。
+    implementation(project(":core"))
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
