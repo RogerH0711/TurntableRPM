@@ -167,6 +167,19 @@ Android 的 `SensorManager` 取樣率設定只是**建議值**，實際頻率由
 `HIGH_SAMPLING_RATE_SENSORS` 權限。
 
 
+### 不是每一支 Android 手機都有陀螺儀
+
+這是 iOS 版從來不必交代的限制 —— 每一支 iPhone 都有。Android 的中階機常常省掉。
+實測 **Sony Xperia XA2 Ultra**（H4233）：只有 BMA255 加速度計與 AK09916C 磁力計。
+`Gravity`、`Linear Acceleration`、`Rotation Vector` 全部都是 Qualcomm 從那兩者算出來的
+**虛擬**感測器 —— 沒有真的角速度來源，這個 app 在那支手機上完全跑不了，
+開啟時會直接說明。
+
+用磁力計的方位角微分來代替不是辦法：iOS 端證實那條路會被每圈一次的空間磁場失真蓋掉
+（見 [`CLAUDE.md`](CLAUDE.md) 坑 13–15），而且那支的磁力計上限只有 50 Hz。
+
+安裝前先確認：規格表有沒有列「陀螺儀」，或用 *Sensor Box* 之類的 app 查。
+
 ### 用真實硬體資料交叉驗證
 
 合成黃金向量驗的是「數學有沒有照規格實作」。這個驗的是更強的一件事：

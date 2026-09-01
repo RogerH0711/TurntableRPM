@@ -73,6 +73,7 @@ private fun AppRoot(modifier: Modifier = Modifier) {
         Screen.Measure -> MeasurementScreen(
             state = state,
             available = engine.isAvailable,
+            unavailableReason = engine.unavailableReason,
             onStart = { engine.start() },
             onStop = { engine.stop() },
             onOpenDiagnostics = { screen = Screen.Diagnostics },

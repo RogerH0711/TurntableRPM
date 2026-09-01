@@ -42,6 +42,7 @@ private val Green = Color(0xFF2E7D32)
 fun MeasurementScreen(
     state: EngineState,
     available: Boolean,
+    unavailableReason: String? = null,
     onStart: () -> Unit,
     onStop: () -> Unit,
     onOpenDiagnostics: () -> Unit,
@@ -60,7 +61,7 @@ fun MeasurementScreen(
         if (!available) {
             Card(Modifier.fillMaxWidth()) {
                 Text(
-                    "這台裝置缺少陀螺儀或重力感測器，無法量測。",
+                    unavailableReason ?: "這台裝置缺少陀螺儀或重力感測器，無法量測。",
                     Modifier.padding(16.dp),
                     style = MaterialTheme.typography.bodyMedium,
                 )

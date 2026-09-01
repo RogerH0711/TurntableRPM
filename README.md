@@ -182,6 +182,21 @@ not need it — above 50 Hz only 0.72% of the weighted energy remains. So it use
 setting, which also sidesteps Android 12's `HIGH_SAMPLING_RATE_SENSORS` permission entirely.
 
 
+### Not every Android phone has a gyroscope
+
+This is a constraint the iOS version never had to state — every iPhone has one. On Android,
+mid-range devices often omit it. Measured on a **Sony Xperia XA2 Ultra** (H4233): a BMA255
+accelerometer and an AK09916C magnetometer, and that's it. `Gravity`, `Linear Acceleration`
+and `Rotation Vector` are all *virtual* sensors Qualcomm derives from those two — there is
+no real angular-rate source, so the app cannot measure on that phone at all and says so
+plainly on launch.
+
+Deriving rotation from the magnetometer's heading instead is not a workaround: the iOS side
+proved that path is swamped by once-per-revolution spatial field distortion (see
+[`CLAUDE.md`](CLAUDE.md) pitfalls 13–15), and that device's magnetometer tops out at 50 Hz.
+
+Check before you install: any spec sheet listing "gyroscope", or an app like *Sensor Box*.
+
 ### Cross-validated against real hardware data
 
 Synthetic golden vectors check that the maths matches the spec. This checks something
