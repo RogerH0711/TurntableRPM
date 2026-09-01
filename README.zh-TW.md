@@ -22,11 +22,14 @@
 
 量測時畫面會**反向旋轉**，內容在轉動中看起來是靜止的，不必把手機拿起來就能讀。
 
-| 分析結果 | 歷史與趨勢 | 手機怎麼擺 |
-|---|---|---|
-| ![分析](docs/screenshots/analysis.png) | ![歷史](docs/screenshots/history.png) | ![擺法](docs/screenshots/placement.png) |
+<p align="center">
+  <img src="docs/screenshots/zh-TW/analysis.png" width="270" alt="分析結果">
+  <img src="docs/screenshots/zh-TW/history.png" width="270" alt="歷史與趨勢">
+  <img src="docs/screenshots/zh-TW/placement.png" width="270" alt="手機怎麼擺">
+</p>
 
-（模擬器截圖，資料為示範用的合成訊號。）
+<p align="center"><sub>分析結果 · 歷史與趨勢 · 手機怎麼擺。<br>
+模擬器截圖，資料為示範用的合成訊號。</sub></p>
 
 ## 它看不到什麼
 
@@ -104,7 +107,7 @@ Packages/TurntableCore/   演算法核心。純 Swift + Foundation
   Tests/                    97 個測試
   Reference/                Python 參考實作，黃金值的來源
 App/                      唯一碰 CoreMotion / SwiftUI / SwiftData 的一層
-  Localizable.xcstrings     四語系字串，305 條
+  Localizable.xcstrings     四語系字串，306 條
 tools/analyze_export.py   分析匯出的量測 JSON
 docs/spec.md              技術規格書
 ```

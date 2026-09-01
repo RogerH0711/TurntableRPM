@@ -27,11 +27,14 @@ that needed a tool accurate to 0.1%.
 While measuring, the screen **counter-rotates**, so the content looks stationary as the
 platter turns and you can read it without picking the phone up.
 
-| Analysis | History & trend | Phone placement |
-|---|---|---|
-| ![Analysis](docs/screenshots/analysis.png) | ![History](docs/screenshots/history.png) | ![Placement](docs/screenshots/placement.png) |
+<p align="center">
+  <img src="docs/screenshots/en/analysis.png" width="270" alt="Analysis">
+  <img src="docs/screenshots/en/history.png" width="270" alt="History and trend">
+  <img src="docs/screenshots/en/placement.png" width="270" alt="Phone placement">
+</p>
 
-(Simulator screenshots; the data is a synthetic signal for demonstration.)
+<p align="center"><sub>Analysis · History &amp; trend · Phone placement.<br>
+Simulator screenshots; the data is a synthetic signal for demonstration.</sub></p>
 
 ## What it cannot see
 
@@ -113,7 +116,7 @@ Packages/TurntableCore/   Algorithm core. Plain Swift + Foundation
   Tests/                    97 tests
   Reference/                Python reference implementation — source of the golden values
 App/                      The only layer that touches CoreMotion / SwiftUI / SwiftData
-  Localizable.xcstrings     305 strings in four languages
+  Localizable.xcstrings     306 strings in four languages
 tools/analyze_export.py   Analyzes exported measurement JSON
 docs/spec.md              Technical specification
 ```

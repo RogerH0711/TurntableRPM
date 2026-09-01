@@ -100,11 +100,14 @@ struct TrendChart: View {
     enum Metric: String, CaseIterable, Identifiable {
         case error, wow, eccentricity
         var id: String { rawValue }
+        /// 已經在地化過的字串。呼叫端用 `Text(變數)`，那是 verbatim 的初始化式，
+        /// 所以這裡必須自己翻好 —— 每個 case 各一次 `String(localized:)`，
+        /// 寫成 `String(localized: switch …)` 就抽不出來了。
         var label: String {
             switch self {
-            case .error: return "偏差"
-            case .wow: return "抖晃率"
-            case .eccentricity: return "偏心"
+            case .error: return String(localized: "偏差")
+            case .wow: return String(localized: "抖晃率")
+            case .eccentricity: return String(localized: "偏心")
             }
         }
         var unit: String { "%" }

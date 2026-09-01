@@ -313,6 +313,25 @@ CI 另外還有 `.github/workflows/swift.yml`。
     「等待轉速穩定」的英文直譯 "Waiting for a steady speed" 太寬，縮成 "Waiting for speed"。
     盤面裡的字在每個語言都要當成「儀表板讀數」來寫，不是句子。
 
+31. **README 截圖的示範資料是臨時 patch，不進版控 —— 重拍前要先重建。**
+    模擬器沒有陀螺儀，分析頁與歷史頁在模擬器上永遠是空的，所以截圖需要一個
+    `App/DemoData.swift` 把合成分析（`SyntheticSignal` → `MeasurementAnalysis.analyze`）
+    塞進 `MotionEngine.init()`，並在 App 進入點 seed 一份 SwiftData
+    （`TurntableProfile` + 六筆 `MeasurementRecord`），用 `-demoData` 啟動引數開關。
+    拍完 `rm App/DemoData.swift` 並 `git checkout` 那兩個掛勾檔。
+    這份 patch 第一次做完就丟掉了，第二次重拍等於從頭推一次，所以把做法記在這裡。
+
+    截圖本身：`xcrun simctl launch <udid> <bundleid> -demoData -AppleLanguages "(en)"`，
+    再用 `xcrun simctl io <udid> screenshot`。**每個語言各拍一組**，放在
+    `docs/screenshots/<語言>/`。
+
+    **GitHub markdown 表格會依標題文字長度分配欄寬**，圖跟著欄寬縮放 ——
+    三張同尺寸的圖在表格裡看起來會一大一小。要等寬就別用表格，改用
+    `<p align="center">` 加 `<img width="270">`。
+
+    順帶：截圖不要存原始的 1206×2622，README 顯示寬度只有 270 左右，
+    `sips -Z 620` 之後六張總共 384 KB。
+
 ## 設計原則
 
 - **比例因子校準原本被當成成敗關鍵，實測後證明不是。**
@@ -371,7 +390,7 @@ App 圖示已完成（`tools/make_icon.py` 產生，可重跑）—— 唱片加
 頻閃盤與抖晃波兩個概念上更貼切的方案都是在小尺寸糊掉才被淘汰的，
 失敗原因記在 `tools/make_icon.py` 的檔頭。
 
-**在地化** — 完成。繁體中文（來源）／英文／日文／德文，305 條字串，
+**在地化** — 完成。繁體中文（來源）／英文／日文／德文，306 條字串，
 `App/Localizable.xcstrings`。四語系都在模擬器上實際跑過版面。日文與德文由 Claude 翻譯，
 還沒有母語者審過。
 
