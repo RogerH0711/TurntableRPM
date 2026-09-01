@@ -18,8 +18,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.roger.turntablerpm.calibration.CalibrationStore
+import com.roger.turntablerpm.core.SpeedStatistics
+import com.roger.turntablerpm.history.HistoryStore
+import com.roger.turntablerpm.history.MeasurementRecord
 import com.roger.turntablerpm.sensor.SensorEngine
 import com.roger.turntablerpm.ui.CalibrationScreen
+import com.roger.turntablerpm.ui.HistoryScreen
 import com.roger.turntablerpm.ui.MeasurementScreen
 import com.roger.turntablerpm.ui.SamplingDiagnostics
 import com.roger.turntablerpm.ui.theme.TurntableRPMTheme
@@ -38,7 +42,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private enum class Screen { Measure, Diagnostics, Calibration }
+private enum class Screen { Measure, Diagnostics, Calibration, History }
 
 /**
  * 兩個畫面共用**同一個** SensorEngine —— 兩份引擎會各自註冊監聽器，
@@ -49,6 +53,8 @@ private fun AppRoot(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val engine = remember { SensorEngine(context) }
     val store = remember { CalibrationStore(context) }
+    val history = remember { HistoryStore(context) }
+    val records by history.records.collectAsStateWithLifecycle()
     val state by engine.state.collectAsStateWithLifecycle()
     val calibration by store.calibration.collectAsStateWithLifecycle()
     val mismatched by store.mismatched.collectAsStateWithLifecycle()
@@ -56,6 +62,25 @@ private fun AppRoot(modifier: Modifier = Modifier) {
     // 校準倍率一改就要立刻反映在讀數上。
     androidx.compose.runtime.LaunchedEffect(calibration) {
         engine.calibrationFactor = calibration?.factor
+    }
+
+    // 分析成功就自動存檔。不做手動按鈕 —— 使用者不會記得按。
+    androidx.compose.runtime.DisposableEffect(engine) {
+        engine.onAnalysisComplete = { analysis, raw ->
+            val nominal = SpeedStatistics.classify(analysis.meanRPM)
+            history.add(
+                MeasurementRecord.from(
+                    analysis = analysis,
+                    rawMeanRPM = raw,
+                    calibrationFactor = engine.calibrationFactor,
+                    nominalLabel = nominal?.label,
+                    errorPercent = nominal?.let {
+                        SpeedStatistics.errorPercent(analysis.meanRPM, it)
+                    },
+                ),
+            )
+        }
+        onDispose { engine.onAnalysisComplete = null }
     }
     var screen by remember { mutableStateOf(Screen.Measure) }
 
@@ -78,6 +103,7 @@ private fun AppRoot(modifier: Modifier = Modifier) {
             onStop = { engine.stop() },
             onOpenDiagnostics = { screen = Screen.Diagnostics },
             onOpenCalibration = { screen = Screen.Calibration },
+            onOpenHistory = { screen = Screen.History },
             modifier = modifier,
         )
         Screen.Calibration -> CalibrationScreen(
@@ -87,6 +113,13 @@ private fun AppRoot(modifier: Modifier = Modifier) {
             mismatched = mismatched,
             onSave = { store.save(it) },
             onClear = { store.clear() },
+            onBack = { screen = Screen.Measure },
+            modifier = modifier,
+        )
+        Screen.History -> HistoryScreen(
+            records = records,
+            onDelete = { history.delete(it) },
+            onClear = { history.clear() },
             onBack = { screen = Screen.Measure },
             modifier = modifier,
         )

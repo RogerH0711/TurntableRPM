@@ -19,6 +19,7 @@ import com.roger.turntablerpm.core.Vector3
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 /** 一次量測的即時狀態。 */
 data class EngineState(
@@ -97,6 +98,14 @@ class SensorEngine(context: Context) : SensorEventListener {
      */
     @Volatile var calibrationFactor: Double? = null
 
+    /**
+     * 分析成功時自動存進歷史。
+     *
+     * **不做手動的「儲存」按鈕** —— 使用者不會記得按，而歷史的價值就在
+     * 「調整前後能比較」，漏存一次就斷了（iOS 端的結論，見 CLAUDE.md 坑 40）。
+     */
+    var onAnalysisComplete: ((MeasurementAnalysis, rawMeanRPM: Double) -> Unit)? = null
+
     private var thread: HandlerThread? = null
     private var handler: Handler? = null
 
@@ -152,9 +161,7 @@ class SensorEngine(context: Context) : SensorEventListener {
         val gyro = gyroscope
         val grav = gravity
         if (gyro == null || grav == null) {
-            _state.value = _state.value.copy(
-                error = "這台裝置缺少陀螺儀或重力感測器，無法量測。",
-            )
+            _state.update { it.copy(error = unavailableReason) }
             return
         }
         synchronized(lock) {
@@ -213,12 +220,17 @@ class SensorEngine(context: Context) : SensorEventListener {
         }
         val rate = _state.value.stats?.effectiveRateHz
         if (snapshot.size <= 64 || rate == null || rate <= 0) {
-            _state.value = _state.value.copy(
-                analysisFailureReason = "量測時間太短，只錄到 ${snapshot.size} 筆資料。",
-            )
+            // 失敗時也要把上一次的分析清掉，否則畫面會留著舊結果 —— 那比沒有結果更糟。
+            _state.update {
+                it.copy(
+                    analysis = null,
+                    analysisFailureReason = "量測時間太短，只錄到 ${snapshot.size} 筆資料。",
+                    analyzing = false,
+                )
+            }
             return
         }
-        _state.value = _state.value.copy(analyzing = true, analysisFailureReason = null)
+        _state.update { it.copy(analyzing = true, analysisFailureReason = null, analysis = null) }
         Thread {
             val result = MeasurementAnalysis.analyze(snapshot, sampleRate = rate)
             // 失敗的原因幾乎都是「找不到夠長的穩定區間」，講清楚比只說「失敗」有用。
@@ -240,19 +252,24 @@ class SensorEngine(context: Context) : SensorEventListener {
             // 兩個數字不一致本來就會讓人困惑，但真正危險的是**校準拿到污染的值** ——
             // 那個 k 會被永久寫進 SharedPreferences，之後每一次讀數都錯。
             // 實測：整段平均 31.546 RPM，切掉 1.4 秒加速後是 32.15，差 1.9%。
-            _state.value = _state.value.copy(
-                analysis = result,
-                analysisFailureReason = reason,
-                analyzing = false,
-                meanRPM = result?.meanRPM ?: _state.value.meanRPM,
-                rawMeanRPM = result?.let { it.meanRPM / factor } ?: _state.value.rawMeanRPM,
-                nominal = result?.let { SpeedStatistics.classify(it.meanRPM) } ?: _state.value.nominal,
-                errorPercent = result?.let { a ->
-                    SpeedStatistics.classify(a.meanRPM)?.let {
-                        SpeedStatistics.errorPercent(a.meanRPM, it)
-                    }
-                } ?: _state.value.errorPercent,
-            )
+            _state.update { previous ->
+                previous.copy(
+                    analysis = result,
+                    analysisFailureReason = reason,
+                    analyzing = false,
+                    meanRPM = result?.meanRPM ?: previous.meanRPM,
+                    rawMeanRPM = result?.let { it.meanRPM / factor } ?: previous.rawMeanRPM,
+                    nominal = result?.let { SpeedStatistics.classify(it.meanRPM) } ?: previous.nominal,
+                    errorPercent = result?.let { a ->
+                        SpeedStatistics.classify(a.meanRPM)?.let {
+                            SpeedStatistics.errorPercent(a.meanRPM, it)
+                        }
+                    } ?: previous.errorPercent,
+                )
+            }
+            if (result != null) {
+                onAnalysisComplete?.invoke(result, result.meanRPM / factor)
+            }
         }.start()
     }
 
@@ -321,6 +338,14 @@ class SensorEngine(context: Context) : SensorEventListener {
         publisher.execute { publish(running = active) }
     }
 
+    /**
+     * **一律用 `update {}`，不要 `_state.value = _state.value.copy(...)`。**
+     *
+     * 後者是讀-改-寫，而這裡有三個執行緒在寫：主執行緒的 stop()、publisher executor、
+     * 分析執行緒。實測踩到：分析寫完之後，一個排在後面的舊 publish 任務用它先前
+     * 讀到的舊值覆蓋回去 —— **分析結果靜默消失，畫面留著上一次的舊結果**，
+     * 連失敗訊息都沒有。使用者連做兩次量測都以為沒反應。
+     */
     private fun publish(running: Boolean) {
         data class Snap(
             val samples: List<SpinSample>, val times: DoubleArray,
@@ -340,26 +365,27 @@ class SensorEngine(context: Context) : SensorEventListener {
         val factor = calibrationFactor
         val mean = if (raw != null && factor != null) raw * factor else raw
         val nominal = mean?.let { SpeedStatistics.classify(it) }
-        val previous = _state.value
-        _state.value = previous.copy(
-            running = running,
-            sampleCount = snapshot.size,
-            elapsedSeconds = if (snapshot.size >= 2) snapshot.last().t - snapshot.first().t else 0.0,
-            instantRPM = (snapshot.lastOrNull()?.omega ?: 0.0) / 6.0 * (factor ?: 1.0),
-            meanRPM = mean,
-            rawMeanRPM = raw,
-            appliedFactor = factor,
-            nominal = nominal,
-            errorPercent = if (mean != null && nominal != null) {
-                SpeedStatistics.errorPercent(mean, nominal)
-            } else null,
-            revolutions = (snap.degrees / 360.0).toInt(),
-            stats = SamplingStats.from(times),
-            timestampBase = base,
-            wallElapsedSeconds = snap.wallSpan,
-            clockRatio = if (snapshot.size >= 2) {
-                SamplingStats.clockRatio(snapshot.last().t - snapshot.first().t, snap.wallSpan)
-            } else null,
-        )
+        _state.update { previous ->
+            previous.copy(
+                running = running,
+                sampleCount = snapshot.size,
+                elapsedSeconds = if (snapshot.size >= 2) snapshot.last().t - snapshot.first().t else 0.0,
+                instantRPM = (snapshot.lastOrNull()?.omega ?: 0.0) / 6.0 * (factor ?: 1.0),
+                meanRPM = mean,
+                rawMeanRPM = raw,
+                appliedFactor = factor,
+                nominal = nominal,
+                errorPercent = if (mean != null && nominal != null) {
+                    SpeedStatistics.errorPercent(mean, nominal)
+                } else null,
+                revolutions = (snap.degrees / 360.0).toInt(),
+                stats = SamplingStats.from(times),
+                timestampBase = base,
+                wallElapsedSeconds = snap.wallSpan,
+                clockRatio = if (snapshot.size >= 2) {
+                    SamplingStats.clockRatio(snapshot.last().t - snapshot.first().t, snap.wallSpan)
+                } else null,
+            )
+        }
     }
 }

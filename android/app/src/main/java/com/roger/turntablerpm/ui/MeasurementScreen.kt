@@ -47,6 +47,7 @@ fun MeasurementScreen(
     onStop: () -> Unit,
     onOpenDiagnostics: () -> Unit,
     onOpenCalibration: () -> Unit,
+    onOpenHistory: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -133,6 +134,10 @@ fun MeasurementScreen(
                     Text(if (state.appliedFactor != null) "重新校準" else "開始碼錶校準")
                 }
             }
+        }
+
+        OutlinedButton(onClick = onOpenHistory, modifier = Modifier.fillMaxWidth()) {
+            Text("量測歷史")
         }
 
         OutlinedButton(onClick = onOpenDiagnostics, modifier = Modifier.fillMaxWidth()) {

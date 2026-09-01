@@ -224,7 +224,7 @@ make android-crosscheck FILE=TurntableRPM-20260901-155337.json
 
 ## Development notes
 
-[`CLAUDE.md`](CLAUDE.md) records 38 pitfalls hit along the way, including several that took
+[`CLAUDE.md`](CLAUDE.md) records 40 pitfalls hit along the way, including several that took
 a long time to find (the file is in Traditional Chinese):
 
 - `CMDeviceMotion.attitude.yaw` is a fusion result — calibrating the gyroscope against it
