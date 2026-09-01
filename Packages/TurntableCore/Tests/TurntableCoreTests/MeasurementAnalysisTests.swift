@@ -121,6 +121,31 @@ final class MeasurementAnalysisTests: XCTestCase {
         XCTAssertEqual(a.durationSeconds, 30.0, accuracy: 0.2)
     }
 
+    /// 回歸測試：靜止不動的手機不能被當成一次量測。
+    ///
+    /// MEMS 陀螺儀靜止時輸出的是幾乎固定的偏置而不是雜訊，所以那段資料**非常穩**，
+    /// 穩定閘門會整段放行；接著除以趨近零的平均值，偏差百分比就爆掉。
+    /// Android 版實測靜置 15 秒得到「抖晃率 24.593% WRMS」，同一條路徑在 iOS 也存在。
+    func testStationaryPhoneIsNotAMeasurement() {
+        var rng = SplitMix64(seed: 5)
+        let bias = 0.036                    // °/s，實測 0.006 RPM 的偏置
+        let samples = (0 ..< 1600).map {
+            SpinSample(t: Double($0) / 107.9, omega: bias + rng.nextGaussian() * 0.002)
+        }
+        // 閘門本身會說「這段很穩」—— 因為它確實很穩
+        XCTAssertNotNil(StabilityGate.find(samples), "偏置很穩定，閘門本來就會放行")
+        // 但那不是一次量測
+        XCTAssertNil(MeasurementAnalysis.analyze(samples: samples, sampleRate: 107.9),
+                     "靜止的手機不該產生分析結果")
+    }
+
+    /// 下限要遠低於最慢的標稱轉速，不能誤擋真實唱盤。
+    func testSlowestNominalSpeedIsNotBlocked() {
+        let run = SyntheticSignal.make(nominalRPM: 50.0 / 3.0, durationSeconds: 60)
+        XCTAssertNotNil(MeasurementAnalysis.analyze(samples: run.samples), "16⅔ 轉不該被擋")
+        XCTAssertLessThan(MeasurementAnalysis.minimumRPM, 50.0 / 3.0 / 3)
+    }
+
     /// 樣本太少要回 nil，不能硬給一個沒有意義的分析。
     func testRejectsTooFewSamples() {
         let run = SyntheticSignal.make(nominalRPM: 100.0 / 3.0, durationSeconds: 0.3)

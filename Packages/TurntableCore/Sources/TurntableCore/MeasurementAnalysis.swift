@@ -109,12 +109,26 @@ public struct MeasurementAnalysis: Sendable {
     ///   - samples: 原始樣本。時間戳可以有抖動，內部會重取樣到等間隔。
     ///   - sampleRate: 重取樣的目標頻率。
     ///   - binCount: 極座標分箱數。
+    /// 低於這個轉速就不當成一次量測。
+    ///
+    /// **這個下限是必要的，不是保險絲。** `StabilityGate` 檢查的是「穩不穩」，
+    /// 而靜止不動的手機非常穩 —— MEMS 陀螺儀靜止時輸出的不是雜訊，是幾乎固定的偏置。
+    /// 於是整段資料通過閘門，接著 `DeviationSeries` 除以一個趨近零的平均值，
+    /// 偏差百分比就爆掉了。Android 版實測靜置 15 秒得到「抖晃率 24.593% WRMS」，
+    /// 這條路徑在 iOS 上一樣存在（手動模式按停止、盤面根本沒轉）。
+    ///
+    /// 5 RPM 遠低於最慢的標稱轉速（16⅔），不會誤擋任何真實唱盤。
+    public static let minimumRPM = 5.0
+
     public static func analyze(samples: [SpinSample],
                                sampleRate: Double = 100.0,
-                               binCount: Int = 72) -> MeasurementAnalysis? {
+                               binCount: Int = 72,
+                               minimumRPM: Double = MeasurementAnalysis.minimumRPM) -> MeasurementAnalysis? {
         // 先切出穩定區間再分析。少了這一步，一段從靜止開始的加速會在頻譜低頻端
         // 灌進巨大能量，把每圈一次的偏心峰淹掉 —— 診斷會整個錯掉。
         guard samples.count > 64, let window = StabilityGate.find(samples) else { return nil }
+        // 穩定但幾乎不動 = 唱盤沒轉起來，不是一次量測。
+        guard window.medianOmega / 6.0 >= minimumRPM else { return nil }
         let trimmedStart = window.droppedAtStart > 0
             ? samples[window.range.lowerBound].t - samples[0].t : 0
         let trimmedEnd = window.droppedAtEnd > 0

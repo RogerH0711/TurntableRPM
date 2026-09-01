@@ -121,6 +121,18 @@ class MeasurementAnalysis private constructor(
     companion object {
 
         /**
+         * 低於這個轉速就不當成一次量測。
+         *
+         * **這個下限是必要的，不是保險絲。** `StabilityGate` 檢查的是「穩不穩」，
+         * 而靜止不動的手機非常穩 —— MEMS 陀螺儀靜止時輸出的不是雜訊，是幾乎固定的偏置。
+         * 於是整段資料通過閘門，接著 `DeviationSeries` 除以一個趨近零的平均值，
+         * 偏差百分比就爆掉了。實測 XZ Premium 靜置 15 秒得到「抖晃率 24.593% WRMS」。
+         *
+         * 5 RPM 遠低於最慢的標稱轉速（16⅔），不會誤擋任何真實唱盤。
+         */
+        const val MINIMUM_RPM = 5.0
+
+        /**
          * @param samples    原始樣本。時間戳可以有抖動，內部會重取樣到等間隔。
          * @param sampleRate 重取樣的目標頻率。**Android 上不要寫死** ——
          *   實測 XZ Premium 要求 100 Hz 會拿到 107.92 Hz，應該傳入實測的有效速率，
@@ -130,11 +142,14 @@ class MeasurementAnalysis private constructor(
             samples: List<SpinSample>,
             sampleRate: Double = 100.0,
             binCount: Int = 72,
+            minimumRPM: Double = MINIMUM_RPM,
         ): MeasurementAnalysis? {
             // 先切出穩定區間再分析。少了這一步，一段從靜止開始的加速會在頻譜低頻端
             // 灌進巨大能量，把每圈一次的偏心峰淹掉 —— 診斷會整個錯掉。
             if (samples.size <= 64) return null
             val window = StabilityGate.find(samples) ?: return null
+            // 穩定但幾乎不動 = 唱盤沒轉起來，不是一次量測。
+            if (window.medianOmega / 6.0 < minimumRPM) return null
             val trimmedStart =
                 if (window.droppedAtStart > 0) samples[window.startIndex].t - samples.first().t else 0.0
             val trimmedEnd =

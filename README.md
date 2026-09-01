@@ -102,7 +102,7 @@ A free Apple ID's signature expires after 7 days — just ⌘R again when it doe
 
 | Command | What it does |
 |---|---|
-| `make test` | Algorithm tests (97 of them, about 4 s; no simulator or device needed) |
+| `make test` | Algorithm tests (99 of them, about 4 s; no simulator or device needed) |
 | `make generate` | **Required** after adding or deleting files under `App/` |
 | `make open` | Generate the project and open Xcode |
 | `make doctor` | Environment self-check |
@@ -115,7 +115,7 @@ A free Apple ID's signature expires after 7 days — just ⌘R again when it doe
 ```
 Packages/TurntableCore/   Algorithm core. Plain Swift + Foundation
   Sources/                  imports neither UIKit nor CoreMotion
-  Tests/                    97 tests
+  Tests/                    99 tests
   Reference/                Python reference implementation — source of the golden values
 App/                      The only layer that touches CoreMotion / SwiftUI / SwiftData
   Localizable.xcstrings     306 strings in four languages
@@ -209,7 +209,7 @@ make android-crosscheck FILE=TurntableRPM-20260901-155337.json
 
 ## Development notes
 
-[`CLAUDE.md`](CLAUDE.md) records 35 pitfalls hit along the way, including several that took
+[`CLAUDE.md`](CLAUDE.md) records 37 pitfalls hit along the way, including several that took
 a long time to find (the file is in Traditional Chinese):
 
 - `CMDeviceMotion.attitude.yaw` is a fusion result — calibrating the gyroscope against it

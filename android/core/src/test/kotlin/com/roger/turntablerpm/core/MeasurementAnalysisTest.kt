@@ -181,6 +181,37 @@ class MeasurementAnalysisTest {
     }
 
     /**
+     * 回歸測試：靜止不動的手機不能被當成一次量測。
+     *
+     * MEMS 陀螺儀靜止時輸出的是幾乎固定的偏置而不是雜訊，所以那段資料**非常穩**，
+     * 穩定閘門會整段放行；接著除以趨近零的平均值，偏差百分比就爆掉。
+     * 實測 XZ Premium 靜置 15 秒得到「抖晃率 24.593% WRMS」。
+     */
+    @Test
+    fun `靜止不動不是一次量測`() {
+        val rng = SplitMix64(5)
+        val bias = 0.036                       // °/s，實測 0.006 RPM 的偏置
+        val samples = (0 until 1600).map {
+            SpinSample(t = it / 107.9, omega = bias + rng.nextGaussian() * 0.002)
+        }
+        // 閘門本身會說「這段很穩」—— 因為它確實很穩
+        assertTrue(StabilityGate.find(samples) != null, "偏置很穩定，閘門本來就會放行")
+        // 但那不是一次量測
+        assertNull(
+            MeasurementAnalysis.analyze(samples, sampleRate = 107.9),
+            "靜止的手機不該產生分析結果",
+        )
+    }
+
+    /** 下限要遠低於最慢的標稱轉速，不能誤擋真實唱盤。 */
+    @Test
+    fun `最慢的標稱轉速不會被下限擋掉`() {
+        val run = SyntheticSignal.make(nominalRPM = 50.0 / 3.0, durationSeconds = 60.0)
+        assertTrue(MeasurementAnalysis.analyze(run.samples) != null, "16⅔ 轉不該被擋")
+        assertTrue(MeasurementAnalysis.MINIMUM_RPM < 50.0 / 3.0 / 3)
+    }
+
+    /**
      * 穩定閘門要真的把開頭的加速切掉 —— 沒有這一步，低頻端的巨大能量會把
      * 每圈一次的偏心峰淹掉，「問題出在哪」那一區就會給出錯誤的診斷。
      */

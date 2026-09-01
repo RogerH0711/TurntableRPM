@@ -8,6 +8,7 @@ import android.hardware.SensorManager
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.SystemClock
+import java.util.concurrent.Executors
 import com.roger.turntablerpm.core.MeasurementAnalysis
 import com.roger.turntablerpm.core.SamplingStats
 import com.roger.turntablerpm.core.SpinProjector
@@ -77,6 +78,14 @@ class SensorEngine(context: Context) : SensorEventListener {
      * 實測抓到：UI 顯示已停止，dumpsys sensorservice 卻顯示陀螺儀有 2 個連線。
      */
     @Volatile private var active = false
+
+    /**
+     * **統計不能算在感測器執行緒上。** `SamplingStats.from()` 內含排序，
+     * 每 200 ms 對全部樣本排一次；3 分鐘的量測是兩萬筆，會直接卡住事件處理。
+     * 實測：量測畫面的抖動比 0.811%，同一台在純診斷畫面是 0.160%。
+     * 感測器回呼只負責丟一個工作進來，重活在這條執行緒上做。
+     */
+    private val publisher = Executors.newSingleThreadExecutor()
 
     private var thread: HandlerThread? = null
     private var handler: Handler? = null
@@ -172,11 +181,17 @@ class SensorEngine(context: Context) : SensorEventListener {
         Thread {
             val result = MeasurementAnalysis.analyze(snapshot, sampleRate = rate)
             // 失敗的原因幾乎都是「找不到夠長的穩定區間」，講清楚比只說「失敗」有用。
+            // 三種失敗要分開講。**最容易搞混的是第二種**：靜止不動的手機非常穩，
+            // 閘門會整段放行，錯誤訊息若說「轉速不穩」使用者會完全找不到方向。
             val reason = if (result == null) {
-                if (com.roger.turntablerpm.core.StabilityGate.find(snapshot) == null) {
-                    "整段量測都沒有穩定的轉速。轉盤有轉起來嗎？至少要連續穩定 5 秒。"
-                } else {
-                    "資料不足以分析。試著量久一點，90 秒以上比較可靠。"
+                val window = com.roger.turntablerpm.core.StabilityGate.find(snapshot)
+                when {
+                    window == null ->
+                        "整段量測都沒有穩定的轉速。轉盤有轉起來嗎？至少要連續穩定 5 秒。"
+                    window.medianOmega / 6.0 < MeasurementAnalysis.MINIMUM_RPM ->
+                        "量到的轉速只有 %.3f RPM —— 轉盤沒有轉起來。".format(window.medianOmega / 6.0)
+                    else ->
+                        "資料不足以分析。試著量久一點，90 秒以上比較可靠。"
                 }
             } else null
             _state.value = _state.value.copy(
@@ -246,7 +261,8 @@ class SensorEngine(context: Context) : SensorEventListener {
         val now = SystemClock.uptimeMillis()
         if (now - lastPublishMs < 200) return
         lastPublishMs = now
-        publish(running = active)
+        // 只丟工作，不在感測器執行緒上算。
+        publisher.execute { publish(running = active) }
     }
 
     private fun publish(running: Boolean) {

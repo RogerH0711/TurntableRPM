@@ -93,7 +93,7 @@ iPhone 要先開啟開發者模式：設定 ▸ 隱私權與安全性 ▸ 開發
 
 | 指令 | 做什麼 |
 |---|---|
-| `make test` | 演算法測試（97 個，約 4 秒，不需要模擬器或實機） |
+| `make test` | 演算法測試（99 個，約 4 秒，不需要模擬器或實機） |
 | `make generate` | 新增／刪除 `App/` 底下的檔案後**必須**跑 |
 | `make open` | 產生並開啟 Xcode |
 | `make doctor` | 環境自我檢查 |
@@ -106,7 +106,7 @@ iPhone 要先開啟開發者模式：設定 ▸ 隱私權與安全性 ▸ 開發
 ```
 Packages/TurntableCore/   演算法核心。純 Swift + Foundation
   Sources/                  不 import UIKit 也不 import CoreMotion
-  Tests/                    97 個測試
+  Tests/                    99 個測試
   Reference/                Python 參考實作，黃金值的來源
 App/                      唯一碰 CoreMotion / SwiftUI / SwiftData 的一層
   Localizable.xcstrings     四語系字串，306 條
@@ -191,7 +191,7 @@ make android-crosscheck FILE=TurntableRPM-20260901-155337.json
 
 ## 開發筆記
 
-[`CLAUDE.md`](CLAUDE.md) 記錄了 35 條踩過的坑，包含幾個花了很久才找到的：
+[`CLAUDE.md`](CLAUDE.md) 記錄了 37 條踩過的坑，包含幾個花了很久才找到的：
 
 - `CMDeviceMotion.attitude.yaw` 是融合結果，拿它校準陀螺儀是同義反覆
 - 移動平均只能用在顯示路徑；用在抖晃率計算會把 4 Hz 的加權峰值整個挖掉
