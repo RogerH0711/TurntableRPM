@@ -1,0 +1,17 @@
+# 預設讓 git 正規化文字檔的換行
+* text=auto
+
+# Windows 批次檔必須是 CRLF，否則在 Windows 上可能無法執行。
+# 這件事跟雙機同步直接相關（macOS 開發、Windows 也要能 clone 下來建置）。
+*.bat text eol=crlf
+
+# 這兩個是 shell script，任何平台都必須是 LF
+gradlew text eol=lf
+*.sh text eol=lf
+
+# 二進位檔不要碰
+*.jar   binary
+*.png   binary
+*.webp  binary
+*.ipa   binary
+*.apk   binary
