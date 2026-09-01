@@ -57,6 +57,13 @@ class SensorEngine(context: Context) : SensorEventListener {
         ?: manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
     private val gravityIsFused = manager.getDefaultSensor(Sensor.TYPE_GRAVITY) != null
 
+    /**
+     * **狀態守衛不能用發布給 UI 的 `running`。** 那個欄位會被感測器執行緒的 publish() 覆寫，
+     * 競態一發生，再按一次開始就會重複 registerListener 而不解除 —— 監聽器就漏了。
+     * 實測抓到：UI 顯示已停止，dumpsys sensorservice 卻顯示陀螺儀有 2 個連線。
+     */
+    @Volatile private var active = false
+
     private var thread: HandlerThread? = null
     private var handler: Handler? = null
 
@@ -80,7 +87,7 @@ class SensorEngine(context: Context) : SensorEventListener {
      *   這個 app 不需要那麼快（50 Hz 以上只佔加權能量 0.72%），刻意不宣告。
      */
     fun start(samplingPeriodUs: Int = 10_000) {
-        if (_state.value.running) return
+        if (active) return
         val gyro = gyroscope
         val grav = gravity
         if (gyro == null || grav == null) {
@@ -98,9 +105,12 @@ class SensorEngine(context: Context) : SensorEventListener {
             latestWallNanos = 0
             timestampBase = null
         }
+        // 防禦性解除：萬一有殘留的註冊（例如上一輪的競態），先清乾淨再註冊。
+        manager.unregisterListener(this)
         val t = HandlerThread("sensor").apply { start() }
         thread = t
         handler = Handler(t.looper)
+        active = true
         manager.registerListener(this, grav, samplingPeriodUs, handler)
         manager.registerListener(this, gyro, samplingPeriodUs, handler)
         _state.value = EngineState(
@@ -112,7 +122,8 @@ class SensorEngine(context: Context) : SensorEventListener {
     }
 
     fun stop() {
-        if (!_state.value.running) return
+        if (!active) return
+        active = false
         manager.unregisterListener(this)
         thread?.quitSafely()
         thread = null
@@ -175,7 +186,7 @@ class SensorEngine(context: Context) : SensorEventListener {
         val now = SystemClock.uptimeMillis()
         if (now - lastPublishMs < 200) return
         lastPublishMs = now
-        publish(running = true)
+        publish(running = active)
     }
 
     private fun publish(running: Boolean) {
