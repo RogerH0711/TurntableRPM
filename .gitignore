@@ -21,4 +21,7 @@ __pycache__/
 # 個人規劃文件 —— repo 是公開的，這份寫了學經歷與求職目標
 HANDOFF-android-port.md
 
+# App 匯出的逐樣本量測（一次 3 分鐘約 2 MB）。結論寫進 docs/，原始檔留本機。
+TurntableRPM-*.json
+
 .DS_Store
