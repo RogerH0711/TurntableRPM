@@ -1,7 +1,8 @@
 XCODEGEN ?= xcodegen
 PACKAGE := Packages/TurntableCore
 
-.PHONY: setup generate open teamid doctor test docker-test reference clean
+.PHONY: setup generate open teamid doctor test docker-test reference clean \
+        android-test android-apk android-devices
 
 ## 第一次設定：檢查 xcodegen、備好個人簽章設定、產生專案
 setup:
@@ -54,6 +55,26 @@ docker-test:
 
 reference:
 	$(MAKE) -C $(PACKAGE) reference
+
+# --- Android ---
+# core 模組是純 Kotlin、不依賴 Android framework，所以測試在 JVM 上跑，
+# 不需要手機也不需要模擬器 —— 跟上面的 `make test` 是同一個理由。
+# 黃金值兩邊都讀 Packages/TurntableCore/Reference/golden.json。
+ANDROID_JAVA_HOME ?= /Applications/Android Studio.app/Contents/jbr/Contents/Home
+
+## Kotlin 核心測試（JVM，不需要手機）
+android-test:
+	cd android && JAVA_HOME="$(ANDROID_JAVA_HOME)" ./gradlew :core:test
+
+## 建出 debug APK
+android-apk:
+	cd android && JAVA_HOME="$(ANDROID_JAVA_HOME)" ./gradlew :app:assembleDebug
+	@echo ""
+	@echo "APK： android/app/build/outputs/apk/debug/app-debug.apk"
+
+## 列出接上的 Android 裝置
+android-devices:
+	@$$HOME/Library/Android/sdk/platform-tools/adb devices -l
 
 clean:
 	rm -rf TurntableRPM.xcodeproj DerivedData

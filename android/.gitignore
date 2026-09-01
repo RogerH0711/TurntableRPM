@@ -1,0 +1,25 @@
+# Android / Gradle 的版控規則
+#
+# 原則跟 iOS 那邊一致（見 repo 根目錄的 .gitignore）：
+# **產生出來的東西不進版控，只保留能重現它的設定檔。**
+#
+# 所以 gradle/wrapper/ 與 gradle/gradle-daemon-jvm.properties 是**要進版控的** ——
+# 前者鎖住 Gradle 版本，後者列出各平台的 JDK 下載位址，
+# 換一台機器（Windows）clone 下來不必先裝 JDK 就能建置。
+
+# 建置產物（每個模組都有，不能只寫 /build）
+build/
+.gradle/
+.kotlin/
+captures/
+.externalNativeBuild
+.cxx
+
+# 機器相關：裡面是這台電腦的 SDK 路徑
+local.properties
+
+# IDE
+.idea/
+*.iml
+
+.DS_Store
