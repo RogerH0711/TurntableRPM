@@ -38,6 +38,24 @@ data class SamplingStats(
     val jitterRatio: Double get() = if (medianIntervalMs > 0) stdDevIntervalMs / medianIntervalMs else 0.0
 
     companion object {
+        /**
+         * 感測器時間戳與系統牆鐘的一致性。**這是 Android 版最關鍵的一項檢查。**
+         *
+         * 實測 Sony XZ Premium 在要求 100 Hz 時實際拿到 107.93 Hz（間隔 9.277 ms）。
+         * 那個 +7.9% 有兩種可能，後果天差地遠：
+         *
+         * - 感測器真的每 9.277 ms（真實時間）送一筆，時間戳誠實 → 完全沒問題，
+         *   因為這個 app 一律用真實時間戳積分，本來就不假設固定速率。
+         * - 感測器每 10 ms 送一筆，但時間戳跑在快 7.9% 的時鐘上 → 所有頻域結果偏 7.9%，
+         *   譜峰的「轉盤幾倍」判讀整個失準，而那是這個 app 最有價值的功能。
+         *
+         * 平均轉速兩種情況都不受影響（ω 是物理量，與取樣時鐘無關），所以光看轉速看不出來。
+         *
+         * @return 感測器時間 ÷ 牆鐘時間。1.000 代表時間戳誠實。
+         */
+        fun clockRatio(sensorSpanSeconds: Double, wallSpanSeconds: Double): Double? =
+            if (wallSpanSeconds > 0) sensorSpanSeconds / wallSpanSeconds else null
+
         /** @param timestampsSeconds 感測器自己的時間戳，秒，必須遞增。 */
         fun from(timestampsSeconds: DoubleArray): SamplingStats? {
             if (timestampsSeconds.size < 3) return null

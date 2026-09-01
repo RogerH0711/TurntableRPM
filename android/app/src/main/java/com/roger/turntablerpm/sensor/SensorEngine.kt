@@ -26,6 +26,10 @@ data class EngineState(
     val meanRPM: Double? = null,
     val stats: SamplingStats? = null,
     val timestampBase: String? = null,
+    /** 牆鐘量到的時長，用來跟感測器時間戳對照。 */
+    val wallElapsedSeconds: Double = 0.0,
+    /** 感測器時間 ÷ 牆鐘時間。1.000 代表時間戳誠實。 */
+    val clockRatio: Double? = null,
     val gyroName: String? = null,
     val gravityName: String? = null,
     val gravityIsFused: Boolean = true,
@@ -61,6 +65,8 @@ class SensorEngine(context: Context) : SensorEventListener {
     private val rawTimestamps = ArrayList<Double>()
     private var latestGravity: Vector3? = null
     private var baseNanos: Long = 0
+    private var baseWallNanos: Long = 0
+    private var latestWallNanos: Long = 0
     private var timestampBase: String? = null
 
     private val _state = MutableStateFlow(EngineState())
@@ -88,6 +94,8 @@ class SensorEngine(context: Context) : SensorEventListener {
             rawTimestamps.clear()
             latestGravity = null
             baseNanos = 0
+            baseWallNanos = 0
+            latestWallNanos = 0
             timestampBase = null
         }
         val t = HandlerThread("sensor").apply { start() }
@@ -138,8 +146,11 @@ class SensorEngine(context: Context) : SensorEventListener {
                 )
                 val omega = SpinProjector.project(rate, g)
                 synchronized(lock) {
+                    // 牆鐘與感測器時間戳成對記錄 —— 兩者的比值就是時間戳誠不誠實。
+                    val wall = SystemClock.elapsedRealtimeNanos()
                     if (baseNanos == 0L) {
                         baseNanos = event.timestamp
+                        baseWallNanos = wall
                         timestampBase = SamplingStats.identifyTimestampBase(
                             event.timestamp,
                             SystemClock.elapsedRealtimeNanos(),
@@ -150,6 +161,7 @@ class SensorEngine(context: Context) : SensorEventListener {
                     val t = (event.timestamp - baseNanos) / 1e9
                     samples += SpinSample(t = t, omega = omega)
                     rawTimestamps += t
+                    latestWallNanos = wall
                 }
                 maybePublish()
             }
@@ -167,9 +179,19 @@ class SensorEngine(context: Context) : SensorEventListener {
     }
 
     private fun publish(running: Boolean) {
-        val (snapshot, times, base) = synchronized(lock) {
-            Triple(ArrayList(samples), rawTimestamps.toDoubleArray(), timestampBase)
+        data class Snap(
+            val samples: List<SpinSample>, val times: DoubleArray,
+            val base: String?, val wallSpan: Double,
+        )
+        val snap = synchronized(lock) {
+            Snap(
+                ArrayList(samples), rawTimestamps.toDoubleArray(), timestampBase,
+                if (baseWallNanos > 0) (latestWallNanos - baseWallNanos) / 1e9 else 0.0,
+            )
         }
+        val snapshot = snap.samples
+        val times = snap.times
+        val base = snap.base
         val previous = _state.value
         _state.value = previous.copy(
             running = running,
@@ -179,6 +201,10 @@ class SensorEngine(context: Context) : SensorEventListener {
             meanRPM = SpeedStatistics.meanRPM(snapshot),
             stats = SamplingStats.from(times),
             timestampBase = base,
+            wallElapsedSeconds = snap.wallSpan,
+            clockRatio = if (snapshot.size >= 2) {
+                SamplingStats.clockRatio(snapshot.last().t - snapshot.first().t, snap.wallSpan)
+            } else null,
         )
     }
 }

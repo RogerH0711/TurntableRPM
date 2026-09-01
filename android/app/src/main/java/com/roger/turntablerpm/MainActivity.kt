@@ -151,6 +151,25 @@ private fun StatsCard(state: EngineState) {
             StatRow("最糟空隙", if (s != null) "%.2f×".format(s.worstGapRatio) else "—")
 
             Row(Modifier.height(6.dp)) {}
+            // **最關鍵的一項。** 實際取樣率比要求值高 7.9% 有兩種可能：感測器真的比較快
+            // （時間戳誠實，無害），或時間戳跑在快 7.9% 的時鐘上（頻域結果全錯）。
+            // 平均轉速兩種情況都看不出差別，只有拿牆鐘對照才分得開。
+            StatRow("牆鐘時長", "%.2f s".format(state.wallElapsedSeconds))
+            StatRow("時間戳 ÷ 牆鐘", state.clockRatio?.let { "%.5f".format(it) } ?: "—")
+            state.clockRatio?.let { r ->
+                Text(
+                    if (kotlin.math.abs(r - 1.0) < 0.002) {
+                        "時間戳誠實（與牆鐘差 %.3f%%）—— 取樣率比要求值高只是感測器本來就跑比較快，".format((r - 1) * 100) +
+                            "對這個 app 無害，因為積分一律用真實時間戳。"
+                    } else {
+                        "⚠ 時間戳與牆鐘差 %.2f%% —— 頻域結果會整體偏移同樣的量，".format((r - 1) * 100) +
+                            "譜峰的倍數判讀不可信，必須先校正時基。"
+                    },
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+
+            Row(Modifier.height(6.dp)) {}
             Text(
                 "iOS 基準（iPhone 15 Pro Max）：中位數 9.990 ms、標準差 0.005 ms、" +
                     "抖動比 0.05%、最糟空隙 1.00×",
