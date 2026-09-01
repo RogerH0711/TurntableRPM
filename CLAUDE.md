@@ -476,6 +476,10 @@ App 圖示已完成（`tools/make_icon.py` 產生，可重跑）—— 唱片加
 `App/Localizable.xcstrings`。四語系都在模擬器上實際跑過版面。日文與德文由 Claude 翻譯，
 還沒有母語者審過。
 
+**Android 版** — 核心移植完成（62 個 JVM 測試，golden.json 九項全覆蓋），
+感測器層與取樣診斷畫面完成。**拿 iOS 匯出的真實錄音交叉驗證過：兩個實作的結果
+差 0.002% 以內**（`make android-crosscheck`）。還沒做 UI 與 release APK。
+
 **還沒做的上架必要項目**：付費開發者帳號、上架素材（截圖／描述／隱私問卷）。
 截圖必須用實機拍 —— 模擬器沒有陀螺儀，畫面永遠是空狀態。
 

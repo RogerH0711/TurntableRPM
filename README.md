@@ -182,6 +182,31 @@ not need it — above 50 Hz only 0.72% of the weighted energy remains. So it use
 setting, which also sidesteps Android 12's `HIGH_SAMPLING_RATE_SENSORS` permission entirely.
 
 
+### Cross-validated against real hardware data
+
+Synthetic golden vectors check that the maths matches the spec. This checks something
+stronger: that **two independent implementations reach the same conclusion about the same
+physical recording**. Feeding a 20,377-sample export from the iOS app (203 s on a Thorens
+TD 235 EV) through the Kotlin core:
+
+| | Kotlin | Swift | Difference |
+|---|---|---|---|
+| Mean speed | 32.05861 RPM | 32.05861 RPM | 0.0000% |
+| Rotation frequency | 0.53431 Hz | 0.53431 Hz | 0.0000% |
+| Weighted WRMS | 0.07436% | 0.07436% | 0.0000% |
+| DIN 2σ peak | 0.14126% | 0.14125% | 0.0018% |
+| 1×/rev component | 0.27238% | 0.27238% | 0.0001% |
+
+The Kotlin port also reproduces the deck's fingerprint: eccentricity at 1×, the belt at
+0.908×, and the motor at 35.28×.
+
+Exports are not in version control (~2 MB each), so this is a manual tool rather than an
+automatic test:
+
+```sh
+make android-crosscheck FILE=TurntableRPM-20260901-155337.json
+```
+
 ## Development notes
 
 [`CLAUDE.md`](CLAUDE.md) records 35 pitfalls hit along the way, including several that took

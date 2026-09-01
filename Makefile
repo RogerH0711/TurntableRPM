@@ -2,7 +2,7 @@ XCODEGEN ?= xcodegen
 PACKAGE := Packages/TurntableCore
 
 .PHONY: setup generate open teamid doctor test docker-test reference clean \
-        android-test android-apk android-devices
+        android-test android-apk android-devices android-crosscheck
 
 ## 第一次設定：檢查 xcodegen、備好個人簽章設定、產生專案
 setup:
@@ -71,6 +71,11 @@ android-apk:
 	cd android && JAVA_HOME="$(ANDROID_JAVA_HOME)" ./gradlew :app:assembleDebug
 	@echo ""
 	@echo "APK： android/app/build/outputs/apk/debug/app-debug.apk"
+
+## 拿 iOS 匯出的真實資料驗證 Kotlin 核心：make android-crosscheck FILE=xxx.json
+android-crosscheck:
+	@[ -n "$(FILE)" ] || { echo "用法： make android-crosscheck FILE=TurntableRPM-....json"; exit 1; }
+	cd android && JAVA_HOME="$(ANDROID_JAVA_HOME)" ./gradlew -q :core:crossCheck -Pfile="$(PWD)/$(FILE)"
 
 ## 列出接上的 Android 裝置
 android-devices:

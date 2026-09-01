@@ -21,6 +21,18 @@ dependencies {
     testImplementation(libs.kotlinx.serialization.json)
 }
 
+/**
+ * 拿 iOS 匯出的真實資料跟 Swift 的結果對照。匯出檔不進版控，所以這是手動工具，
+ * 不是自動測試 —— 從 repo 根目錄跑 `make android-crosscheck FILE=<檔案>`。
+ */
+tasks.register<JavaExec>("crossCheck") {
+    group = "verification"
+    description = "拿 iOS 匯出的逐樣本資料驗證 Kotlin 核心"
+    classpath = sourceSets["test"].runtimeClasspath
+    mainClass.set("com.roger.turntablerpm.core.ExportCrossCheck")
+    if (project.hasProperty("file")) args(project.property("file") as String)
+}
+
 tasks.test {
     useJUnitPlatform()
     testLogging { events("passed", "failed"); showStandardStreams = true }
