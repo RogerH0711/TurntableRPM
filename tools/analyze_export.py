@@ -162,19 +162,25 @@ def main():
     d, cols, samples = load(sys.argv[1])
     summary = d.get("summary", {})
     gyro_total = summary.get("gyroTotalDegrees", 0.0)
-    stopwatch_k = summary.get("stopwatchReferenceK", 1.01837)
+    stopwatch_k = summary.get("stopwatchReferenceK", 0.99915)
+    # meanRPM 是 App 已經套過 appliedFactor 的讀數，rawMeanRPM 才是未修正的。
+    # 舊版直接把 meanRPM 再乘一次 k —— 沒存校準時剛好無害，存了就重複套用。
+    applied = summary.get("appliedFactor")
+    raw_rpm = summary.get("rawMeanRPM", summary.get("meanRPM", 0.0))
 
     print(f"錄製時間  {d.get('recordedAt')}")
     print(f"樣本數    {len(samples)}    時長 {summary.get('elapsedSeconds', 0):.1f} s"
           f"    取樣率 {summary.get('effectiveSampleRate', 0):.1f} Hz")
     print(f"平均轉速  {summary.get('meanRPM', 0):.4f} RPM"
-          f"   偏差 {summary.get('errorPercent', 0):+.3f}%")
+          f"   偏差 {summary.get('errorPercent', 0):+.3f}%"
+          + (f"   （已套用 k={applied:.5f}）" if applied else "   （未校準）"))
+    print(f"未修正讀數 {raw_rpm:.4f} RPM")
     print(f"圈數      {summary.get('revolutions', 0)}"
           f"    陀螺儀總轉角 {gyro_total:.0f}°"
           f"    磁北總轉角 {summary.get('magneticTotalDegrees', 0):.0f}°")
     print(f"磁力計校準 {summary.get('fieldAccuracy', '—')}")
-    print(f"\n套用碼錶 k={stopwatch_k} → "
-          f"{summary.get('meanRPM', 0) * stopwatch_k:.4f} RPM")
+    print(f"\n改套碼錶 k={stopwatch_k} → {raw_rpm * stopwatch_k:.4f} RPM"
+          f"   偏差 {(raw_rpm * stopwatch_k / summary.get('nominalRPM', 1) - 1) * 100:+.3f}%")
 
     analyse("CoreMotion 已校準磁場（CMDeviceMotion.magneticField）",
             project(samples, cols, "b"), gyro_total, stopwatch_k)

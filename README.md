@@ -135,7 +135,7 @@ which avoids merge conflicts in the project file.
 
 ## Development notes
 
-[`CLAUDE.md`](CLAUDE.md) records 30 pitfalls hit along the way, including several that took
+[`CLAUDE.md`](CLAUDE.md) records 33 pitfalls hit along the way, including several that took
 a long time to find (the file is in Traditional Chinese):
 
 - `CMDeviceMotion.attitude.yaw` is a fusion result — calibrating the gyroscope against it
