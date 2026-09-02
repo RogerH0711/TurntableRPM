@@ -16,7 +16,10 @@ extension SpectralPeak {
         case .eccentricity:
             return String(localized: "每圈一次 —— 偏心（盤面、主軸或皮帶接觸面沒對正）")
         case .ovality:
-            return String(localized: "每圈兩次 —— 盤面橢圓或主軸兩點磨損")
+            // **1× 大的時候這個判讀不可信。** 非正弦的每圈一次擾動本來就會生出 2×、3×。
+            // 實測把手機轉 180° 讓 1× 掉 74% 之後，2× 也跟著掉 59% —— 而純粹的
+            // 180° 旋轉不該改變 2×（相位移 360°），所以那是耦合的諧波不是獨立缺陷。
+            return String(localized: "每圈兩次 —— 盤面橢圓或主軸兩點磨損。但如果上面的每圈一次很大，這根多半只是它的諧波，先把偏心降下來再看。")
         case .harmonic(let n):
             return String(localized: "轉盤 \(n)× 諧波")
         case .slowerThanRotation:

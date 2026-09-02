@@ -83,8 +83,19 @@ fun MeasurementScreen(
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text("放上唱盤之前", style = MaterialTheme.typography.titleSmall)
                 Text(
-                    "拿掉磁吸配件與含磁鐵的手機殼、鎖好唱臂、墊一張唱片或用唱片鎮再放手機。" +
-                        "手機偏在一邊會拖慢轉速並放大抖動 —— 放在轉軸正中央，或對面放等重的東西配平。",
+                    "拿掉磁吸配件與含磁鐵的手機殼，鎖好唱臂。",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                Text(
+                    "手機橫跨轉軸放在唱片鎮上，讓質心落在轉軸正上方 —— 這是最省事的擺法。" +
+                        "沒有唱片鎮的話，手機右側長邊中點貼轉軸、機身放左半邊，" +
+                        "對面放一個等重的東西配平。",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                Text(
+                    "手機偏在一邊會拖慢轉速 0.3%、放大每圈一次的抖動三成。" +
+                        "實測顯示「每圈一次」裡有一大半是手機造成的，不是唱盤的 —— " +
+                        "想知道唱盤自己有多少，把手機轉 180° 再量一次，兩次的差就是手機的貢獻。",
                     style = MaterialTheme.typography.bodySmall,
                 )
             }

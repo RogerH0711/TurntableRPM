@@ -15,6 +15,11 @@ import SwiftUI
 /// **修正量測方法優於事後補償。** 這也是為什麼載重補償不該拿來處理這件事：
 /// 兩點外插假設「只有質量在變」，而在這裡不平衡才是主導。
 struct PlacementDiagram: View {
+    /// 兩種都可以。**置中是推薦的做法** —— 不必找等重的東西，傾角也更小，
+    /// 而且實測給出這台盤最低的抖晃率。
+    enum Mode { case centred, counterbalanced }
+    var mode: Mode = .centred
+
     var body: some View {
         Canvas { ctx, size in
             let w = size.width, h = size.height
@@ -29,9 +34,21 @@ struct PlacementDiagram: View {
                                               width: r * 2, height: r * 2)),
                        with: .color(Color(white: 0.45)), lineWidth: 1.5)
 
-            // 手機：長邊中點貼著轉軸，機身往左邊延伸
+            // 置中：先畫唱片鎮（手機底下那個圓盤）
+            if mode == .centred {
+                let wr = r * 0.42
+                ctx.fill(Path(ellipseIn: CGRect(x: c.x - wr, y: c.y - wr,
+                                                width: wr * 2, height: wr * 2)),
+                         with: .color(Color(white: 0.55)))
+                ctx.stroke(Path(ellipseIn: CGRect(x: c.x - wr, y: c.y - wr,
+                                                  width: wr * 2, height: wr * 2)),
+                           with: .color(Color(white: 0.7)), lineWidth: 1.5)
+            }
+
+            // 手機。置中時橫跨轉軸；配平時長邊中點貼轉軸、機身往左延伸。
             let pw = r * 0.62, ph = r * 1.28
-            let phone = CGRect(x: c.x - pw, y: c.y - ph / 2, width: pw, height: ph)
+            let phoneX = mode == .centred ? c.x - pw / 2 : c.x - pw
+            let phone = CGRect(x: phoneX, y: c.y - ph / 2, width: pw, height: ph)
             ctx.fill(Path(roundedRect: phone, cornerRadius: pw * 0.16),
                      with: .color(Color(white: 0.92)))
             let screen = phone.insetBy(dx: pw * 0.1, dy: ph * 0.05)
@@ -42,7 +59,8 @@ struct PlacementDiagram: View {
                                width: pw * 0.32, height: ph * 0.018)
             ctx.fill(Path(roundedRect: notch, cornerRadius: 2), with: .color(Color(white: 0.55)))
 
-            // 配重：放在對面，質心離轉軸的距離跟手機差不多
+            // 配重：只有配平模式才畫
+            if mode == .counterbalanced {
             let cwR = pw * 0.52
             let cwCenter = CGPoint(x: c.x + pw * 0.55, y: c.y)
             ctx.fill(Path(ellipseIn: CGRect(x: cwCenter.x - cwR, y: cwCenter.y - cwR,
@@ -58,6 +76,7 @@ struct PlacementDiagram: View {
                           radius: cwR * 0.34,
                           startAngle: .degrees(-95), endAngle: .degrees(95), clockwise: false)
             ctx.stroke(handle, with: .color(Color(white: 0.72)), lineWidth: 3)
+            }
 
             // 主軸畫在最後，壓在手機與配重之上
             ctx.fill(Path(ellipseIn: CGRect(x: c.x - 5, y: c.y - 5, width: 10, height: 10)),
@@ -83,14 +102,18 @@ struct PlacementGuide: View {
                 .frame(height: 230)
 
             VStack(alignment: .leading, spacing: 6) {
-                line("手機**右側長邊的中點**貼著轉軸，機身放在左半邊")
+                line("手機**橫跨轉軸放在唱片鎮上**，讓質心落在轉軸正上方")
                 line("手機**下緣朝著你**（跟平放在桌上看一樣）")
-                line("**對面放一個跟手機等重的東西**配平，距離轉軸差不多遠")
-                line("螢幕朝上，放在轉盤原本的**絨布墊**上")
+                line("螢幕朝上，唱片鎮放在轉盤原本的**絨布墊**上")
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            Text("配平很重要：手機偏在一邊會在軸承產生側向負載，實測會讓轉速慢 0.3%、每圈一次的抖動大三成。小馬克杯加水到跟手機等重就很好用。")
+            Text("**手機偏在一邊會拖慢轉速並放大抖動** —— 實測轉速慢 0.3%、每圈一次的抖動大三成。置中最省事：不必找等重的東西，手機也躺得更平。")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Text("**沒有唱片鎮也可以**：手機右側長邊的中點貼著轉軸、機身放在左半邊，然後在對面放一個跟手機等重的東西（小馬克杯加水就很好用），距離轉軸差不多遠。")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: .infinity, alignment: .leading)

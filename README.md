@@ -246,8 +246,11 @@ particular turntable.
 - Lock the tonearm in its rest; never leave the cartridge hanging over the platter
 - Use the platter's own mat (felt, non-woven or rubber all work; no need to add a record)
   and never press the phone onto the bare platter
-- **Put something the same weight as the phone opposite it** — without it the platter runs
-  about 0.3% slow and the wobble is a third larger
+- **Balance the phone about the spindle.** Easiest is to rest it across a record weight so
+  its centre of mass sits on the axis; otherwise put something of equal weight opposite it.
+  Off-centre, the platter runs about 0.3% slow and the once-per-revolution wobble is a third
+  larger. Measured on this deck, **most of the reported 1×/rev came from the phone, not the
+  turntable** — to find out how much, measure, rotate the phone 180°, and measure again
 - At 78 RPM keep the phone nearer the center: centrifugal force from off-center placement
   is 5.5× what it is at 33
 
