@@ -50,6 +50,7 @@ fun MeasurementScreen(
     onOpenDiagnostics: () -> Unit,
     onOpenCalibration: () -> Unit,
     onOpenHistory: () -> Unit = {},
+    onOpenAbout: () -> Unit = {},
     mode: Mode = Mode.AUTOMATIC,
     onModeChange: (Mode) -> Unit = {},
     modifier: Modifier = Modifier,
@@ -184,6 +185,10 @@ fun MeasurementScreen(
 
         OutlinedButton(onClick = onOpenHistory, modifier = Modifier.fillMaxWidth()) {
             Text("量測歷史")
+        }
+
+        OutlinedButton(onClick = onOpenAbout, modifier = Modifier.fillMaxWidth()) {
+            Text("說明")
         }
 
         OutlinedButton(onClick = onOpenDiagnostics, modifier = Modifier.fillMaxWidth()) {

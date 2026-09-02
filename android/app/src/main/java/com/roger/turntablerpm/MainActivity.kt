@@ -24,7 +24,9 @@ import com.roger.turntablerpm.history.MeasurementRecord
 import com.roger.turntablerpm.sensor.Mode
 import com.roger.turntablerpm.sensor.SensorEngine
 import com.roger.turntablerpm.ui.CalibrationScreen
+import com.roger.turntablerpm.ui.AboutScreen
 import com.roger.turntablerpm.ui.HistoryScreen
+import com.roger.turntablerpm.ui.OnboardingScreen
 import com.roger.turntablerpm.ui.MeasurementScreen
 import com.roger.turntablerpm.ui.SpinningDialScreen
 import com.roger.turntablerpm.ui.SamplingDiagnostics
@@ -44,7 +46,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private enum class Screen { Measure, Diagnostics, Calibration, History }
+private enum class Screen { Measure, Diagnostics, Calibration, History, About }
 
 /**
  * 兩個畫面共用**同一個** SensorEngine —— 兩份引擎會各自註冊監聽器，
@@ -89,6 +91,10 @@ private fun AppRoot(modifier: Modifier = Modifier) {
     var showDial by remember { mutableStateOf(false) }
     var mode by remember { mutableStateOf(Mode.AUTOMATIC) }
 
+    // 首次開啟顯示導覽。看完就記下來，之後可以從說明頁再看一次。
+    val onboarding = remember { context.getSharedPreferences("app", android.content.Context.MODE_PRIVATE) }
+    var showOnboarding by remember { mutableStateOf(!onboarding.getBoolean("seenOnboarding", false)) }
+
     DisposableEffect(Unit) { onDispose { engine.stop() } }
 
     // 量測中不讓螢幕睡著。3 分鐘的量測遠長於預設的螢幕逾時，睡著就等於量測中斷 ——
@@ -97,6 +103,17 @@ private fun AppRoot(modifier: Modifier = Modifier) {
     DisposableEffect(state.running) {
         view.keepScreenOn = state.running
         onDispose { view.keepScreenOn = false }
+    }
+
+    if (showOnboarding) {
+        OnboardingScreen(
+            onFinish = {
+                onboarding.edit().putBoolean("seenOnboarding", true).apply()
+                showOnboarding = false
+            },
+            modifier = modifier,
+        )
+        return
     }
 
     // 量測中（含自動模式的等待）就整片切到反旋轉盤面 —— 手機這時在轉盤上，
@@ -124,6 +141,7 @@ private fun AppRoot(modifier: Modifier = Modifier) {
             onOpenDiagnostics = { screen = Screen.Diagnostics },
             onOpenCalibration = { screen = Screen.Calibration },
             onOpenHistory = { screen = Screen.History },
+            onOpenAbout = { screen = Screen.About },
             mode = mode,
             onModeChange = { mode = it },
             modifier = modifier,
@@ -135,6 +153,10 @@ private fun AppRoot(modifier: Modifier = Modifier) {
             mismatched = mismatched,
             onSave = { store.save(it) },
             onClear = { store.clear() },
+            onBack = { screen = Screen.Measure },
+            modifier = modifier,
+        )
+        Screen.About -> AboutScreen(
             onBack = { screen = Screen.Measure },
             modifier = modifier,
         )
