@@ -1,0 +1,41 @@
+name: Android
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  kotlin:
+    name: Kotlin 測試（JVM）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # AGP 9 需要 JDK 17 以上；專案本身的位元組碼目標仍是 11。
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      # core 是純 Kotlin，app 的單元測試也只用到 java.io ——
+      # 兩邊都不需要模擬器，所以 CI 上跑得動。
+      # 這一步同時是黃金值的守門：核心測試會讀
+      # Packages/TurntableCore/Reference/golden.json，Swift 與 Kotlin 兩個實作
+      # 對同一組黃金值，任一邊漂掉都會在這裡爆掉。
+      - name: 核心與 app 單元測試
+        working-directory: android
+        run: ./gradlew --no-daemon :core:test :app:testDebugUnitTest
+
+      - name: 建出 debug APK
+        working-directory: android
+        run: ./gradlew --no-daemon :app:assembleDebug
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-reports
+          path: |
+            android/core/build/reports/tests/
+            android/app/build/reports/tests/

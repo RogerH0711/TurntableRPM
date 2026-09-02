@@ -62,9 +62,9 @@ reference:
 # 黃金值兩邊都讀 Packages/TurntableCore/Reference/golden.json。
 ANDROID_JAVA_HOME ?= /Applications/Android Studio.app/Contents/jbr/Contents/Home
 
-## Kotlin 核心測試（JVM，不需要手機）
+## Kotlin 測試（JVM，不需要手機）—— 核心加上 app 層裡不依賴 Android 的部分
 android-test:
-	cd android && JAVA_HOME="$(ANDROID_JAVA_HOME)" ./gradlew :core:test
+	cd android && JAVA_HOME="$(ANDROID_JAVA_HOME)" ./gradlew :core:test :app:testDebugUnitTest
 
 ## 建出 debug APK
 android-apk:

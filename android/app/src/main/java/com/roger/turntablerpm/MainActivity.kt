@@ -26,7 +26,10 @@ import com.roger.turntablerpm.sensor.SensorEngine
 import com.roger.turntablerpm.ui.CalibrationScreen
 import com.roger.turntablerpm.ui.AboutScreen
 import com.roger.turntablerpm.ui.HistoryScreen
+import com.roger.turntablerpm.profile.ProfileStore
 import com.roger.turntablerpm.ui.OnboardingScreen
+import com.roger.turntablerpm.ui.LoadTestScreen
+import com.roger.turntablerpm.ui.ProfileScreen
 import com.roger.turntablerpm.ui.MeasurementScreen
 import com.roger.turntablerpm.ui.SpinningDialScreen
 import com.roger.turntablerpm.ui.SamplingDiagnostics
@@ -46,7 +49,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private enum class Screen { Measure, Diagnostics, Calibration, History, About }
+private enum class Screen { Measure, Diagnostics, Calibration, History, About, Profiles, LoadTest }
 
 /**
  * 把匯出的 JSON 交給別的 app（郵件、雲端硬碟、傳訊）。
@@ -80,6 +83,8 @@ private fun AppRoot(modifier: Modifier = Modifier) {
     val engine = remember { SensorEngine(context) }
     val store = remember { CalibrationStore(context) }
     val history = remember { HistoryStore(context) }
+    val profileStore = remember { ProfileStore(context) }
+    val profiles by profileStore.profiles.collectAsStateWithLifecycle()
     val records by history.records.collectAsStateWithLifecycle()
     val state by engine.state.collectAsStateWithLifecycle()
     val calibration by store.calibration.collectAsStateWithLifecycle()
@@ -116,6 +121,8 @@ private fun AppRoot(modifier: Modifier = Modifier) {
     // 首次開啟顯示導覽。看完就記下來，之後可以從說明頁再看一次。
     val onboarding = remember { context.getSharedPreferences("app", android.content.Context.MODE_PRIVATE) }
     var showOnboarding by remember { mutableStateOf(!onboarding.getBoolean("seenOnboarding", false)) }
+    // 手機重量：換手機才會變，不該每次做載重測試都重打一次。
+    var phoneMass by remember { mutableStateOf(onboarding.getFloat("phoneMassGrams", 200f).toDouble()) }
 
     DisposableEffect(Unit) { onDispose { engine.stop() } }
 
@@ -165,6 +172,8 @@ private fun AppRoot(modifier: Modifier = Modifier) {
             onOpenHistory = { screen = Screen.History },
             onOpenAbout = { screen = Screen.About },
             onShareExport = { shareExport(context, it) },
+            onOpenProfiles = { screen = Screen.Profiles },
+            profile = profiles.firstOrNull { it.isActive },
             mode = mode,
             onModeChange = { mode = it },
             modifier = modifier,
@@ -179,6 +188,42 @@ private fun AppRoot(modifier: Modifier = Modifier) {
             onBack = { screen = Screen.Measure },
             modifier = modifier,
         )
+        Screen.Profiles -> ProfileScreen(
+            profiles = profiles,
+            onAdd = { profileStore.add() },
+            onUpdate = { profileStore.update(it) },
+            onDelete = { profileStore.delete(it) },
+            onOpenLoadTest = { screen = Screen.LoadTest },
+            onBack = { screen = Screen.Measure },
+            modifier = modifier,
+        )
+        Screen.LoadTest -> {
+            val active = profiles.firstOrNull { it.isActive }
+            LoadTestScreen(
+                profile = active,
+                records = records,
+                phoneMassGrams = phoneMass,
+                onPhoneMassChange = {
+                    phoneMass = it
+                    onboarding.edit().putFloat("phoneMassGrams", it.toFloat()).apply()
+                },
+                onSave = { r ->
+                    active?.let {
+                        profileStore.update(
+                            it.copy(
+                                loadSlopeRPMPerGram = r.slopeRPMPerGram,
+                                loadPhoneEffectRPM = r.phoneEffectRPM,
+                                loadIsSignificant = r.isSignificant,
+                                loadMeasuredAtMillis = System.currentTimeMillis(),
+                            ),
+                        )
+                    }
+                    screen = Screen.Profiles
+                },
+                onBack = { screen = Screen.Profiles },
+                modifier = modifier,
+            )
+        }
         Screen.About -> AboutScreen(
             onBack = { screen = Screen.Measure },
             modifier = modifier,

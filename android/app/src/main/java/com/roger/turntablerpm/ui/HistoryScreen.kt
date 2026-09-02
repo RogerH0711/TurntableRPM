@@ -70,6 +70,14 @@ fun HistoryScreen(
                     "（那些是比值，陀螺儀的比例因子誤差會抵消）；只有 RPM 需要校準。",
                 style = MaterialTheme.typography.bodySmall,
             )
+            // 趨勢圖放在列表之前：使用者打開歷史是為了看「有沒有變好」，
+            // 那個答案該第一眼就看到，不是往下捲十筆記錄之後才拼出來。
+            Card(Modifier.fillMaxWidth()) {
+                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("趨勢", style = MaterialTheme.typography.titleMedium)
+                    TrendChart(records)
+                }
+            }
             for (r in records) {
                 RecordCard(r, format.format(Date(r.epochMillis))) { onDelete(r.epochMillis) }
             }

@@ -27,11 +27,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.roger.turntablerpm.core.MeasurementAnalysis
 import com.roger.turntablerpm.sensor.EngineState
+import com.roger.turntablerpm.profile.TurntableProfile
 import com.roger.turntablerpm.sensor.Mode
 import kotlin.math.abs
 
 private val Orange = Color(0xFFCC6600)
 private val Green = Color(0xFF2E7D32)
+private val Blue = Color(0xFF1565C0)
 
 /**
  * 量測主畫面。
@@ -51,6 +53,9 @@ fun MeasurementScreen(
     onOpenHistory: () -> Unit = {},
     onOpenAbout: () -> Unit = {},
     onShareExport: (String) -> Unit = {},
+    onOpenProfiles: () -> Unit = {},
+    /** 使用中的唱盤。有規格就拿來比對，有傳動鏈尺寸就用來認出馬達那根峰。 */
+    profile: TurntableProfile? = null,
     mode: Mode = Mode.AUTOMATIC,
     onModeChange: (Mode) -> Unit = {},
     modifier: Modifier = Modifier,
@@ -159,7 +164,7 @@ fun MeasurementScreen(
             }
         }
         state.analysis?.let {
-            AnalysisCard(it)
+            AnalysisCard(it, profile)
             AnalysisCharts(it)
         }
         state.exportPath?.let { ExportCard(it, onShareExport) }
@@ -189,6 +194,10 @@ fun MeasurementScreen(
 
         OutlinedButton(onClick = onOpenHistory, modifier = Modifier.fillMaxWidth()) {
             Text("量測歷史")
+        }
+
+        OutlinedButton(onClick = onOpenProfiles, modifier = Modifier.fillMaxWidth()) {
+            Text(profile?.let { "唱盤：${it.displayName}" } ?: "唱盤設定檔")
         }
 
         OutlinedButton(onClick = onOpenAbout, modifier = Modifier.fillMaxWidth()) {
@@ -294,7 +303,7 @@ private fun RunningCard(state: EngineState) {
 }
 
 @Composable
-private fun AnalysisCard(a: MeasurementAnalysis) {
+private fun AnalysisCard(a: MeasurementAnalysis, profile: TurntableProfile?) {
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text("抖晃率", style = MaterialTheme.typography.titleMedium)
@@ -313,6 +322,20 @@ private fun AnalysisCard(a: MeasurementAnalysis) {
             StatRow("平均轉速（切過）", "%.4f RPM".format(a.meanRPM))
             StatRow("分析時長", "%.1f s".format(a.durationSeconds))
             StatRow("重取樣頻率", "%.2f Hz".format(a.sampleRate))
+
+            // 原廠規格的比對。0.09% 是好是壞，要看手冊寫幾 —— 沒有這個數字，
+            // 抖晃率就只是一個無從判斷的浮點數。
+            profile?.specWowFlutterPercent?.takeIf { it > 0 }?.let { spec ->
+                HorizontalDivider(Modifier.padding(vertical = 4.dp))
+                StatRow("原廠規格（${profile.displayName}）", "%.3f %%".format(spec))
+                val ratio = a.wowFlutter.wrmsPercent / spec
+                Text(
+                    if (ratio <= 1) "在規格內（規格的 %.0f%%）。".format(ratio * 100)
+                    else "超出規格 %.2f 倍。".format(ratio),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (ratio <= 1) Green else Orange,
+                )
+            }
 
             if (a.trimmedStartSeconds > 0.05 || a.trimmedEndSeconds > 0.05) {
                 Text(
@@ -347,6 +370,28 @@ private fun AnalysisCard(a: MeasurementAnalysis) {
                         style = MaterialTheme.typography.bodySmall,
                         color = if (isHarmonic(peak)) Orange else Color.Unspecified,
                     )
+                    // 傳動比的比對**永遠顯示，不做二分判定**。
+                    //
+                    // 皮帶輪很小的時候，有效傳動比對皮帶厚度極度敏感：
+                    // d=8.5 mm 配 t=0.5 mm，光是厚度就讓比值差 5.6%。用「符合／
+                    // 不符合」的門檻會因為使用者量厚度差一點就整個消失，而
+                    // 「預期 33.4×、量到 35.3×」這個資訊本身就有用 —— 它同時可能是
+                    // 「尺寸量錯了」或「這根不是馬達」。
+                    val ratio = profile?.expectedDriveRatio
+                    if (ratio != null && !isHarmonic(peak) && peak.orderOfRotation > 3) {
+                        val diff = (peak.orderOfRotation / ratio - 1) * 100
+                        Text(
+                            if (abs(diff) < 8) {
+                                "符合這台盤的傳動比（%.1f×）—— 這是馬達。".format(ratio)
+                            } else {
+                                ("這台盤的傳動比是 %.1f×，量到 %.1f×（差 %+.0f%%）—— " +
+                                    "可能是傳動鏈尺寸填得不夠準，也可能這根不是馬達。")
+                                    .format(ratio, peak.orderOfRotation, diff)
+                            },
+                            style = MaterialTheme.typography.bodySmall,
+                            color = if (abs(diff) < 8) Blue else Color.Unspecified,
+                        )
+                    }
                 }
                 Row(Modifier.height(6.dp)) {}
                 Text(
