@@ -367,6 +367,7 @@
       }
     },
     "**對面放一個跟手機等重的東西**配平，距離轉軸差不多遠": {
+      "extractionState": "stale",
       "localizations": {
         "de": {
           "stringUnit": {
@@ -3335,6 +3336,7 @@
       }
     },
     "手機**右側長邊的中點**貼著轉軸，機身放在左半邊": {
+      "extractionState": "stale",
       "localizations": {
         "de": {
           "stringUnit": {
@@ -3946,6 +3948,34 @@
           "stringUnit": {
             "state": "translated",
             "value": "拿掉磁吸配件與含磁鐵的手機殼、鎖好唱臂、墊一張唱片再放手機。"
+          }
+        }
+      }
+    },
+    "拿掉磁吸配件與含磁鐵的手機殼、鎖好唱臂，手機放在轉盤原本的墊子上（或唱片鎮上）。": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Magnetisches Zubehör und Hüllen mit Magneten abnehmen, den Tonarm arretieren und das Telefon auf die originale Tellermatte legen (oder auf ein Plattengewicht)."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove magnetic accessories and cases with magnets, lock the tonearm, and rest the phone on the platter’s own mat (or on a record weight)."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "マグネット製品と磁石入りケースを外し、トーンアームを固定して、iPhone はターンテーブル純正のマットの上（またはレコードウェイトの上）に置いてください。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拿掉磁吸配件與含磁鐵的手機殼、鎖好唱臂，手機放在轉盤原本的墊子上（或唱片鎮上）。"
           }
         }
       }
@@ -5183,6 +5213,7 @@
       }
     },
     "每圈兩次 —— 盤面橢圓或主軸兩點磨損": {
+      "extractionState": "stale",
       "localizations": {
         "de": {
           "stringUnit": {
@@ -6499,6 +6530,7 @@
       }
     },
     "螢幕朝上，放在轉盤原本的**絨布墊**上": {
+      "extractionState": "stale",
       "localizations": {
         "de": {
           "stringUnit": {
@@ -7731,6 +7763,7 @@
       }
     },
     "配平很重要：手機偏在一邊會在軸承產生側向負載，實測會讓轉速慢 0.3%、每圈一次的抖動大三成。小馬克杯加水到跟手機等重就很好用。": {
+      "extractionState": "stale",
       "localizations": {
         "de": {
           "stringUnit": {

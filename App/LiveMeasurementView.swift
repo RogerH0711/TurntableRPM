@@ -265,7 +265,9 @@ struct LiveMeasurementView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text("放上唱盤之前")
                         .font(.body.weight(.medium))
-                    Text("拿掉磁吸配件與含磁鐵的手機殼、鎖好唱臂、墊一張唱片再放手機。")
+                    // 不要說「墊一張唱片」—— 說明頁早就寫著不需要，兩邊自相矛盾。
+                    // 轉盤原本的墊子就夠了，而且置中擺法是手機放在唱片鎮上，根本碰不到盤面。
+                    Text("拿掉磁吸配件與含磁鐵的手機殼、鎖好唱臂，手機放在轉盤原本的墊子上（或唱片鎮上）。")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.leading)
