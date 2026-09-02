@@ -13,9 +13,12 @@ import com.roger.turntablerpm.core.MeasurementAnalysis
 import com.roger.turntablerpm.core.SamplingStats
 import com.roger.turntablerpm.core.SpinProjector
 import com.roger.turntablerpm.core.SpinSample
+import com.roger.turntablerpm.export.MeasurementExport
+import com.roger.turntablerpm.export.RawFrame
 import com.roger.turntablerpm.core.SpeedStatistics
 import com.roger.turntablerpm.core.TurntableSpeed
 import com.roger.turntablerpm.core.Vector3
+import java.io.File
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -67,6 +70,8 @@ data class EngineState(
     /** 分析失敗的原因。「載入中」是最容易變成死路的狀態，每條失敗路徑都要有畫面。 */
     val analysisFailureReason: String? = null,
     val analyzing: Boolean = false,
+    /** 這次量測的原始資料 JSON 檔路徑。分析失敗時也會有 —— 那時最需要它。 */
+    val exportPath: String? = null,
 )
 
 /**
@@ -89,6 +94,13 @@ class SensorEngine(context: Context) : SensorEventListener {
     private val gravity: Sensor? = manager.getDefaultSensor(Sensor.TYPE_GRAVITY)
         ?: manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
     private val gravityIsFused = manager.getDefaultSensor(Sensor.TYPE_GRAVITY) != null
+
+    /**
+     * 匯出目錄。用 app 專屬的外部空間而不是 filesDir：不需要任何權限，
+     * 而且接上電腦 `adb pull` 就拿得到 —— 診斷時常常要整包搬到 Mac 上跑分析腳本。
+     */
+    private val exportDir: File =
+        File(context.getExternalFilesDir(null) ?: context.filesDir, "exports")
 
     /**
      * **狀態守衛不能用發布給 UI 的 `running`。** 那個欄位會被感測器執行緒的 publish() 覆寫，
@@ -124,6 +136,9 @@ class SensorEngine(context: Context) : SensorEventListener {
 
     private val lock = Any()
     private val samples = ArrayList<SpinSample>()
+    // 匯出要逐筆的重力向量：離線工具靠它把感測器座標系的東西投影到水平面。
+    // 只留一個 latestGravity 不夠 —— 盤面章動時每一筆的重力方向都不一樣（坑 14）。
+    private val gravities = ArrayList<Vector3>()
     private val rawTimestamps = ArrayList<Double>()
     private var latestGravity: Vector3? = null
     private var baseNanos: Long = 0
@@ -254,11 +269,15 @@ class SensorEngine(context: Context) : SensorEventListener {
         val rate = _state.value.stats?.effectiveRateHz
         if (snapshot.size <= 64 || rate == null || rate <= 0) {
             // 失敗時也要把上一次的分析清掉，否則畫面會留著舊結果 —— 那比沒有結果更糟。
+            // 樣本太少分析不了，但**匯出還是要做** —— 短量測的原始資料一樣有診斷價值，
+            // 而且「分析失敗」本身就是最需要拿原始資料出來看的時候。
+            val path = writeExport(null)
             _state.update {
                 it.copy(
                     analysis = null,
                     analysisFailureReason = "量測時間太短，只錄到 ${snapshot.size} 筆資料。",
                     analyzing = false,
+                    exportPath = path,
                 )
             }
             return
@@ -285,11 +304,13 @@ class SensorEngine(context: Context) : SensorEventListener {
             // 兩個數字不一致本來就會讓人困惑，但真正危險的是**校準拿到污染的值** ——
             // 那個 k 會被永久寫進 SharedPreferences，之後每一次讀數都錯。
             // 實測：整段平均 31.546 RPM，切掉 1.4 秒加速後是 32.15，差 1.9%。
+            val path = writeExport(result)
             _state.update { previous ->
                 previous.copy(
                     analysis = result,
                     analysisFailureReason = reason,
                     analyzing = false,
+                    exportPath = path,
                     meanRPM = result?.meanRPM ?: previous.meanRPM,
                     rawMeanRPM = result?.let { it.meanRPM / factor } ?: previous.rawMeanRPM,
                     nominal = result?.let { SpeedStatistics.classify(it.meanRPM) } ?: previous.nominal,
@@ -306,8 +327,81 @@ class SensorEngine(context: Context) : SensorEventListener {
         }.start()
     }
 
+    /**
+     * 把整包原始資料寫成 JSON。已經在分析執行緒上，不會擋畫面 ——
+     * 3 分鐘的量測是兩萬筆樣本，編碼在主執行緒會頓一下。
+     */
+    private fun writeExport(analysis: MeasurementAnalysis?): String? = try {
+        exportDir.mkdirs()
+        MeasurementExport.write(snapshotFrames(), summaryMap(analysis), exportDir)?.absolutePath
+    } catch (e: Exception) {
+        // 匯出失敗不該讓量測結果跟著消失。
+        null
+    }
+
+    /**
+     * 摘要。鍵名跟 iOS 對齊，`tools/analyze_export.py` 才不用分兩套讀。
+     * iOS 有而 Android 沒有的（磁力計那一組）就不寫，不要填 0 —— 0 會被讀成量到 0。
+     */
+    private fun summaryMap(analysis: MeasurementAnalysis?): Map<String, Any?> {
+        val s = _state.value
+        val d = LinkedHashMap<String, Any?>()
+        d["meanRPM"] = s.meanRPM ?: 0.0
+        d["rawMeanRPM"] = s.rawMeanRPM ?: 0.0
+        d["appliedFactor"] = s.appliedFactor ?: 0.0
+        d["instantRPM"] = s.instantRPM
+        d["sampleCount"] = s.sampleCount
+        d["elapsedSeconds"] = s.elapsedSeconds
+        d["effectiveSampleRate"] = s.stats?.effectiveRateHz ?: 0.0
+        d["revolutions"] = s.revolutions
+        // 整圈數乘 360 會丟掉不足一圈的餘數，而校準比對要的正是總轉角本身。
+        d["gyroTotalDegrees"] = synchronized(lock) { totalDegrees }
+        // 標稱辨識失敗時不要寫 0 —— 那會被讀成「偏差正好是 0%」。
+        s.errorPercent?.let { d["errorPercent"] = it }
+        s.nominal?.let { d["nominalRPM"] = it.rpm }
+        // Android 特有：時間戳誠不誠實、實際拿到多少取樣率，是這個平台的主要疑點。
+        d["platformModel"] = "${android.os.Build.MANUFACTURER} ${android.os.Build.MODEL}"
+        d["androidSdk"] = android.os.Build.VERSION.SDK_INT
+        d["timestampBase"] = s.timestampBase
+        d["clockRatio"] = s.clockRatio
+        d["wallElapsedSeconds"] = s.wallElapsedSeconds
+        d["gyroName"] = s.gyroName
+        d["gravityName"] = s.gravityName
+        d["gravityIsFused"] = s.gravityIsFused
+        s.stats?.let {
+            d["jitterRatio"] = it.jitterRatio
+            d["longGaps"] = it.longGaps
+        }
+        analysis?.let { a ->
+            d["analysisWrmsPercent"] = a.wowFlutter.wrmsPercent
+            d["analysisPeak2SigmaPercent"] = a.wowFlutter.peak2SigmaPercent
+            d["analysisPeakToRMSRatio"] = a.wowFlutter.peakToRMSRatio
+            d["analysisOnePerRevPercent"] = a.onePerRevolutionPercent
+            d["analysisRotationHz"] = a.rotationHz
+            d["analysisDurationSeconds"] = a.durationSeconds
+            d["analysisTrimmedStartSeconds"] = a.trimmedStartSeconds
+            d["analysisTrimmedEndSeconds"] = a.trimmedEndSeconds
+            a.peakAngleDegrees?.let { p -> d["analysisPeakAngleDegrees"] = p }
+            d["analysisPeaks"] = a.peaks.take(8).map {
+                linkedMapOf<String, Any?>(
+                    "hz" to it.frequencyHz,
+                    "percent" to it.amplitudePercent,
+                    "order" to it.orderOfRotation,
+                    "harmonic" to it.isRotationHarmonic,
+                )
+            }
+        }
+        return d
+    }
+
     /** 交出目前累積的樣本，供離線分析。 */
     fun snapshotSamples(): List<SpinSample> = synchronized(lock) { ArrayList(samples) }
+
+    /** 匯出用的逐樣本快照。長度一定對得起來 —— 兩個 list 在同一個鎖裡一起 append。 */
+    fun snapshotFrames(): List<RawFrame> = synchronized(lock) {
+        val n = minOf(samples.size, gravities.size)
+        (0 until n).map { RawFrame(samples[it].t, samples[it].omega, gravities[it]) }
+    }
 
     /**
      * 反旋轉盤面要顯示的角度，度。
@@ -341,7 +435,7 @@ class SensorEngine(context: Context) : SensorEventListener {
                 if (now - stableSinceMs >= AUTO_STABLE_MS) {
                     // 丟掉等待期間的資料，從乾淨的狀態開始記錄。
                     synchronized(lock) {
-                        samples.clear(); rawTimestamps.clear()
+                        samples.clear(); gravities.clear(); rawTimestamps.clear()
                         totalDegrees = 0.0; lastSampleTime = null; lastOmega = 0.0
                         baseNanos = 0; baseWallNanos = 0; latestWallNanos = 0
                     }
@@ -402,6 +496,7 @@ class SensorEngine(context: Context) : SensorEventListener {
                     lastSampleTime = t
                     lastOmega = omega
                     samples += SpinSample(t = t, omega = omega)
+                    gravities += g
                     rawTimestamps += t
                     latestWallNanos = wall
                 }

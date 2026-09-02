@@ -49,6 +49,28 @@ class MainActivity : ComponentActivity() {
 private enum class Screen { Measure, Diagnostics, Calibration, History, About }
 
 /**
+ * 把匯出的 JSON 交給別的 app（郵件、雲端硬碟、傳訊）。
+ *
+ * **一定要走 FileProvider。** Android 7 之後把 `file://` 的 URI 傳出 app 會直接
+ * 丟 FileUriExposedException；`content://` 加上 FLAG_GRANT_READ_URI_PERMISSION
+ * 才是合法的路徑，而且權限只給這一次、只給這一個檔案。
+ */
+private fun shareExport(context: android.content.Context, path: String) {
+    val file = java.io.File(path)
+    if (!file.exists()) return
+    val uri = androidx.core.content.FileProvider.getUriForFile(
+        context, "${context.packageName}.fileprovider", file,
+    )
+    val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+        type = "application/json"
+        putExtra(android.content.Intent.EXTRA_STREAM, uri)
+        putExtra(android.content.Intent.EXTRA_SUBJECT, file.name)
+        addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    }
+    context.startActivity(android.content.Intent.createChooser(intent, "分享原始資料"))
+}
+
+/**
  * 兩個畫面共用**同一個** SensorEngine —— 兩份引擎會各自註冊監聽器，
  * 事件流互相干擾，取樣統計就沒有意義了。
  */
@@ -142,6 +164,7 @@ private fun AppRoot(modifier: Modifier = Modifier) {
             onOpenCalibration = { screen = Screen.Calibration },
             onOpenHistory = { screen = Screen.History },
             onOpenAbout = { screen = Screen.About },
+            onShareExport = { shareExport(context, it) },
             mode = mode,
             onModeChange = { mode = it },
             modifier = modifier,

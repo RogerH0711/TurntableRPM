@@ -179,8 +179,15 @@ def main():
           f"    陀螺儀總轉角 {gyro_total:.0f}°"
           f"    磁北總轉角 {summary.get('magneticTotalDegrees', 0):.0f}°")
     print(f"磁力計校準 {summary.get('fieldAccuracy', '—')}")
-    print(f"\n改套碼錶 k={stopwatch_k} → {raw_rpm * stopwatch_k:.4f} RPM"
-          f"   偏差 {(raw_rpm * stopwatch_k / summary.get('nominalRPM', 1) - 1) * 100:+.3f}%")
+    # 標稱轉速辨識失敗時不要拿 1 當分母 —— 那會印出一個 −98% 的假偏差。
+    nominal = summary.get("nominalRPM")
+    corrected = raw_rpm * stopwatch_k
+    line = f"\n改套碼錶 k={stopwatch_k} → {corrected:.4f} RPM"
+    if nominal:
+        line += f"   偏差 {(corrected / nominal - 1) * 100:+.3f}%"
+    else:
+        line += "   （標稱轉速辨識失敗，算不出偏差）"
+    print(line)
 
     analyse("CoreMotion 已校準磁場（CMDeviceMotion.magneticField）",
             project(samples, cols, "b"), gyro_total, stopwatch_k)

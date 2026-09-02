@@ -50,6 +50,7 @@ fun MeasurementScreen(
     onOpenCalibration: () -> Unit,
     onOpenHistory: () -> Unit = {},
     onOpenAbout: () -> Unit = {},
+    onShareExport: (String) -> Unit = {},
     mode: Mode = Mode.AUTOMATIC,
     onModeChange: (Mode) -> Unit = {},
     modifier: Modifier = Modifier,
@@ -161,6 +162,7 @@ fun MeasurementScreen(
             AnalysisCard(it)
             AnalysisCharts(it)
         }
+        state.exportPath?.let { ExportCard(it, onShareExport) }
 
         Card(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -195,6 +197,38 @@ fun MeasurementScreen(
 
         OutlinedButton(onClick = onOpenDiagnostics, modifier = Modifier.fillMaxWidth()) {
             Text("取樣特性診斷")
+        }
+    }
+}
+
+/**
+ * 原始資料匯出。
+ *
+ * **摘要數字診斷不出問題。** 這個 app 每一次真正查出原因的經驗都是靠逐樣本資料：
+ * 取樣率為什麼是 107.9 而不是要求的 100、時間戳誠不誠實、譜峰是不是分析參數造成的。
+ * 畫面上的數字看不出這些。
+ *
+ * 分析失敗時也會有檔案 —— 那正是最需要它的時候。
+ */
+@Composable
+private fun ExportCard(path: String, onShare: (String) -> Unit) {
+    Card(Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Text("原始資料", style = MaterialTheme.typography.titleSmall)
+            Text(
+                "這次量測的逐樣本資料已經存成 JSON（時間戳、角速度、重力向量）。" +
+                    "傳到電腦上可以用 tools/analyze_export.py 重新分析，" +
+                    "或是拿去跟別的量測工具對照。",
+                style = MaterialTheme.typography.bodySmall,
+            )
+            Text(
+                path.substringAfterLast('/'),
+                style = MaterialTheme.typography.bodySmall,
+                fontFamily = FontFamily.Monospace,
+            )
+            OutlinedButton(onClick = { onShare(path) }, modifier = Modifier.fillMaxWidth()) {
+                Text("分享原始資料")
+            }
         }
     }
 }

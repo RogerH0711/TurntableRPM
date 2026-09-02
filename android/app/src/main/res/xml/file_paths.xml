@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 只開放匯出目錄。分享用的 content:// URI 能碰到的範圍要盡量小。 -->
+<paths>
+    <external-files-path name="exports" path="exports/" />
+    <files-path name="internal-exports" path="exports/" />
+</paths>
