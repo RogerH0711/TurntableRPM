@@ -21,10 +21,12 @@ import com.roger.turntablerpm.calibration.CalibrationStore
 import com.roger.turntablerpm.core.SpeedStatistics
 import com.roger.turntablerpm.history.HistoryStore
 import com.roger.turntablerpm.history.MeasurementRecord
+import com.roger.turntablerpm.sensor.Mode
 import com.roger.turntablerpm.sensor.SensorEngine
 import com.roger.turntablerpm.ui.CalibrationScreen
 import com.roger.turntablerpm.ui.HistoryScreen
 import com.roger.turntablerpm.ui.MeasurementScreen
+import com.roger.turntablerpm.ui.SpinningDialScreen
 import com.roger.turntablerpm.ui.SamplingDiagnostics
 import com.roger.turntablerpm.ui.theme.TurntableRPMTheme
 
@@ -83,6 +85,9 @@ private fun AppRoot(modifier: Modifier = Modifier) {
         onDispose { engine.onAnalysisComplete = null }
     }
     var screen by remember { mutableStateOf(Screen.Measure) }
+    var rotationOffset by remember { mutableStateOf(0.0) }
+    var showDial by remember { mutableStateOf(false) }
+    var mode by remember { mutableStateOf(Mode.AUTOMATIC) }
 
     DisposableEffect(Unit) { onDispose { engine.stop() } }
 
@@ -94,16 +99,33 @@ private fun AppRoot(modifier: Modifier = Modifier) {
         onDispose { view.keepScreenOn = false }
     }
 
+    // 量測中（含自動模式的等待）就整片切到反旋轉盤面 —— 手機這時在轉盤上，
+    // 一般版面的文字是歪的、按鈕也按不到。
+    if (showDial) {
+        SpinningDialScreen(
+            state = state,
+            angleProvider = { engine.displayAngleDegrees() },
+            rotationOffset = rotationOffset,
+            onRotate = { rotationOffset += it },
+            onStop = { engine.stop() },
+            onDismiss = { showDial = false },
+            modifier = modifier,
+        )
+        return
+    }
+
     when (screen) {
         Screen.Measure -> MeasurementScreen(
             state = state,
             available = engine.isAvailable,
             unavailableReason = engine.unavailableReason,
-            onStart = { engine.start() },
+            onStart = { rotationOffset = 0.0; showDial = true; engine.start(mode = it) },
             onStop = { engine.stop() },
             onOpenDiagnostics = { screen = Screen.Diagnostics },
             onOpenCalibration = { screen = Screen.Calibration },
             onOpenHistory = { screen = Screen.History },
+            mode = mode,
+            onModeChange = { mode = it },
             modifier = modifier,
         )
         Screen.Calibration -> CalibrationScreen(

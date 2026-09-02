@@ -12,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.roger.turntablerpm.core.MeasurementAnalysis
 import com.roger.turntablerpm.sensor.EngineState
+import com.roger.turntablerpm.sensor.Mode
 import kotlin.math.abs
 
 private val Orange = Color(0xFFCC6600)
@@ -43,11 +45,13 @@ fun MeasurementScreen(
     state: EngineState,
     available: Boolean,
     unavailableReason: String? = null,
-    onStart: () -> Unit,
+    onStart: (Mode) -> Unit,
     onStop: () -> Unit,
     onOpenDiagnostics: () -> Unit,
     onOpenCalibration: () -> Unit,
     onOpenHistory: () -> Unit = {},
+    mode: Mode = Mode.AUTOMATIC,
+    onModeChange: (Mode) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -72,11 +76,42 @@ fun MeasurementScreen(
 
         SpeedReadout(state)
 
+        // **自動是預設。** 手動模式要在盤面轉動時去點按鈕，那很難按。
+        Text("模式", style = MaterialTheme.typography.titleSmall)
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FilterChip(
+                selected = mode == Mode.AUTOMATIC,
+                onClick = { if (!state.running) onModeChange(Mode.AUTOMATIC) },
+                label = { Text("自動") },
+                enabled = !state.running,
+            )
+            FilterChip(
+                selected = mode == Mode.MANUAL,
+                onClick = { if (!state.running) onModeChange(Mode.MANUAL) },
+                label = { Text("手動") },
+                enabled = !state.running,
+            )
+        }
+        Text(
+            if (mode == Mode.AUTOMATIC) {
+                "按下按鈕後把手機放上轉盤，程式會等轉速穩定才開始記錄，盤面停下時自動結束。"
+            } else {
+                "自己按開始與停止。記得先讓轉盤轉起來、手機放好，再按開始。"
+            },
+            style = MaterialTheme.typography.bodySmall,
+        )
+
         Button(
-            onClick = { if (state.running) onStop() else onStart() },
+            onClick = { if (state.running) onStop() else onStart(mode) },
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text(if (state.running) "停止" else "開始量測")
+            Text(
+                when {
+                    state.running -> "停止"
+                    mode == Mode.AUTOMATIC -> "準備好，開始偵測"
+                    else -> "開始量測"
+                },
+            )
         }
 
         Card(Modifier.fillMaxWidth()) {

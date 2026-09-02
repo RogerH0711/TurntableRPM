@@ -21,9 +21,22 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
+/**
+ * 量測模式。
+ *
+ * **自動是預設。** 手動模式要在盤面轉動時去點畫面上的按鈕，那很難按；
+ * 自動模式等轉速穩定才真正開始記錄、盤面停下時自己結束，使用者只要放好手機。
+ */
+enum class Mode { MANUAL, AUTOMATIC }
+
+/** 量測的階段。自動模式會多一個「等待轉速穩定」。 */
+enum class Phase { IDLE, WAITING_FOR_STABILITY, MEASURING, STOPPED }
+
 /** 一次量測的即時狀態。 */
 data class EngineState(
     val running: Boolean = false,
+    val mode: Mode = Mode.AUTOMATIC,
+    val phase: Phase = Phase.IDLE,
     val sampleCount: Int = 0,
     val elapsedSeconds: Double = 0.0,
     val instantRPM: Double = 0.0,
@@ -117,6 +130,19 @@ class SensorEngine(context: Context) : SensorEventListener {
     private var baseWallNanos: Long = 0
     private var latestWallNanos: Long = 0
     private var totalDegrees: Double = 0.0
+
+    /**
+     * 反旋轉盤面用的顯示角度。
+     *
+     * **它的零點必須是「使用者按下開始的那一刻」**，而不是自動模式決定開始記錄的
+     * 那一刻 —— 後者是程式挑的隨機時刻。零點決定畫面上的文字朝哪個方向，
+     * 只有在使用者還照著指示擺手機的時候歸零，文字才會正對著他（iOS 坑 21）。
+     * 所以它跟 totalDegrees 分開，不隨自動模式的 reset 歸零。
+     */
+    @Volatile private var displayDegrees: Double = 0.0
+    @Volatile private var lastDisplayTime: Double = 0.0
+    @Volatile private var lastDisplayOmega: Double = 0.0
+    private var stableSinceMs: Long = 0
     private var lastSampleTime: Double? = null
     private var lastOmega: Double = 0.0
     private var timestampBase: String? = null
@@ -156,7 +182,7 @@ class SensorEngine(context: Context) : SensorEventListener {
      *   注意 Android 12 起超過 200 Hz 需要 HIGH_SAMPLING_RATE_SENSORS 權限 ——
      *   這個 app 不需要那麼快（50 Hz 以上只佔加權能量 0.72%），刻意不宣告。
      */
-    fun start(samplingPeriodUs: Int = 10_000) {
+    fun start(samplingPeriodUs: Int = 10_000, mode: Mode = Mode.AUTOMATIC) {
         if (active) return
         val gyro = gyroscope
         val grav = gravity
@@ -184,8 +210,14 @@ class SensorEngine(context: Context) : SensorEventListener {
         active = true
         manager.registerListener(this, grav, samplingPeriodUs, handler)
         manager.registerListener(this, gyro, samplingPeriodUs, handler)
+        displayDegrees = 0.0          // **只有這裡歸零** —— 手機此刻還照著指示擺著
+        lastDisplayTime = 0.0
+        lastDisplayOmega = 0.0
+        stableSinceMs = 0
         _state.value = EngineState(
             running = true,
+            mode = mode,
+            phase = if (mode == Mode.AUTOMATIC) Phase.WAITING_FOR_STABILITY else Phase.MEASURING,
             gyroName = "${gyro.name} / ${gyro.vendor}",
             gravityName = "${grav.name} / ${grav.vendor}",
             gravityIsFused = gravityIsFused,
@@ -199,6 +231,7 @@ class SensorEngine(context: Context) : SensorEventListener {
         thread?.quitSafely()
         thread = null
         handler = null
+        _state.update { it.copy(phase = Phase.STOPPED) }
         publish(running = false)
         runAnalysis()
     }
@@ -276,6 +309,53 @@ class SensorEngine(context: Context) : SensorEventListener {
     /** 交出目前累積的樣本，供離線分析。 */
     fun snapshotSamples(): List<SpinSample> = synchronized(lock) { ArrayList(samples) }
 
+    /**
+     * 反旋轉盤面要顯示的角度，度。
+     *
+     * 用最後一筆的時間戳往前外推 —— 感測器是 100 Hz、畫面是 60/120 Hz，
+     * 直接讀累積值會讓畫面一頓一頓的。
+     */
+    fun displayAngleDegrees(): Double {
+        val base = displayDegrees
+        val last = lastDisplayTime
+        val wallBase = baseWallNanos
+        if (last <= 0.0 || wallBase <= 0L) return base
+        // 感測器時間戳與 elapsedRealtime 同一個時基（實測比值 0.99995），可以直接外推。
+        val now = (SystemClock.elapsedRealtimeNanos() - wallBase) / 1e9
+        val ahead = (now - last).coerceIn(0.0, 0.05)   // 最多補 50 ms，掉幀時不要暴衝
+        return base + ahead * lastDisplayOmega
+    }
+
+    /**
+     * 自動模式的階段推進。**不歸零顯示角度** —— 它的零點必須留在使用者按下開始的那一刻，
+     * 否則反旋轉的文字方向會變成程式挑的隨機時刻決定（iOS 坑 21）。
+     */
+    private fun advanceAutoPhase(recentRPM: Double?) {
+        if (_state.value.mode != Mode.AUTOMATIC) return
+        val now = SystemClock.uptimeMillis()
+        when (_state.value.phase) {
+            Phase.WAITING_FOR_STABILITY -> {
+                val stable = recentRPM != null && SpeedStatistics.classify(recentRPM) != null
+                if (!stable) { stableSinceMs = 0; return }
+                if (stableSinceMs == 0L) { stableSinceMs = now; return }
+                if (now - stableSinceMs >= AUTO_STABLE_MS) {
+                    // 丟掉等待期間的資料，從乾淨的狀態開始記錄。
+                    synchronized(lock) {
+                        samples.clear(); rawTimestamps.clear()
+                        totalDegrees = 0.0; lastSampleTime = null; lastOmega = 0.0
+                        baseNanos = 0; baseWallNanos = 0; latestWallNanos = 0
+                    }
+                    _state.update { it.copy(phase = Phase.MEASURING) }
+                }
+            }
+            Phase.MEASURING -> {
+                // 盤面停下就自動結束。門檻取最慢標稱轉速（16⅔）的一半。
+                if (recentRPM != null && recentRPM < STOP_RPM) stop()
+            }
+            else -> Unit
+        }
+    }
+
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
 
     override fun onSensorChanged(event: SensorEvent) {
@@ -316,6 +396,9 @@ class SensorEngine(context: Context) : SensorEventListener {
                     lastSampleTime?.let { previous ->
                         totalDegrees += (t - previous) * (omega + lastOmega) / 2.0
                     }
+                    displayDegrees += (t - (lastSampleTime ?: t)) * (omega + lastOmega) / 2.0
+                    lastDisplayTime = t
+                    lastDisplayOmega = omega
                     lastSampleTime = t
                     lastOmega = omega
                     samples += SpinSample(t = t, omega = omega)
@@ -361,6 +444,11 @@ class SensorEngine(context: Context) : SensorEventListener {
         val snapshot = snap.samples
         val times = snap.times
         val base = snap.base
+        // 最近約 2 秒的平均，用來判斷「轉穩了沒」與「停了沒」。
+        // 用累積平均不行 —— 那個量的是整段，反應太慢。
+        val recent = snapshot.takeLast(200).let {
+            if (it.size >= 20) SpeedStatistics.meanRPM(it) else null
+        }
         val raw = SpeedStatistics.meanRPM(snapshot)
         val factor = calibrationFactor
         val mean = if (raw != null && factor != null) raw * factor else raw
@@ -387,5 +475,14 @@ class SensorEngine(context: Context) : SensorEventListener {
                 } else null,
             )
         }
+        if (running) advanceAutoPhase(recent)
+    }
+
+    private companion object {
+        /** 連續穩定這麼久才真正開始記錄。 */
+        const val AUTO_STABLE_MS = 3_000L
+
+        /** 低於這個轉速視為盤面停下。16⅔ 的一半。 */
+        const val STOP_RPM = 8.0
     }
 }
