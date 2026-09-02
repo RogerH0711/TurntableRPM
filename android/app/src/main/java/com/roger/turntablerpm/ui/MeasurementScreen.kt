@@ -36,9 +36,8 @@ private val Green = Color(0xFF2E7D32)
 /**
  * 量測主畫面。
  *
- * iOS 版在量測中會把整個畫面**反向旋轉**，讓內容在轉動中看起來靜止 ——
- * 那需要處理內接圓約束與文字方向（規格 §6.2）。Android 版還沒做，
- * 目前的作法是量完拿起手機再看。
+ * 量測一開始就切到 SpinningDialScreen（反向旋轉的盤面），所以這一頁在量測中
+ * 其實看不到 —— 它是「開始之前」與「分析之後」的畫面。
  */
 @Composable
 fun MeasurementScreen(
@@ -158,7 +157,10 @@ fun MeasurementScreen(
                 }
             }
         }
-        state.analysis?.let { AnalysisCard(it) }
+        state.analysis?.let {
+            AnalysisCard(it)
+            AnalysisCharts(it)
+        }
 
         Card(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
