@@ -50,6 +50,17 @@ android {
                 storePassword = signingValue("storePassword", "TURNTABLE_KEYSTORE_PASSWORD")
                 keyAlias = signingValue("keyAlias", "TURNTABLE_KEYSTORE_ALIAS")
                 keyPassword = signingValue("keyPassword", "TURNTABLE_KEYSTORE_ALIAS_PASSWORD")
+
+                // **v3 是金鑰外洩時的唯一退路。** 它讓已安裝的 app 認得「舊金鑰
+                // 授權過新金鑰」，可以換一把繼續發布更新；只有 v2 的話，
+                // 金鑰一旦外洩就只能換套件名稱重來。
+                //
+                // 實測產出的是 **v3-only**（兩個都設 true，但 apksigner 回報
+                // v2:false / v3:true）。minSdk 28 = Android 9，而 v3 正是從
+                // Android 9 開始支援 —— 裝得起這個 app 的裝置全部認得 v3，
+                // 所以覆蓋是完整的。v1（JAR 簽章）是給 Android 6 以下用的，不需要。
+                enableV2Signing = true
+                enableV3Signing = true
             }
         }
     }
