@@ -25,6 +25,9 @@ androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "u
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+# 圖示：主畫面的導覽列靠它做視覺分層（對應 iOS 的 SF Symbols）。
+# 用 core 而不是 extended —— extended 有幾千個圖示，會讓 APK 大一個量級。
+androidx-compose-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core" }
 # core 模組「只有測試」用得到 —— 正式程式碼保持零依賴
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 

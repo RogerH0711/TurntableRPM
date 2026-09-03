@@ -26,6 +26,7 @@ import com.roger.turntablerpm.history.MeasurementRecord
 import com.roger.turntablerpm.sensor.Mode
 import com.roger.turntablerpm.sensor.SensorEngine
 import com.roger.turntablerpm.ui.AdvancedDiagnosticsScreen
+import com.roger.turntablerpm.ui.AnalysisScreen
 import com.roger.turntablerpm.ui.CalibrationScreen
 import com.roger.turntablerpm.ui.AboutScreen
 import com.roger.turntablerpm.ui.HistoryDetailScreen
@@ -54,7 +55,7 @@ class MainActivity : ComponentActivity() {
 }
 
 private enum class Screen {
-    Measure, Diagnostics, Advanced, Calibration, History, HistoryDetail,
+    Measure, Analysis, Diagnostics, Advanced, Calibration, History, HistoryDetail,
     About, Profiles, LoadTest,
 }
 
@@ -211,6 +212,7 @@ private fun AppRoot(modifier: Modifier = Modifier) {
             onOpenHistory = { screen = Screen.History },
             onOpenAbout = { screen = Screen.About },
             onOpenAdvanced = { screen = Screen.Advanced },
+            onOpenAnalysis = { screen = Screen.Analysis },
             onReplayOnboarding = { showOnboarding = true },
             onShareExport = { shareExport(context, it) },
             onOpenProfiles = { screen = Screen.Profiles },
@@ -287,6 +289,20 @@ private fun AppRoot(modifier: Modifier = Modifier) {
                     record = record,
                     onNoteChange = { history.setNote(record.epochMillis, it) },
                     onBack = { screen = Screen.History },
+                    modifier = modifier,
+                )
+            }
+        }
+        Screen.Analysis -> {
+            val analysis = state.analysis
+            // 記錄被清掉時退回主畫面，不要停在空白頁。
+            if (analysis == null) {
+                screen = Screen.Measure
+            } else {
+                AnalysisScreen(
+                    analysis = analysis,
+                    profile = profiles.firstOrNull { it.isActive },
+                    onBack = { screen = Screen.Measure },
                     modifier = modifier,
                 )
             }

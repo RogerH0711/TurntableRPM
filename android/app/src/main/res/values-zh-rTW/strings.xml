@@ -353,4 +353,17 @@
     <string name="adv_sec_raw_mag">未校準磁力計（獨立於系統的偏置估計）</string>
     <string name="adv_refined_total">扣圓心後總轉角</string>
     <string name="adv_raw_mag_note">系統的偏置估計器會在量測過程中持續改動已校準磁場的讀數。把未校準的原始讀數並排放在這裡，兩條算出來的 k 若差很多，就代表那個估計器是干擾源。</string>
+    <string name="meas_analysis_result">分析結果</string>
+    <string name="meas_analysis_summary">抖晃率 %1$.3f%% WRMS  ·  每圈一次 %2$.3f%%</string>
+    <string name="meas_this_run">這次量測</string>
+    <string name="meas_mean_speed">平均轉速</string>
+    <string name="meas_run_duration">量測時間</string>
+    <string name="meas_total_revs">累積圈數</string>
+    <string name="meas_sample_count">樣本數</string>
+    <string name="meas_sample_rate">取樣率</string>
+    <string name="meas_export_with_count">匯出原始資料（%1$d 筆）</string>
+    <string name="meas_history_row">歷史記錄</string>
+    <string name="meas_profile_row">唱盤設定</string>
+    <string name="meas_safety_short">拿掉磁吸配件與含磁鐵的手機殼、鎖好唱臂，手機放在轉盤原本的墊子上（或唱片鎮上）。</string>
+    <string name="meas_more">更多</string>
 </resources>

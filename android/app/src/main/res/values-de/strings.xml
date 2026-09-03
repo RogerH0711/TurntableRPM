@@ -353,4 +353,17 @@
     <string name="adv_sec_raw_mag">Unkalibriertes Magnetometer (unabhängig von der Bias-Schätzung des Systems)</string>
     <string name="adv_refined_total">Gesamtwinkel nach Abzug des Mittelpunkts</string>
     <string name="adv_raw_mag_note">Der Bias-Schätzer des Systems verändert während einer Messung fortlaufend den kalibrierten Feldwert. Daneben steht hier der unkalibrierte Rohwert: Weichen die beiden k-Werte stark ab, ist dieser Schätzer die Störquelle.</string>
+    <string name="meas_analysis_result">Analyse</string>
+    <string name="meas_analysis_summary">Gleichlauf %1$.3f%% WRMS  ·  1×/Umdr. %2$.3f%%</string>
+    <string name="meas_this_run">Diese Messung</string>
+    <string name="meas_mean_speed">Mittlere Drehzahl</string>
+    <string name="meas_run_duration">Dauer</string>
+    <string name="meas_total_revs">Umdrehungen</string>
+    <string name="meas_sample_count">Messwerte</string>
+    <string name="meas_sample_rate">Abtastrate</string>
+    <string name="meas_export_with_count">Rohdaten exportieren (%1$d Punkte)</string>
+    <string name="meas_history_row">Verlauf</string>
+    <string name="meas_profile_row">Laufwerksprofil</string>
+    <string name="meas_safety_short">Magnetisches Zubehör und Hüllen mit Magneten abnehmen, den Tonarm arretieren und das Telefon auf die originale Tellermatte legen (oder auf ein Plattengewicht).</string>
+    <string name="meas_more">Mehr</string>
 </resources>

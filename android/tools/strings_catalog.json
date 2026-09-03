@@ -2822,5 +2822,109 @@
   "ja": "システムのバイアス推定器は測定中も校正済み磁場の読みを変え続けます。ここでは未校正の生の読みを並べています。2 つの k が大きく食い違えば、その推定器が擾乱源です。",
   "de": "Der Bias-Schätzer des Systems verändert während einer Messung fortlaufend den kalibrierten Feldwert. Daneben steht hier der unkalibrierte Rohwert: Weichen die beiden k-Werte stark ab, ist dieser Schätzer die Störquelle.",
   "args": 0
+ },
+ {
+  "key": "meas_analysis_result",
+  "zh": "分析結果",
+  "args": 0,
+  "en": "Analysis",
+  "ja": "解析結果",
+  "de": "Analyse"
+ },
+ {
+  "key": "meas_analysis_summary",
+  "zh": "抖晃率 %1$.3f%% WRMS  ·  每圈一次 %2$.3f%%",
+  "args": 2,
+  "en": "W&F %1$.3f%% WRMS  ·  1×/rev %2$.3f%%",
+  "ja": "ワウ・フラッター %1$.3f%% WRMS  ·  1回転に1回 %2$.3f%%",
+  "de": "Gleichlauf %1$.3f%% WRMS  ·  1×/Umdr. %2$.3f%%"
+ },
+ {
+  "key": "meas_this_run",
+  "zh": "這次量測",
+  "args": 0,
+  "en": "This measurement",
+  "ja": "今回の測定",
+  "de": "Diese Messung"
+ },
+ {
+  "key": "meas_mean_speed",
+  "zh": "平均轉速",
+  "args": 0,
+  "en": "Mean speed",
+  "ja": "平均回転数",
+  "de": "Mittlere Drehzahl"
+ },
+ {
+  "key": "meas_run_duration",
+  "zh": "量測時間",
+  "args": 0,
+  "en": "Duration",
+  "ja": "測定時間",
+  "de": "Dauer"
+ },
+ {
+  "key": "meas_total_revs",
+  "zh": "累積圈數",
+  "args": 0,
+  "en": "Revolutions",
+  "ja": "回転数の積算",
+  "de": "Umdrehungen"
+ },
+ {
+  "key": "meas_sample_count",
+  "zh": "樣本數",
+  "args": 0,
+  "en": "Samples",
+  "ja": "サンプル数",
+  "de": "Messwerte"
+ },
+ {
+  "key": "meas_sample_rate",
+  "zh": "取樣率",
+  "args": 0,
+  "en": "Sample rate",
+  "ja": "サンプリング周波数",
+  "de": "Abtastrate"
+ },
+ {
+  "key": "meas_export_with_count",
+  "zh": "匯出原始資料（%1$d 筆）",
+  "args": 1,
+  "en": "Export raw data (%1$d samples)",
+  "ja": "生データを書き出す（%1$d 件）",
+  "de": "Rohdaten exportieren (%1$d Punkte)"
+ },
+ {
+  "key": "meas_history_row",
+  "zh": "歷史記錄",
+  "args": 0,
+  "en": "History",
+  "ja": "履歴",
+  "de": "Verlauf"
+ },
+ {
+  "key": "meas_profile_row",
+  "zh": "唱盤設定",
+  "args": 0,
+  "en": "Turntable profile",
+  "ja": "ターンテーブル設定",
+  "de": "Laufwerksprofil"
+ },
+ {
+  "key": "meas_safety_short",
+  "zh": "拿掉磁吸配件與含磁鐵的手機殼、鎖好唱臂，手機放在轉盤原本的墊子上（或唱片鎮上）。",
+  "args": 0,
+  "en": "Remove magnetic accessories and cases with magnets, lock the tonearm, and rest the phone on the platter’s own mat (or on a record weight).",
+  "ja": "マグネット製品と磁石入りケースを外し、トーンアームを固定して、iPhone はターンテーブル純正のマットの上（またはレコードウェイトの上）に置いてください。",
+  "de": "Magnetisches Zubehör und Hüllen mit Magneten abnehmen, den Tonarm arretieren und das Telefon auf die originale Tellermatte legen (oder auf ein Plattengewicht)."
+ },
+ {
+  "key": "meas_more",
+  "zh": "更多",
+  "args": 0,
+  "en": "More",
+  "ja": "その他",
+  "de": "Mehr"
  }
 ]

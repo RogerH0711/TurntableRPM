@@ -354,4 +354,17 @@
     <string name="adv_sec_raw_mag">Uncalibrated magnetometer (independent of the system\'s bias estimate)</string>
     <string name="adv_refined_total">Total angle after removing the centre</string>
     <string name="adv_raw_mag_note">The system\'s bias estimator keeps altering the calibrated field reading during a run. The uncalibrated raw reading is shown alongside it here: if the two k values differ a lot, that estimator is the disturbance.</string>
+    <string name="meas_analysis_result">Analysis</string>
+    <string name="meas_analysis_summary">W&amp;F %1$.3f%% WRMS  ·  1×/rev %2$.3f%%</string>
+    <string name="meas_this_run">This measurement</string>
+    <string name="meas_mean_speed">Mean speed</string>
+    <string name="meas_run_duration">Duration</string>
+    <string name="meas_total_revs">Revolutions</string>
+    <string name="meas_sample_count">Samples</string>
+    <string name="meas_sample_rate">Sample rate</string>
+    <string name="meas_export_with_count">Export raw data (%1$d samples)</string>
+    <string name="meas_history_row">History</string>
+    <string name="meas_profile_row">Turntable profile</string>
+    <string name="meas_safety_short">Remove magnetic accessories and cases with magnets, lock the tonearm, and rest the phone on the platter’s own mat (or on a record weight).</string>
+    <string name="meas_more">More</string>
 </resources>

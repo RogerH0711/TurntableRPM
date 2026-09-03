@@ -353,4 +353,17 @@
     <string name="adv_sec_raw_mag">未校正の磁気センサー（システムのバイアス推定から独立）</string>
     <string name="adv_refined_total">中心を除いた後の総回転角</string>
     <string name="adv_raw_mag_note">システムのバイアス推定器は測定中も校正済み磁場の読みを変え続けます。ここでは未校正の生の読みを並べています。2 つの k が大きく食い違えば、その推定器が擾乱源です。</string>
+    <string name="meas_analysis_result">解析結果</string>
+    <string name="meas_analysis_summary">ワウ・フラッター %1$.3f%% WRMS  ·  1回転に1回 %2$.3f%%</string>
+    <string name="meas_this_run">今回の測定</string>
+    <string name="meas_mean_speed">平均回転数</string>
+    <string name="meas_run_duration">測定時間</string>
+    <string name="meas_total_revs">回転数の積算</string>
+    <string name="meas_sample_count">サンプル数</string>
+    <string name="meas_sample_rate">サンプリング周波数</string>
+    <string name="meas_export_with_count">生データを書き出す（%1$d 件）</string>
+    <string name="meas_history_row">履歴</string>
+    <string name="meas_profile_row">ターンテーブル設定</string>
+    <string name="meas_safety_short">マグネット製品と磁石入りケースを外し、トーンアームを固定して、iPhone はターンテーブル純正のマットの上（またはレコードウェイトの上）に置いてください。</string>
+    <string name="meas_more">その他</string>
 </resources>

@@ -11,7 +11,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -23,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -57,6 +69,7 @@ fun MeasurementScreen(
     onShareExport: (String) -> Unit = {},
     onReplayOnboarding: () -> Unit = {},
     onOpenAdvanced: () -> Unit = {},
+    onOpenAnalysis: () -> Unit = {},
     onOpenProfiles: () -> Unit = {},
     /** 使用中的唱盤。有規格就拿來比對，有傳動鏈尺寸就用來認出馬達那根峰。 */
     profile: TurntableProfile? = null,
@@ -64,6 +77,9 @@ fun MeasurementScreen(
     onModeChange: (Mode) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
+    // 有沒有可以拿來校準、匯出或分析的結果。
+    val hasMeasurement = (state.rawMeanRPM ?: 0.0) > 0
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -124,23 +140,10 @@ fun MeasurementScreen(
             )
         }
 
-        Card(Modifier.fillMaxWidth()) {
-            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(stringResource(R.string.meas_before_title), style = MaterialTheme.typography.titleSmall)
-                Text(
-                    stringResource(R.string.meas_before_magnets),
-                    style = MaterialTheme.typography.bodySmall,
-                )
-                Text(
-                    stringResource(R.string.meas_before_placement),
-                    style = MaterialTheme.typography.bodySmall,
-                )
-                Text(
-                    stringResource(R.string.meas_before_offcentre),
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
-        }
+        // **安全提醒只在「還沒量過」時出現。** 量完之後使用者要看的是結果，
+        // 而那三段字每次都佔掉一整螢幕。完整的擺法與安全說明在說明頁裡，
+        // 所以這張橫幅點下去就是說明頁。
+        if (!state.running && !hasMeasurement) SafetyBanner(onOpenAbout)
 
         if (state.running) RunningCard(state)
         if (state.analyzing) {
@@ -166,12 +169,27 @@ fun MeasurementScreen(
                 }
             }
         }
-        state.analysis?.let {
-            AnalysisCard(it, profile)
-            AnalysisCharts(it)
-        }
-        state.exportPath?.let { ExportCard(it, onShareExport) }
+        // **量測摘要放在分析之前。** 那是使用者每次量完最先想確認的東西
+        // （轉速、圈數、取樣率），而分析是要花時間讀的。
+        if (hasMeasurement) SummaryCard(state)
 
+        state.analysis?.let { AnalysisLink(it, onOpenAnalysis) }
+        state.exportPath?.let { ExportRow(state.sampleCount, it, onShareExport) }
+
+        NavRow(Icons.Filled.List, stringResource(R.string.meas_history_row), onOpenHistory)
+        NavRow(
+            Icons.Filled.Settings,
+            profile?.let {
+                stringResource(
+                    R.string.meas_profile_named,
+                    it.displayName.ifBlank { stringResource(R.string.profile_untitled) },
+                )
+            } ?: stringResource(R.string.meas_profile_row),
+            onOpenProfiles,
+        )
+
+        // **校準放在最下面。** 它是設定性質的，一台裝置做一次就好；
+        // 上面那些是每次量測都會碰的。iOS 端也是這個順序。
         Card(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -198,37 +216,110 @@ fun MeasurementScreen(
             }
         }
 
-        OutlinedButton(onClick = onOpenHistory, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.meas_history))
-        }
+        NavRow(
+            Icons.Filled.Search,
+            stringResource(R.string.meas_sampling_diagnostics),
+            onOpenDiagnostics,
+        )
+        NavRow(
+            Icons.Filled.Build,
+            stringResource(R.string.meas_advanced_diagnostics),
+            onOpenAdvanced,
+        )
+    }
+}
 
-        OutlinedButton(onClick = onOpenProfiles, modifier = Modifier.fillMaxWidth()) {
-            Text(
-                profile?.let {
-                    stringResource(
-                        R.string.meas_profile_named,
-                        it.displayName.ifBlank { stringResource(R.string.profile_untitled) },
-                    )
-                } ?: stringResource(R.string.meas_profile_none),
+/**
+ * 放上唱盤之前的安全提醒。
+ *
+ * **一行，而且可以點進說明頁。** 完整的擺法、配平、磁鐵、78 轉離心力那些
+ * 都在說明頁裡；主畫面只需要一句話加一個入口。三段長文字放在這裡的話，
+ * 每次打開 app 都要捲過它才看得到按鈕。量完之後就收起來 ——
+ * 那時使用者要看的是結果。
+ */
+@Composable
+private fun SafetyBanner(onOpenAbout: () -> Unit) {
+    Card(onClick = onOpenAbout, modifier = Modifier.fillMaxWidth()) {
+        Row(
+            Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.Top,
+        ) {
+            Icon(Icons.Filled.Warning, contentDescription = null, tint = Orange)
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                Text(
+                    stringResource(R.string.meas_before_title),
+                    style = MaterialTheme.typography.titleSmall,
+                )
+                Text(
+                    stringResource(R.string.meas_safety_short),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+            Icon(
+                Icons.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+    }
+}
 
-        OutlinedButton(onClick = onOpenAbout, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.meas_about))
+/** 這次量測的原始數字。分析是要花時間讀的，這幾個是一眼確認用的。 */
+@Composable
+private fun SummaryCard(state: EngineState) {
+    Card(Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(stringResource(R.string.meas_this_run), style = MaterialTheme.typography.titleMedium)
+            StatRow(
+                stringResource(R.string.meas_mean_speed),
+                state.meanRPM?.let { "%.4f RPM".format(it) } ?: "—",
+            )
+            StatRow(stringResource(R.string.meas_run_duration), "%.1f s".format(state.elapsedSeconds))
+            StatRow(stringResource(R.string.meas_total_revs), "${state.revolutions}")
+            StatRow(stringResource(R.string.meas_sample_count), "${state.sampleCount}")
+            StatRow(
+                stringResource(R.string.meas_sample_rate),
+                state.stats?.let { "%.1f Hz".format(it.effectiveRateHz) } ?: "—",
+            )
         }
+    }
+}
 
-        // 導覽看完就再也進不去的話，那幾頁等於只存在一次 —— 而擺法那一頁
-        // 是使用者最常需要回去確認的東西。
-        OutlinedButton(onClick = onReplayOnboarding, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.meas_replay_onboarding))
-        }
-
-        OutlinedButton(onClick = onOpenDiagnostics, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.meas_sampling_diagnostics))
-        }
-
-        OutlinedButton(onClick = onOpenAdvanced, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.meas_advanced_diagnostics))
+/**
+ * 分析結果的入口。
+ *
+ * **只放一行摘要，內容在獨立的一頁。** 分析有三張圖加上譜峰判讀，接在主畫面
+ * 下面的話每次打開 app 都要捲過去。而這一行（抖晃率＋每圈一次）已經足夠
+ * 判斷「這次要不要點進去看」。
+ */
+@Composable
+private fun AnalysisLink(a: MeasurementAnalysis, onOpen: () -> Unit) {
+    Card(onClick = onOpen, modifier = Modifier.fillMaxWidth()) {
+        Row(
+            Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(Icons.Filled.Info, contentDescription = null, tint = Blue)
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(
+                    stringResource(R.string.meas_analysis_result),
+                    style = MaterialTheme.typography.titleSmall,
+                )
+                Text(
+                    stringResource(
+                        R.string.meas_analysis_summary,
+                        a.wowFlutter.wrmsPercent, a.onePerRevolutionPercent,
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+            Icon(
+                Icons.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
@@ -236,29 +327,35 @@ fun MeasurementScreen(
 /**
  * 原始資料匯出。
  *
- * **摘要數字診斷不出問題。** 這個 app 每一次真正查出原因的經驗都是靠逐樣本資料：
- * 取樣率為什麼是 107.9 而不是要求的 100、時間戳誠不誠實、譜峰是不是分析參數造成的。
- * 畫面上的數字看不出這些。
- *
- * 分析失敗時也會有檔案 —— 那正是最需要它的時候。
+ * **摘要數字診斷不出問題。** 這個 app 每一次真正查出原因都是靠逐樣本資料 ——
+ * iOS 端是磁場的空間失真，Android 端是取樣率為什麼是 107.9 而不是要求的 100。
+ * 分析失敗時也會有檔案，那正是最需要它的時候。
  */
 @Composable
-private fun ExportCard(path: String, onShare: (String) -> Unit) {
-    Card(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(stringResource(R.string.meas_raw_data), style = MaterialTheme.typography.titleSmall)
-            Text(
-                stringResource(R.string.meas_raw_data_body),
-                style = MaterialTheme.typography.bodySmall,
+private fun ExportRow(sampleCount: Int, path: String, onShare: (String) -> Unit) {
+    OutlinedButton(onClick = { onShare(path) }, modifier = Modifier.fillMaxWidth()) {
+        Icon(Icons.Filled.Share, contentDescription = null)
+        Spacer(Modifier.width(8.dp))
+        Text(stringResource(R.string.meas_export_with_count, sampleCount))
+    }
+}
+
+/** 導覽列：圖示 + 標籤 + 右箭頭。跟 iOS 的 NavigationLink 同一個視覺語彙。 */
+@Composable
+private fun NavRow(icon: ImageVector, label: String, onClick: () -> Unit) {
+    Card(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
+        Row(
+            Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+            Icon(
+                Icons.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            Text(
-                path.substringAfterLast('/'),
-                style = MaterialTheme.typography.bodySmall,
-                fontFamily = FontFamily.Monospace,
-            )
-            OutlinedButton(onClick = { onShare(path) }, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.share_raw_data))
-            }
         }
     }
 }
@@ -333,7 +430,7 @@ private fun RunningCard(state: EngineState) {
 }
 
 @Composable
-private fun AnalysisCard(a: MeasurementAnalysis, profile: TurntableProfile?) {
+internal fun AnalysisCard(a: MeasurementAnalysis, profile: TurntableProfile?) {
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(stringResource(R.string.meas_wow_title), style = MaterialTheme.typography.titleMedium)
