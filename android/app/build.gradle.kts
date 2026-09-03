@@ -39,8 +39,8 @@ android {
         targetSdk = 37
         // **versionName 跟 GitHub release 的 tag 一致。** 使用者回報問題時
         // 「我裝的是哪一版」才對得起來 —— app 裡看到的字串要能在 release 頁上找到。
-        versionCode = 1
-        versionName = "0.2.0"
+        versionCode = 2
+        versionName = "0.2.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
