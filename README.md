@@ -12,6 +12,21 @@ Put it on the spinning platter — no strobe disc, no extra hardware.
 It started with a Thorens TD 235 EV that had sat idle for 20 years and ran slow. Diagnosing
 that needed a tool accurate to 0.1%.
 
+<p align="center">
+  <img src="docs/screenshots/en/android-placement.png" width="235" alt="Where to put the phone">
+  <img src="docs/screenshots/en/android-main.png" width="235" alt="Measuring">
+  <img src="docs/screenshots/en/android-analysis.png" width="235" alt="Analysis">
+  <img src="docs/screenshots/en/android-history.png" width="235" alt="History and trend">
+</p>
+
+<p align="center"><sub><b>Where to put the phone · what it measured · what is causing it ·
+how it changed.</b><br>
+Real data from the Thorens TD 235 EV — 201 s, 20,377 samples. The spectral peaks are that
+deck's actual fingerprint: eccentricity at 1×, the belt at 0.91×, the motor at 35.3×.<br>
+In the history, the last two runs are the same deck measured twice with the phone rotated
+180° in between — the 1×/rev drops 74%, because most of it was the phone, not the
+turntable.</sub></p>
+
 ## What it tells you
 
 - **Mean speed and error %** — whether the platter runs fast or slow, and by how much
@@ -29,17 +44,6 @@ that needed a tool accurate to 0.1%.
 While measuring, the screen **counter-rotates**, so the content looks stationary as the
 platter turns and you can read it without picking the phone up.
 
-<p align="center">
-  <img src="docs/screenshots/en/android-main.png" width="260" alt="Measuring">
-  <img src="docs/screenshots/en/android-analysis.png" width="260" alt="Analysis">
-  <img src="docs/screenshots/en/android-history.png" width="260" alt="History and trend">
-</p>
-
-<p align="center"><sub>Real measurements from the Thorens TD 235 EV — 201 s, 20,377 samples.<br>
-The two history entries are the same deck measured twice with the phone rotated 180°
-between runs; the 1×/rev component drops 74% because most of it was the phone, not the
-turntable.</sub></p>
-
 ## What it cannot see
 
 **The phone turns with the platter, so what it measures is the platter's speed.** Pitch
@@ -49,6 +53,23 @@ in practice that is often the largest part of the wow you actually hear.
 **Until you calibrate, the "error %" cannot be used to adjust your deck.** It is the
 turntable's error multiplied by the gyroscope's error, and the two cannot be separated.
 Calibration uses a stopwatch — once per phone is enough.
+
+## Using it
+
+1. **Balance the phone about the spindle.** Easiest is to rest it across a record weight so
+   its centre of mass sits on the axis. Off-centre, the deck runs about 0.3% slow and the
+   reported wobble is a third larger — see [Safety](#safety).
+2. **Stop the platter, put the phone down, tap Start.** In automatic mode it waits for the
+   speed to settle before it begins recording, and stops on its own when the platter does.
+3. **Let it run at least 90 seconds** — the spectrum's resolution is 1 ÷ measurement length.
+   Three minutes if you want accurate peak amplitudes; a one-minute run underestimates them
+   by about 8%.
+4. **Read the analysis.** Mean speed and error % say whether the deck runs true; the
+   spectral peaks say which part is responsible.
+
+To trust the error %, calibrate once with a stopwatch: mark the platter, time 100
+revolutions, and enter the numbers. Wow & flutter and the other percentages are ratios and
+need no calibration.
 
 ## Get it
 
@@ -67,14 +88,8 @@ if yours doesn't. See [`docs/android-sensors.md`](docs/android-sensors.md).
 There is no App Store build: that needs a paid developer account, which this project does
 not have.
 
-<p align="center">
-  <img src="docs/screenshots/en/ios-analysis.png" width="200" alt="Analysis on iOS">
-  <img src="docs/screenshots/en/ios-history.png" width="200" alt="History on iOS">
-  <img src="docs/screenshots/en/ios-placement.png" width="200" alt="Phone placement on iOS">
-</p>
-
-<p align="center"><sub>The iOS build. Simulator screenshots with a synthetic signal —
-simulators have no gyroscope, so those screens are empty without one.</sub></p>
+The screens are the same as the Android ones above — same layout, same numbers, native
+controls on each platform.
 
 **Build it in Xcode** (most reliable) — see [Building](#building) below.
 

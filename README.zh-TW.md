@@ -11,6 +11,19 @@
 
 起因是一台閒置 20 年的 Thorens TD 235 EV 轉速偏慢，需要一個能量到 0.1% 的工具來診斷。
 
+<p align="center">
+  <img src="docs/screenshots/zh-TW/android-placement.png" width="235" alt="手機怎麼擺">
+  <img src="docs/screenshots/zh-TW/android-main.png" width="235" alt="量測">
+  <img src="docs/screenshots/zh-TW/android-analysis.png" width="235" alt="分析結果">
+  <img src="docs/screenshots/zh-TW/android-history.png" width="235" alt="歷史與趨勢">
+</p>
+
+<p align="center"><sub><b>手機怎麼擺 · 量到什麼 · 是什麼造成的 · 有沒有變好。</b><br>
+Thorens TD 235 EV 的真實資料 —— 201 秒、20,377 筆樣本。譜峰是這台盤的實際指紋：
+偏心在 1×、皮帶在 0.91×、馬達在 35.3×。<br>
+歷史裡最後兩筆是同一台盤量兩次、中間把手機原地轉 180° —— 每圈一次掉了 74%，
+因為那裡面有一大半本來就是手機造成的，不是唱盤的。</sub></p>
+
 ## 它能告訴你什麼
 
 - **平均轉速與偏差 %** —— 盤到底快還是慢、差多少
@@ -24,16 +37,6 @@
 
 量測時畫面會**反向旋轉**，內容在轉動中看起來是靜止的，不必把手機拿起來就能讀。
 
-<p align="center">
-  <img src="docs/screenshots/zh-TW/android-main.png" width="260" alt="量測">
-  <img src="docs/screenshots/zh-TW/android-analysis.png" width="260" alt="分析結果">
-  <img src="docs/screenshots/zh-TW/android-history.png" width="260" alt="歷史與趨勢">
-</p>
-
-<p align="center"><sub>Thorens TD 235 EV 的真實量測 —— 201 秒、20,377 筆樣本。<br>
-歷史裡那兩筆是同一台盤量兩次、中間把手機原地轉 180°；每圈一次的成分掉了 74%，
-因為那裡面有一大半本來就是手機造成的，不是唱盤的。</sub></p>
-
 ## 它看不到什麼
 
 **手機是跟著盤面一起轉的，量到的是盤的轉速。** 唱片中心孔沒對準造成的音高起伏，
@@ -41,6 +44,19 @@
 
 **沒有校準之前，「偏差 %」不能拿來調唱盤。** 那是唱盤誤差與陀螺儀誤差相乘的結果，
 兩者分不開。校準用碼錶做，一支手機做一次就好。
+
+## 怎麼用
+
+1. **讓手機的質心落在轉軸上。** 最省事的方式是橫跨轉軸放在唱片鎮上。偏在一邊的話
+   轉速會慢約 0.3%，報出來的抖動也會大三成 —— 見[安全提醒](#安全提醒)。
+2. **轉盤停著、把手機放好、按開始。** 自動模式會等轉速穩定才開始記錄，盤面停下時
+   自己結束。
+3. **至少量 90 秒** —— 頻譜的解析度是 1 ÷ 量測時長。想要準確的譜峰振幅就量 3 分鐘；
+   量 1 分鐘會低估約 8%。
+4. **看分析結果。** 平均轉速與偏差 % 告訴你盤轉得準不準，譜峰告訴你是哪個零件造成的。
+
+偏差 % 要能採信，得先用碼錶校準一次：盤面貼記號、數 100 圈計時、把數字填進去。
+抖晃率與其他百分比是比值，不需要校準。
 
 ## 取得
 
@@ -58,14 +74,7 @@
 
 沒有 App Store 版本：那需要付費開發者帳號，這個專案沒有。
 
-<p align="center">
-  <img src="docs/screenshots/zh-TW/ios-analysis.png" width="200" alt="iOS 的分析結果">
-  <img src="docs/screenshots/zh-TW/ios-history.png" width="200" alt="iOS 的歷史與趨勢">
-  <img src="docs/screenshots/zh-TW/ios-placement.png" width="200" alt="iOS 的擺放示意">
-</p>
-
-<p align="center"><sub>iOS 版。模擬器截圖，資料是合成訊號 ——
-模擬器沒有陀螺儀，沒有它那幾個畫面都是空的。</sub></p>
+畫面跟上面 Android 的一樣 —— 同樣的版面、同樣的數字，各自用該平台原生的元件。
 
 **用 Xcode 自己建置**（最可靠）—— 往下看「建置」。
 
