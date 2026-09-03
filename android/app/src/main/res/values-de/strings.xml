@@ -56,7 +56,7 @@
     <string name="trend_unchanged">Praktisch unverändert gegenüber der ersten Messung.</string>
     <string name="trend_improved">besser</string>
     <string name="trend_worse">schlechter</string>
-    <string name="trend_change">%1$s um %2$.3f Prozentpunkte gegenüber dem ersten Durchlauf (%3$.3f%% → %4$.3f%%).</string>
+    <string name="trend_change">%2$.3f Prozentpunkte %1$s als beim ersten Durchlauf (%3$.3f%% → %4$.3f%%).</string>
     <string name="chart_spectrum">Spektrum</string>
     <string name="chart_spectrum_caption">Waagerecht die Frequenz (logarithmisch, Hz), senkrecht die Amplitude (%). Orange Punkte sind ganzzahlige Harmonische des Tellers — Dinge, die sich mit ihm drehen; graue Punkte nicht, sie gehören zu Antriebsteilen mit anderer Drehzahl.</string>
     <string name="chart_heatmap">Verteilung der Abweichung auf dem Teller</string>
@@ -276,8 +276,7 @@
     <string name="meas_mean_trimmed">Mittlere Drehzahl (beschnitten)</string>
     <string name="meas_analysis_duration">Analysierte Länge</string>
     <string name="meas_resample_rate">Resampling-Rate</string>
-    <string name="meas_trimmed">Instabile Abschnitte wurden automatisch übersprungen: %1$.1f s am Anfang, %2$.1f s am Ende.</string>
-    <string name="meas_trimmed_tail">Alle Zahlen unten stammen aus dem verbleibenden Abschnitt.</string>
+    <string name="meas_trimmed">Instabile Abschnitte wurden automatisch übersprungen: %1$.1f s am Anfang, %2$.1f s am Ende. Alle Zahlen unten stammen aus dem verbleibenden Abschnitt.</string>
     <string name="meas_spec_row">Werksangabe (%1$s)</string>
     <string name="meas_within_spec">Innerhalb der Spezifikation (%1$.0f %% davon).</string>
     <string name="meas_over_spec">%1$.2f× über der Spezifikation.</string>

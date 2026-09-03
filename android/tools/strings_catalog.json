@@ -435,7 +435,7 @@
   "key": "trend_improved",
   "zh": "改善",
   "args": 0,
-  "en": "improved",
+  "en": "Improved",
   "ja": "改善し",
   "de": "besser"
  },
@@ -443,7 +443,7 @@
   "key": "trend_worse",
   "zh": "變差",
   "args": 0,
-  "en": "got worse",
+  "en": "Got worse",
   "ja": "悪化し",
   "de": "schlechter"
  },
@@ -453,7 +453,7 @@
   "args": 4,
   "en": "%1$s by %2$.3f percentage points compared with the first run (%3$.3f%% → %4$.3f%%).",
   "ja": "初回と比べて %2$.3f ポイント%1$sしました（%3$.3f%% → %4$.3f%%）。",
-  "de": "%1$s um %2$.3f Prozentpunkte gegenüber dem ersten Durchlauf (%3$.3f%% → %4$.3f%%)."
+  "de": "%2$.3f Prozentpunkte %1$s als beim ersten Durchlauf (%3$.3f%% → %4$.3f%%)."
  },
  {
   "key": "chart_spectrum",
@@ -2209,19 +2209,11 @@
  },
  {
   "key": "meas_trimmed",
-  "zh": "已自動略過轉速不穩的區間：開頭 %1$.1f s、尾端 %2$.1f s。",
-  "en": "Unsteady stretches were skipped automatically: %1$.1f s at the start, %2$.1f s at the end.",
-  "ja": "回転が不安定な区間を自動的に除外しました：先頭 %1$.1f 秒、末尾 %2$.1f 秒。",
-  "de": "Instabile Abschnitte wurden automatisch übersprungen: %1$.1f s am Anfang, %2$.1f s am Ende.",
+  "zh": "已自動略過轉速不穩的區間：開頭 %1$.1f s、尾端 %2$.1f s。下面所有數字都是剩下那一段算出來的。",
+  "en": "Unsteady stretches were skipped automatically: %1$.1f s at the start, %2$.1f s at the end. Every number below comes from what remains.",
+  "ja": "回転が不安定な区間を自動的に除外しました：先頭 %1$.1f 秒、末尾 %2$.1f 秒。以下の数値はすべて残った区間から算出しています。",
+  "de": "Instabile Abschnitte wurden automatisch übersprungen: %1$.1f s am Anfang, %2$.1f s am Ende. Alle Zahlen unten stammen aus dem verbleibenden Abschnitt.",
   "args": 2
- },
- {
-  "key": "meas_trimmed_tail",
-  "zh": "下面所有數字都是剩下那一段算出來的。",
-  "en": "Every number below comes from what remains.",
-  "ja": "以下の数値はすべて残った区間から算出しています。",
-  "de": "Alle Zahlen unten stammen aus dem verbleibenden Abschnitt.",
-  "args": 0
  },
  {
   "key": "meas_spec_row",

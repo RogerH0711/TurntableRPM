@@ -276,8 +276,7 @@
     <string name="meas_mean_trimmed">平均轉速（切過）</string>
     <string name="meas_analysis_duration">分析時長</string>
     <string name="meas_resample_rate">重取樣頻率</string>
-    <string name="meas_trimmed">已自動略過轉速不穩的區間：開頭 %1$.1f s、尾端 %2$.1f s。</string>
-    <string name="meas_trimmed_tail">下面所有數字都是剩下那一段算出來的。</string>
+    <string name="meas_trimmed">已自動略過轉速不穩的區間：開頭 %1$.1f s、尾端 %2$.1f s。下面所有數字都是剩下那一段算出來的。</string>
     <string name="meas_spec_row">原廠規格（%1$s）</string>
     <string name="meas_within_spec">在規格內（規格的 %1$.0f%%）。</string>
     <string name="meas_over_spec">超出規格 %1$.2f 倍。</string>

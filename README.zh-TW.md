@@ -3,9 +3,11 @@
 [English](README.md) · **繁體中文**
 
 [![Swift](https://github.com/RogerH0711/TurntableRPM/actions/workflows/swift.yml/badge.svg)](https://github.com/RogerH0711/TurntableRPM/actions/workflows/swift.yml)
+[![Android](https://github.com/RogerH0711/TurntableRPM/actions/workflows/android.yml/badge.svg)](https://github.com/RogerH0711/TurntableRPM/actions/workflows/android.yml)
 
-用 iPhone 量測黑膠唱盤的轉速與抖晃率（wow & flutter）。目標精度 0.1%。
+用手機量測黑膠唱盤的轉速與抖晃率（wow & flutter）。目標精度 0.1%。
 把手機放在轉動的盤面上就能量，不需要頻閃盤或其他硬體。
+**iOS 與 Android 兩版共用同一套演算法，算出同樣的數字。**
 
 起因是一台閒置 20 年的 Thorens TD 235 EV 轉速偏慢，需要一個能量到 0.1% 的工具來診斷。
 
@@ -23,13 +25,14 @@
 量測時畫面會**反向旋轉**，內容在轉動中看起來是靜止的，不必把手機拿起來就能讀。
 
 <p align="center">
-  <img src="docs/screenshots/zh-TW/analysis.png" width="270" alt="分析結果">
-  <img src="docs/screenshots/zh-TW/history.png" width="270" alt="歷史與趨勢">
-  <img src="docs/screenshots/zh-TW/placement.png" width="270" alt="手機怎麼擺">
+  <img src="docs/screenshots/zh-TW/android-main.png" width="260" alt="量測">
+  <img src="docs/screenshots/zh-TW/android-analysis.png" width="260" alt="分析結果">
+  <img src="docs/screenshots/zh-TW/android-history.png" width="260" alt="歷史與趨勢">
 </p>
 
-<p align="center"><sub>分析結果 · 歷史與趨勢 · 手機怎麼擺。<br>
-模擬器截圖，資料為示範用的合成訊號。</sub></p>
+<p align="center"><sub>Thorens TD 235 EV 的真實量測 —— 201 秒、20,377 筆樣本。<br>
+歷史裡那兩筆是同一台盤量兩次、中間把手機原地轉 180°；每圈一次的成分掉了 74%，
+因為那裡面有一大半本來就是手機造成的，不是唱盤的。</sub></p>
 
 ## 它看不到什麼
 
@@ -39,67 +42,81 @@
 **沒有校準之前，「偏差 %」不能拿來調唱盤。** 那是唱盤誤差與陀螺儀誤差相乘的結果，
 兩者分不開。校準用碼錶做，一支手機做一次就好。
 
-## 需求
+## 取得
 
-- iPhone，iOS 17 以上（不支援 iPad）
-- 介面語言：**繁體中文／English／日本語／Deutsch**（跟隨系統設定）
-- 唱盤大到放得下手機，速度 16⅔ / 33⅓ / 45 / 78 都支援
-- 開發需要 macOS + Xcode 16 以上、[XcodeGen](https://github.com/yonaskolb/XcodeGen)
+### Android —— 下載 APK
 
-## 安裝
+[**最新的 release**](https://github.com/RogerH0711/TurntableRPM/releases/latest) ▸
+`TurntableRPM-*.apk`。在手機上開啟即可安裝，第一次會問你要不要允許從這個來源安裝。
+已簽章，2.7 MB。
 
-### 選項 A：自己用 Xcode 建置（推薦）
+需要 **Android 9 以上**，而且 —— 這才是真正的限制 —— **手機必須有陀螺儀**。
+不是每一支 Android 都有，中階機常常省掉；沒有的話 app 開起來會直接告訴你。
+細節見 [`docs/android-sensors.md`](docs/android-sensors.md)。
 
-最可靠，也不必信任第三方工具。往下看「建置」。
+### iOS —— 自己建置或自己簽章
 
-### 選項 B：下載 .ipa 自己簽章
+沒有 App Store 版本：那需要付費開發者帳號，這個專案沒有。
 
-[Releases](https://github.com/RogerH0711/TurntableRPM/releases) 有 `TurntableRPM-unsigned.ipa`。
+<p align="center">
+  <img src="docs/screenshots/zh-TW/ios-analysis.png" width="200" alt="iOS 的分析結果">
+  <img src="docs/screenshots/zh-TW/ios-history.png" width="200" alt="iOS 的歷史與趨勢">
+  <img src="docs/screenshots/zh-TW/ios-placement.png" width="200" alt="iOS 的擺放示意">
+</p>
 
-**它是未簽章的，不能直接安裝。** iOS 只執行經過簽章的 App，而我目前沒有付費開發者
-帳號，所以無法提供 TestFlight 或可直接安裝的版本。你必須用**自己的 Apple ID** 簽章，
-常見的工具是 [AltStore](https://altstore.io) 或 [SideStore](https://sidestore.io)：
+<p align="center"><sub>iOS 版。模擬器截圖，資料是合成訊號 ——
+模擬器沒有陀螺儀，沒有它那幾個畫面都是空的。</sub></p>
+
+**用 Xcode 自己建置**（最可靠）—— 往下看「建置」。
+
+**或是自己簽章 `.ipa`。** [Releases](https://github.com/RogerH0711/TurntableRPM/releases)
+有 `TurntableRPM-unsigned.ipa`。iOS 只執行經過簽章的 App，所以你必須用**自己的 Apple ID**
+簽章，常見的工具是 [AltStore](https://altstore.io) 或 [SideStore](https://sidestore.io)：
 
 1. 在 Mac 或 Windows 上安裝 **AltServer**
 2. iPhone 接上電腦，用 AltServer 把 **AltStore** 裝進 iPhone
-3. 下載上面的 `.ipa` 到 iPhone
-4. 打開 AltStore ▸ My Apps ▸ 左上角 **+** ▸ 選那個 `.ipa`
+3. 下載那個 `.ipa` 到 iPhone
+4. AltStore ▸ My Apps ▸ 左上角 **+** ▸ 選那個 `.ipa`
 5. 輸入你的 Apple ID（建議另外開一個，不要用主帳號）
 
-**免費 Apple ID 的限制：**
+免費 Apple ID 的 App **7 天後過期**，而且同時最多只能有 **3 個**這樣安裝的 App。
+AltStore 在同一個 Wi-Fi 下會自動續期。付費帳號（$99/年）的簽章有效期是一年。
 
-- App **7 天後過期**，要重新簽章（AltStore 在同一個 Wi-Fi 下會自動續期）
-- 同時最多只能有 **3 個**這樣安裝的 App
+## 需求
 
-有付費開發者帳號（$99/年）的話簽章有效期是一年。等我有帳號會改成 TestFlight，
-那時候就只要點一個連結。
+| | Android | iOS |
+|---|---|---|
+| 系統 | 9 以上 | 17 以上（不支援 iPad） |
+| 硬體 | **必須有陀螺儀** | 任何 iPhone |
+| 介面語言 | 繁體中文／English／日本語／Deutsch，跟隨系統設定 | 同左 |
+| 轉速 | 16⅔ / 33⅓ / 45 / 78 | 同左 |
+
+開發：iOS 需要 macOS + Xcode 16 以上；Android 只需要一套 JDK（或 Android Studio）。
 
 ## 建置
 
 ```sh
-brew install xcodegen
 git clone https://github.com/RogerH0711/TurntableRPM.git
 cd TurntableRPM
-make setup
-make open
 ```
-
-在 Xcode 裡選 TurntableRPM target ▸ Signing & Capabilities ▸ Team 選你的 Apple ID，
-再把 Team ID 填進 `Config/Local.xcconfig`（這個檔案不進版控，所以 `make generate`
-重新產生專案時不會被洗掉）。
-
-iPhone 要先開啟開發者模式：設定 ▸ 隱私權與安全性 ▸ 開發者模式。
-免費 Apple ID 的簽章 7 天過期，過期重新 ⌘R 一次即可。
 
 | 指令 | 做什麼 |
 |---|---|
-| `make test` | 演算法測試（99 個，約 4 秒，不需要模擬器或實機） |
-| `make generate` | 新增／刪除 `App/` 底下的檔案後**必須**跑 |
+| `make test` | Swift 演算法測試（99 個，約 4 秒，不需要模擬器或實機） |
+| `make android-test` | Kotlin 測試（核心 92 + app 17，JVM，不需要手機） |
+| `make android-apk` | 建出 debug APK |
+| `make android-release` | 建出已簽章的 release APK —— 見 [`docs/android-release.md`](docs/android-release.md) |
+| `make android-strings` | 從 `android/tools/strings_catalog.json` 重新產生四個 `strings.xml` |
 | `make open` | 產生並開啟 Xcode |
+| `make generate` | 新增／刪除 `App/` 底下的檔案後**必須**跑 |
 | `make doctor` | 環境自我檢查 |
 | `make reference` | 跑 Python 參考實作，重新產生黃金向量 |
-| `make android-test` | Kotlin 核心測試（JVM，不需要手機） |
-| `make android-apk` | 建出 debug APK |
+
+iOS 還需要 [XcodeGen](https://github.com/yonaskolb/XcodeGen)（`brew install xcodegen`），
+然後在 Xcode 裡選 TurntableRPM target ▸ Signing & Capabilities ▸ Team 選你的 Apple ID，
+再把 Team ID 填進 `Config/Local.xcconfig`（這個檔案不進版控，`make generate` 不會洗掉它）。
+iPhone 要先開啟開發者模式：設定 ▸ 隱私權與安全性 ▸ 開發者模式。
+免費 Apple ID 的簽章 7 天過期，過期重新 ⌘R 一次即可。
 
 ## 架構
 
@@ -109,78 +126,25 @@ Packages/TurntableCore/   演算法核心。純 Swift + Foundation
   Tests/                    99 個測試
   Reference/                Python 參考實作，黃金值的來源
 App/                      唯一碰 CoreMotion / SwiftUI / SwiftData 的一層
-  Localizable.xcstrings     四語系字串，306 條
-android/                  Kotlin 移植（共用同一組黃金向量）
+  Localizable.xcstrings     四語系字串，312 條
+android/
   core/                     純 Kotlin、JVM 測試，不依賴 Android framework
   app/                      唯一碰 SensorManager 的一層
+  tools/strings_catalog.json  四語系字串，353 條，用來產生 strings.xml
 tools/analyze_export.py   分析匯出的量測 JSON
 docs/spec.md              技術規格書
 ```
 
 **核心跟平台切開是刻意的**：模擬器沒有陀螺儀，所以感測器相關的東西一定要實機測。
-把演算法抽成不依賴 iOS 框架的純 Swift，就能在 Mac 原生與 Linux container 上跑測試，
-CI 也才有意義。
+把演算法抽成不依賴平台框架的純 Swift（與純 Kotlin），就能在 Mac 原生、Linux container
+與 JVM 上跑測試 —— CI 也才有意義。
 
 **黃金值來自 `Reference/` 的獨立 Python 實作**，不是 Swift 自己的輸出 ——
-改演算法的流程是先在 Python 改、確認數學、再同步到 Swift。CI 會擋住兩邊不同步。
+改演算法的流程是先在 Python 改、確認數學、再同步到兩個平台。CI 會擋住彼此不同步。
 
 `.xcodeproj` 由 XcodeGen 從 `project.yml` 產生，**不進版控**，避免專案檔的 merge 衝突。
 
-## Android 版（進行中）
-
-`android/` 是共用**同一組黃金向量**的 Kotlin 移植。`android/core` 是純 Kotlin、
-不依賴任何 Android framework，測試直接讀 `Packages/TurntableCore/Reference/golden.json`
-—— 九個黃金項目全部覆蓋。`make android-test` 在 JVM 上跑，不需要手機。
-
-### 實測的取樣行為
-
-Android 的 `SensorManager` 取樣率設定只是**建議值**，實際頻率由廠商的 HAL 決定。
-實測 **Sony Xperia XZ Premium**（G8142、Android 9、STMicroelectronics LSM6DSM 陀螺儀），
-手機靜止：
-
-| 要求 | 實際 | 間隔中位數 | σ | 抖動比 | 長空隙 | 最糟空隙 | 感測器時鐘 ÷ 牆鐘 |
-|---|---|---|---|---|---|---|---|
-| 50 Hz | 53.96 Hz | 18.524 ms | 0.014 ms | 0.075% | 0 | 1.01× | 0.99995 |
-| **100 Hz** | **107.92 Hz** | **9.277 ms** | **0.015 ms** | **0.160%** | **0** | **1.00×** | **0.99995** |
-| 200 Hz | 215.74 Hz | 4.639 ms | 0.076 ms | 1.641% | 4 | 1.56× | 1.00051 |
-| iPhone 15 Pro Max @100 Hz | 100.13 Hz | 9.990 ms | 0.005 ms | 0.05% | 0 | 1.00× | — |
-
-**那個一致的 +7.9% 是兩層疊出來的，不是雜訊。** LSM6DSM 的 ODR 階梯是
-12.5/26/52/104/208 Hz —— **不是** 50/100/200。HAL 先進位到階梯上，再乘一個固定的
-振盪器偏差：
-
-```
-53.96 ÷ 52 = 1.03769      107.92 ÷ 104 = 1.03769      215.74 ÷ 208 = 1.03721
-```
-
-前兩個到小數第五位完全相同。
-
-**真正要緊的是「時間戳誠不誠實」**，不是實際速率符不符合要求。如果時間戳的時鐘快 7.9%，
-所有頻域結果都會偏移同樣的量，「問題出在哪」那一區的判讀就全錯 —— 而那是這個 app
-最有價值的功能。平均轉速兩種情況看起來一模一樣（ω 是物理量，與取樣時鐘無關），
-所以光看轉速查不出來。拿 `SystemClock.elapsedRealtimeNanos()` 對照就分得開：
-比值 **0.99995**，時間戳誠實，這個 app 不受影響 —— 因為它一律用真實時間戳積分，
-從不假設固定速率。
-
-200 Hz 明顯變差（抖動比 1.641%、4 次長空隙、最糟空隙 1.56×），而這個 app 不需要那麼快
-—— 50 Hz 以上只剩 0.72% 的加權能量。所以固定用 100 Hz 檔，也順便完全避開 Android 12 的
-`HIGH_SAMPLING_RATE_SENSORS` 權限。
-
-
-### 不是每一支 Android 手機都有陀螺儀
-
-這是 iOS 版從來不必交代的限制 —— 每一支 iPhone 都有。Android 的中階機常常省掉。
-實測 **Sony Xperia XA2 Ultra**（H4233）：只有 BMA255 加速度計與 AK09916C 磁力計。
-`Gravity`、`Linear Acceleration`、`Rotation Vector` 全部都是 Qualcomm 從那兩者算出來的
-**虛擬**感測器 —— 沒有真的角速度來源，這個 app 在那支手機上完全跑不了，
-開啟時會直接說明。
-
-用磁力計的方位角微分來代替不是辦法：iOS 端證實那條路會被每圈一次的空間磁場失真蓋掉
-（見 [`CLAUDE.md`](CLAUDE.md) 坑 13–15），而且那支的磁力計上限只有 50 Hz。
-
-安裝前先確認：規格表有沒有列「陀螺儀」，或用 *Sensor Box* 之類的 app 查。
-
-### 用真實硬體資料交叉驗證
+## 兩個實作，同一個核心
 
 合成黃金向量驗的是「數學有沒有照規格實作」。這個驗的是更強的一件事：
 **兩個獨立實作對同一段實體錄音會不會得到同樣的結論**。
@@ -204,7 +168,7 @@ make android-crosscheck FILE=TurntableRPM-20260901-155337.json
 
 ## 開發筆記
 
-[`CLAUDE.md`](CLAUDE.md) 記錄了 40 條踩過的坑，包含幾個花了很久才找到的：
+[`CLAUDE.md`](CLAUDE.md) 記錄了 45 條踩過的坑，包含幾個花了很久才找到的：
 
 - `CMDeviceMotion.attitude.yaw` 是融合結果，拿它校準陀螺儀是同義反覆
 - 移動平均只能用在顯示路徑；用在抖晃率計算會把 4 Hz 的加權峰值整個挖掉
@@ -212,6 +176,9 @@ make android-crosscheck FILE=TurntableRPM-20260901-155337.json
 - 記錄下來的實測值也可能是錯的；獨立證據跟它衝突時，要查的是記錄值
 
 [`docs/td235ev-maintenance.md`](docs/td235ev-maintenance.md) 是那台唱盤本身的維修記錄。
+
+[`docs/android-sensors.md`](docs/android-sensors.md) 是 Android 版在真實硬體上量到的
+感測器行為 —— 為什麼取樣率比要求的高 7.9%，以及為什麼那件事其實無害。
 
 ## 安全提醒
 
@@ -232,4 +199,4 @@ App 有繁體中文（來源語言）、英文、日文、德文。日文與德�
 
 ## 授權
 
-MIT。見 [LICENSE](LICENSE)。
+MIT，見 [LICENSE](LICENSE)。

@@ -276,8 +276,7 @@
     <string name="meas_mean_trimmed">平均回転数（切り出し後）</string>
     <string name="meas_analysis_duration">解析した長さ</string>
     <string name="meas_resample_rate">リサンプリング周波数</string>
-    <string name="meas_trimmed">回転が不安定な区間を自動的に除外しました：先頭 %1$.1f 秒、末尾 %2$.1f 秒。</string>
-    <string name="meas_trimmed_tail">以下の数値はすべて残った区間から算出しています。</string>
+    <string name="meas_trimmed">回転が不安定な区間を自動的に除外しました：先頭 %1$.1f 秒、末尾 %2$.1f 秒。以下の数値はすべて残った区間から算出しています。</string>
     <string name="meas_spec_row">工場仕様（%1$s）</string>
     <string name="meas_within_spec">仕様内（仕様の %1$.0f%%）。</string>
     <string name="meas_over_spec">仕様の %1$.2f 倍です。</string>

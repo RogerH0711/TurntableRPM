@@ -481,9 +481,12 @@ internal fun AnalysisCard(a: MeasurementAnalysis, profile: TurntableProfile?) {
 
             if (a.trimmedStartSeconds > 0.05 || a.trimmedEndSeconds > 0.05) {
                 Text(
+                    // **不要在程式碼裡串接句子。** 分隔符本身是語言相關的 ——
+                    // 中文句尾是「。」不用空格，英文需要。串接出來就是
+                    // 「2.4 s at the end.Every number below…」。整句放進一條字串。
                     stringResource(
                         R.string.meas_trimmed, a.trimmedStartSeconds, a.trimmedEndSeconds,
-                    ) + stringResource(R.string.meas_trimmed_tail),
+                    ),
                     style = MaterialTheme.typography.bodySmall,
                     color = Orange,
                 )

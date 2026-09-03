@@ -55,8 +55,8 @@
     <string name="trend_axis_old">older</string>
     <string name="trend_axis_new">newer</string>
     <string name="trend_unchanged">Practically unchanged from the first run.</string>
-    <string name="trend_improved">improved</string>
-    <string name="trend_worse">got worse</string>
+    <string name="trend_improved">Improved</string>
+    <string name="trend_worse">Got worse</string>
     <string name="trend_change">%1$s by %2$.3f percentage points compared with the first run (%3$.3f%% → %4$.3f%%).</string>
     <string name="chart_spectrum">Spectrum</string>
     <string name="chart_spectrum_caption">Frequency on the horizontal axis (logarithmic, Hz), amplitude on the vertical (%). Orange dots are integer harmonics of the platter — things turning with it; grey dots are not, and belong to drive-chain parts turning at other speeds.</string>
@@ -277,8 +277,7 @@
     <string name="meas_mean_trimmed">Mean speed (trimmed)</string>
     <string name="meas_analysis_duration">Analysed length</string>
     <string name="meas_resample_rate">Resample rate</string>
-    <string name="meas_trimmed">Unsteady stretches were skipped automatically: %1$.1f s at the start, %2$.1f s at the end.</string>
-    <string name="meas_trimmed_tail">Every number below comes from what remains.</string>
+    <string name="meas_trimmed">Unsteady stretches were skipped automatically: %1$.1f s at the start, %2$.1f s at the end. Every number below comes from what remains.</string>
     <string name="meas_spec_row">Factory spec (%1$s)</string>
     <string name="meas_within_spec">Within spec (%1$.0f%% of it).</string>
     <string name="meas_over_spec">%1$.2f× over spec.</string>
