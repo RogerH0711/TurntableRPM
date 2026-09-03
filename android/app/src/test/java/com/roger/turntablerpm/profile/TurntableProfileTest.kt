@@ -58,9 +58,20 @@ class TurntableProfileTest {
     }
 
     @Test
-    fun `顯示名稱在完全空白時有預設值`() {
-        assertEquals("未命名唱盤", TurntableProfile(id = 1).displayName)
+    fun `顯示名稱是廠牌加型號`() {
         assertEquals("Thorens TD 235 EV", TurntableProfile(1, "TD 235 EV", "Thorens").displayName)
         assertEquals("TD 235 EV", TurntableProfile(1, name = "TD 235 EV").displayName)
+        assertEquals("Thorens", TurntableProfile(1, maker = "Thorens").displayName)
+    }
+
+    /**
+     * **兩者都空白時回空字串，不在資料類別裡補預設名稱。**
+     * 資料類別拿不到 Compose 的資源，硬寫「未命名唱盤」就等於把這一條
+     * 排除在多語系之外。UI 層用 ifBlank 補上 R.string.profile_untitled。
+     */
+    @Test
+    fun `全空白時回空字串讓 UI 補預設名稱`() {
+        assertEquals("", TurntableProfile(id = 1).displayName)
+        assertEquals("", TurntableProfile(1, name = "  ", maker = "\t").displayName)
     }
 }

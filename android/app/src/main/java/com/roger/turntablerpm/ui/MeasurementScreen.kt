@@ -22,9 +22,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.roger.turntablerpm.R
 import com.roger.turntablerpm.core.MeasurementAnalysis
 import com.roger.turntablerpm.sensor.EngineState
 import com.roger.turntablerpm.profile.TurntableProfile
@@ -53,6 +55,8 @@ fun MeasurementScreen(
     onOpenHistory: () -> Unit = {},
     onOpenAbout: () -> Unit = {},
     onShareExport: (String) -> Unit = {},
+    onReplayOnboarding: () -> Unit = {},
+    onOpenAdvanced: () -> Unit = {},
     onOpenProfiles: () -> Unit = {},
     /** 使用中的唱盤。有規格就拿來比對，有傳動鏈尺寸就用來認出馬達那根峰。 */
     profile: TurntableProfile? = null,
@@ -67,12 +71,12 @@ fun MeasurementScreen(
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        Text("轉速量測", style = MaterialTheme.typography.headlineSmall)
+        Text(stringResource(R.string.meas_title), style = MaterialTheme.typography.headlineSmall)
 
         if (!available) {
             Card(Modifier.fillMaxWidth()) {
                 Text(
-                    unavailableReason ?: "這台裝置缺少陀螺儀或重力感測器，無法量測。",
+                    unavailableReason ?: stringResource(R.string.meas_unavailable),
                     Modifier.padding(16.dp),
                     style = MaterialTheme.typography.bodyMedium,
                 )
@@ -83,26 +87,26 @@ fun MeasurementScreen(
         SpeedReadout(state)
 
         // **自動是預設。** 手動模式要在盤面轉動時去點按鈕，那很難按。
-        Text("模式", style = MaterialTheme.typography.titleSmall)
+        Text(stringResource(R.string.meas_mode), style = MaterialTheme.typography.titleSmall)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             FilterChip(
                 selected = mode == Mode.AUTOMATIC,
                 onClick = { if (!state.running) onModeChange(Mode.AUTOMATIC) },
-                label = { Text("自動") },
+                label = { Text(stringResource(R.string.meas_mode_auto)) },
                 enabled = !state.running,
             )
             FilterChip(
                 selected = mode == Mode.MANUAL,
                 onClick = { if (!state.running) onModeChange(Mode.MANUAL) },
-                label = { Text("手動") },
+                label = { Text(stringResource(R.string.meas_mode_manual)) },
                 enabled = !state.running,
             )
         }
         Text(
             if (mode == Mode.AUTOMATIC) {
-                "按下按鈕後把手機放上轉盤，程式會等轉速穩定才開始記錄，盤面停下時自動結束。"
+                stringResource(R.string.meas_auto_hint)
             } else {
-                "自己按開始與停止。記得先讓轉盤轉起來、手機放好，再按開始。"
+                stringResource(R.string.meas_manual_hint)
             },
             style = MaterialTheme.typography.bodySmall,
         )
@@ -113,30 +117,26 @@ fun MeasurementScreen(
         ) {
             Text(
                 when {
-                    state.running -> "停止"
-                    mode == Mode.AUTOMATIC -> "準備好，開始偵測"
-                    else -> "開始量測"
+                    state.running -> stringResource(R.string.meas_stop)
+                    mode == Mode.AUTOMATIC -> stringResource(R.string.meas_start_auto)
+                    else -> stringResource(R.string.meas_start_manual)
                 },
             )
         }
 
         Card(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text("放上唱盤之前", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.meas_before_title), style = MaterialTheme.typography.titleSmall)
                 Text(
-                    "拿掉磁吸配件與含磁鐵的手機殼，鎖好唱臂。",
+                    stringResource(R.string.meas_before_magnets),
                     style = MaterialTheme.typography.bodySmall,
                 )
                 Text(
-                    "手機橫跨轉軸放在唱片鎮上，讓質心落在轉軸正上方 —— 這是最省事的擺法。" +
-                        "沒有唱片鎮的話，手機右側長邊中點貼轉軸、機身放左半邊，" +
-                        "對面放一個等重的東西配平。",
+                    stringResource(R.string.meas_before_placement),
                     style = MaterialTheme.typography.bodySmall,
                 )
                 Text(
-                    "手機偏在一邊會拖慢轉速 0.3%、放大每圈一次的抖動三成。" +
-                        "實測顯示「每圈一次」裡有一大半是手機造成的，不是唱盤的 —— " +
-                        "想知道唱盤自己有多少，把手機轉 180° 再量一次，兩次的差就是手機的貢獻。",
+                    stringResource(R.string.meas_before_offcentre),
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
@@ -151,14 +151,17 @@ fun MeasurementScreen(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     CircularProgressIndicator()
-                    Text("分析中…", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.meas_analyzing), style = MaterialTheme.typography.bodyMedium)
                 }
             }
         }
         state.analysisFailureReason?.let { reason ->
             Card(Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text("分析不出來", style = MaterialTheme.typography.titleSmall, color = Orange)
+                    Text(
+                        stringResource(R.string.meas_analysis_failed),
+                        style = MaterialTheme.typography.titleSmall, color = Orange,
+                    )
                     Text(reason, style = MaterialTheme.typography.bodyMedium)
                 }
             }
@@ -172,40 +175,60 @@ fun MeasurementScreen(
         Card(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("碼錶校準", style = MaterialTheme.typography.titleSmall)
+                    Text(stringResource(R.string.cal_title), style = MaterialTheme.typography.titleSmall)
                     Text(
-                        if (state.appliedFactor != null) "已校準" else "未校準",
+                        if (state.appliedFactor != null) stringResource(R.string.meas_cal_calibrated)
+                        else stringResource(R.string.meas_cal_uncalibrated),
                         style = MaterialTheme.typography.titleSmall,
                         color = if (state.appliedFactor != null) Green else Orange,
                     )
                 }
                 Text(
                     state.appliedFactor?.let {
-                        "倍率 k = %.5f，所有轉速讀數都已套用。".format(it)
-                    } ?: "還沒校準。目前的偏差 % 是唱盤誤差與陀螺儀誤差相乘的結果，" +
-                        "兩者分不開，還不能拿來調唱盤。",
+                        stringResource(R.string.meas_cal_applied, it)
+                    } ?: stringResource(R.string.meas_cal_none),
                     style = MaterialTheme.typography.bodySmall,
                 )
                 OutlinedButton(onClick = onOpenCalibration, modifier = Modifier.fillMaxWidth()) {
-                    Text(if (state.appliedFactor != null) "重新校準" else "開始碼錶校準")
+                    Text(
+                        if (state.appliedFactor != null) stringResource(R.string.meas_cal_redo)
+                        else stringResource(R.string.meas_cal_start),
+                    )
                 }
             }
         }
 
         OutlinedButton(onClick = onOpenHistory, modifier = Modifier.fillMaxWidth()) {
-            Text("量測歷史")
+            Text(stringResource(R.string.meas_history))
         }
 
         OutlinedButton(onClick = onOpenProfiles, modifier = Modifier.fillMaxWidth()) {
-            Text(profile?.let { "唱盤：${it.displayName}" } ?: "唱盤設定檔")
+            Text(
+                profile?.let {
+                    stringResource(
+                        R.string.meas_profile_named,
+                        it.displayName.ifBlank { stringResource(R.string.profile_untitled) },
+                    )
+                } ?: stringResource(R.string.meas_profile_none),
+            )
         }
 
         OutlinedButton(onClick = onOpenAbout, modifier = Modifier.fillMaxWidth()) {
-            Text("說明")
+            Text(stringResource(R.string.meas_about))
+        }
+
+        // 導覽看完就再也進不去的話，那幾頁等於只存在一次 —— 而擺法那一頁
+        // 是使用者最常需要回去確認的東西。
+        OutlinedButton(onClick = onReplayOnboarding, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(R.string.meas_replay_onboarding))
         }
 
         OutlinedButton(onClick = onOpenDiagnostics, modifier = Modifier.fillMaxWidth()) {
-            Text("取樣特性診斷")
+            Text(stringResource(R.string.meas_sampling_diagnostics))
+        }
+
+        OutlinedButton(onClick = onOpenAdvanced, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(R.string.meas_advanced_diagnostics))
         }
     }
 }
@@ -223,11 +246,9 @@ fun MeasurementScreen(
 private fun ExportCard(path: String, onShare: (String) -> Unit) {
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text("原始資料", style = MaterialTheme.typography.titleSmall)
+            Text(stringResource(R.string.meas_raw_data), style = MaterialTheme.typography.titleSmall)
             Text(
-                "這次量測的逐樣本資料已經存成 JSON（時間戳、角速度、重力向量）。" +
-                    "傳到電腦上可以用 tools/analyze_export.py 重新分析，" +
-                    "或是拿去跟別的量測工具對照。",
+                stringResource(R.string.meas_raw_data_body),
                 style = MaterialTheme.typography.bodySmall,
             )
             Text(
@@ -236,7 +257,7 @@ private fun ExportCard(path: String, onShare: (String) -> Unit) {
                 fontFamily = FontFamily.Monospace,
             )
             OutlinedButton(onClick = { onShare(path) }, modifier = Modifier.fillMaxWidth()) {
-                Text("分享原始資料")
+                Text(stringResource(R.string.share_raw_data))
             }
         }
     }
@@ -258,20 +279,29 @@ private fun SpeedReadout(state: EngineState) {
             // **未校準的偏差不能拿來調唱盤。** 那是唱盤誤差與陀螺儀誤差相乘的結果，
             // 兩者分不開，所以未校準時要明確標出來。
             if (state.appliedFactor != null) {
-                Text("已校準", style = MaterialTheme.typography.titleMedium, color = Green)
+                Text(
+                    stringResource(R.string.meas_cal_calibrated),
+                    style = MaterialTheme.typography.titleMedium, color = Green,
+                )
             } else {
-                Text("未校準", style = MaterialTheme.typography.titleMedium, color = Orange)
+                Text(
+                    stringResource(R.string.meas_cal_uncalibrated),
+                    style = MaterialTheme.typography.titleMedium, color = Orange,
+                )
             }
         }
         if (state.nominal != null && state.errorPercent != null) {
             val e = state.errorPercent
             Text(
-                "%s 轉  %+.3f%%".format(state.nominal.label, e),
+                stringResource(R.string.meas_nominal_and_error, state.nominal.label, e),
                 style = MaterialTheme.typography.headlineSmall,
                 color = if (abs(e) <= 0.3) Green else Orange,
             )
         } else if (state.running) {
-            Text("轉速尚未穩定或不在標稱範圍內", style = MaterialTheme.typography.bodyMedium, color = Orange)
+            Text(
+                stringResource(R.string.meas_rpm_unstable),
+                style = MaterialTheme.typography.bodyMedium, color = Orange,
+            )
         }
     }
 }
@@ -281,21 +311,21 @@ private fun RunningCard(state: EngineState) {
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("經過時間 %.0f s".format(state.elapsedSeconds))
-                Text("${state.revolutions} 圈")
-                Text("${state.sampleCount} 筆")
+                Text(stringResource(R.string.meas_elapsed, state.elapsedSeconds))
+                Text(stringResource(R.string.meas_revs, state.revolutions))
+                Text(stringResource(R.string.meas_samples, state.sampleCount))
             }
             state.stats?.let { s ->
                 Text(
-                    "取樣 %.2f Hz，抖動比 %.3f%%，長空隙 %d 次".format(
+                    stringResource(
+                        R.string.meas_sampling_line,
                         s.effectiveRateHz, s.jitterRatio * 100, s.longGaps,
                     ),
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
             Text(
-                "至少量 90 秒；想要準確的譜峰振幅就量 3 分鐘 —— " +
-                    "1 分鐘的量測會低估約 8%，因為解析度不夠細，峰值落在兩個頻率格之間。",
+                stringResource(R.string.meas_duration_hint),
                 style = MaterialTheme.typography.bodySmall,
             )
         }
@@ -306,7 +336,7 @@ private fun RunningCard(state: EngineState) {
 private fun AnalysisCard(a: MeasurementAnalysis, profile: TurntableProfile?) {
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text("抖晃率", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.meas_wow_title), style = MaterialTheme.typography.titleMedium)
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
                     "%.3f".format(a.wowFlutter.wrmsPercent),
@@ -314,24 +344,39 @@ private fun AnalysisCard(a: MeasurementAnalysis, profile: TurntableProfile?) {
                     fontFamily = FontFamily.Monospace,
                 )
                 Spacer(Modifier.fillMaxWidth(0.02f))
-                Text("% WRMS", style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(R.string.meas_wrms_unit), style = MaterialTheme.typography.bodyMedium)
             }
-            StatRow("DIN 2σ 峰值", "%.3f %%".format(a.wowFlutter.peak2SigmaPercent))
-            StatRow("每圈一次成分", "%.3f %%".format(a.onePerRevolutionPercent))
-            StatRow("最強成分佔比", "%.0f %%".format(a.dominantPeakShare * 100))
-            StatRow("平均轉速（切過）", "%.4f RPM".format(a.meanRPM))
-            StatRow("分析時長", "%.1f s".format(a.durationSeconds))
-            StatRow("重取樣頻率", "%.2f Hz".format(a.sampleRate))
+            StatRow(
+                stringResource(R.string.meas_din_peak),
+                "%.3f %%".format(a.wowFlutter.peak2SigmaPercent),
+            )
+            StatRow(
+                stringResource(R.string.meas_one_per_rev),
+                "%.3f %%".format(a.onePerRevolutionPercent),
+            )
+            StatRow(
+                stringResource(R.string.meas_dominant_share),
+                "%.0f %%".format(a.dominantPeakShare * 100),
+            )
+            StatRow(stringResource(R.string.meas_mean_trimmed), "%.4f RPM".format(a.meanRPM))
+            StatRow(stringResource(R.string.meas_analysis_duration), "%.1f s".format(a.durationSeconds))
+            StatRow(stringResource(R.string.meas_resample_rate), "%.2f Hz".format(a.sampleRate))
 
             // 原廠規格的比對。0.09% 是好是壞，要看手冊寫幾 —— 沒有這個數字，
             // 抖晃率就只是一個無從判斷的浮點數。
             profile?.specWowFlutterPercent?.takeIf { it > 0 }?.let { spec ->
                 HorizontalDivider(Modifier.padding(vertical = 4.dp))
-                StatRow("原廠規格（${profile.displayName}）", "%.3f %%".format(spec))
+                StatRow(
+                    stringResource(
+                        R.string.meas_spec_row,
+                        profile.displayName.ifBlank { stringResource(R.string.profile_untitled) },
+                    ),
+                    "%.3f %%".format(spec),
+                )
                 val ratio = a.wowFlutter.wrmsPercent / spec
                 Text(
-                    if (ratio <= 1) "在規格內（規格的 %.0f%%）。".format(ratio * 100)
-                    else "超出規格 %.2f 倍。".format(ratio),
+                    if (ratio <= 1) stringResource(R.string.meas_within_spec, ratio * 100)
+                    else stringResource(R.string.meas_over_spec, ratio),
                     style = MaterialTheme.typography.bodyMedium,
                     color = if (ratio <= 1) Green else Orange,
                 )
@@ -339,19 +384,19 @@ private fun AnalysisCard(a: MeasurementAnalysis, profile: TurntableProfile?) {
 
             if (a.trimmedStartSeconds > 0.05 || a.trimmedEndSeconds > 0.05) {
                 Text(
-                    "已自動略過轉速不穩的區間：開頭 %.1f s、尾端 %.1f s。".format(
-                        a.trimmedStartSeconds, a.trimmedEndSeconds,
-                    ) + "下面所有數字都是剩下那一段算出來的。",
+                    stringResource(
+                        R.string.meas_trimmed, a.trimmedStartSeconds, a.trimmedEndSeconds,
+                    ) + stringResource(R.string.meas_trimmed_tail),
                     style = MaterialTheme.typography.bodySmall,
                     color = Orange,
                 )
             }
 
             HorizontalDivider(Modifier.padding(vertical = 6.dp))
-            Text("問題出在哪", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.meas_where_problem), style = MaterialTheme.typography.titleMedium)
             if (a.peaks.isEmpty()) {
                 Text(
-                    "沒有找到顯著的週期性成分 —— 這是好事，代表沒有單一零件在主導誤差。",
+                    stringResource(R.string.meas_no_peaks),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             } else {
@@ -382,11 +427,12 @@ private fun AnalysisCard(a: MeasurementAnalysis, profile: TurntableProfile?) {
                         val diff = (peak.orderOfRotation / ratio - 1) * 100
                         Text(
                             if (abs(diff) < 8) {
-                                "符合這台盤的傳動比（%.1f×）—— 這是馬達。".format(ratio)
+                                stringResource(R.string.meas_is_the_motor, ratio)
                             } else {
-                                ("這台盤的傳動比是 %.1f×，量到 %.1f×（差 %+.0f%%）—— " +
-                                    "可能是傳動鏈尺寸填得不夠準，也可能這根不是馬達。")
-                                    .format(ratio, peak.orderOfRotation, diff)
+                                stringResource(
+                                    R.string.meas_ratio_mismatch,
+                                    ratio, peak.orderOfRotation, diff,
+                                )
                             },
                             style = MaterialTheme.typography.bodySmall,
                             color = if (abs(diff) < 8) Blue else Color.Unspecified,
@@ -395,8 +441,7 @@ private fun AnalysisCard(a: MeasurementAnalysis, profile: TurntableProfile?) {
                 }
                 Row(Modifier.height(6.dp)) {}
                 Text(
-                    "整數倍 = 跟著盤面轉的東西（偏心、變形）。" +
-                        "非整數倍 = 傳動鏈上轉速不同的零件（馬達、皮帶輪）。",
+                    stringResource(R.string.meas_harmonic_legend),
                     style = MaterialTheme.typography.bodySmall,
                 )
             }

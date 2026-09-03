@@ -27,11 +27,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.roger.turntablerpm.R
 import com.roger.turntablerpm.sensor.EngineState
 import com.roger.turntablerpm.sensor.Phase
 import kotlin.math.abs
@@ -141,7 +143,7 @@ private fun DialContent(state: EngineState) {
         val error = state.errorPercent
         if (nominal != null && error != null) {
             Text(
-                "${nominal.label} 轉",
+                stringResource(R.string.dial_nominal_rpm, nominal.label),
                 color = Color.White.copy(alpha = 0.5f),
                 fontSize = 16.sp,
                 modifier = Modifier.padding(top = 6.dp),
@@ -155,7 +157,11 @@ private fun DialContent(state: EngineState) {
             )
         } else {
             Text(
-                if (state.phase == Phase.WAITING_FOR_STABILITY) "等待轉速穩定" else "尚未穩定",
+                if (state.phase == Phase.WAITING_FOR_STABILITY) {
+                    stringResource(R.string.dial_waiting_for_speed)
+                } else {
+                    stringResource(R.string.dial_not_steady)
+                },
                 color = Amber,
                 fontSize = 20.sp,
                 modifier = Modifier.padding(top = 6.dp),
@@ -164,14 +170,15 @@ private fun DialContent(state: EngineState) {
 
         if (state.appliedFactor == null) {
             Text(
-                "未校準",
+                stringResource(R.string.dial_uncalibrated),
                 color = Amber.copy(alpha = 0.8f),
                 fontSize = 13.sp,
                 modifier = Modifier.padding(top = 4.dp),
             )
         }
         Text(
-            "%d:%02d  ·  %d 圈".format(
+            stringResource(
+                R.string.dial_elapsed_and_revs,
                 state.elapsedSeconds.toInt() / 60, state.elapsedSeconds.toInt() % 60,
                 state.revolutions,
             ),
@@ -196,7 +203,10 @@ private fun TurnControls(onRotate: (Double) -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(bottom = 24.dp),
     ) {
-        Text("點上方畫面停止", color = Color.White.copy(alpha = 0.35f), fontSize = 13.sp)
+        Text(
+            stringResource(R.string.dial_tap_top_to_stop),
+            color = Color.White.copy(alpha = 0.35f), fontSize = 13.sp,
+        )
         Row(
             horizontalArrangement = Arrangement.spacedBy(20.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -204,7 +214,10 @@ private fun TurnControls(onRotate: (Double) -> Unit) {
             TextButton(onClick = { onRotate(-15.0) }) {
                 Text("⟲", color = Color.White.copy(alpha = 0.75f), fontSize = 30.sp)
             }
-            Text("轉向", color = Color.White.copy(alpha = 0.4f), fontSize = 14.sp)
+            Text(
+                stringResource(R.string.dial_rotate),
+                color = Color.White.copy(alpha = 0.4f), fontSize = 14.sp,
+            )
             TextButton(onClick = { onRotate(15.0) }) {
                 Text("⟳", color = Color.White.copy(alpha = 0.75f), fontSize = 30.sp)
             }
@@ -219,13 +232,13 @@ private fun FrozenControls(onDismiss: () -> Unit) {
         modifier = Modifier.padding(bottom = 24.dp),
     ) {
         Text(
-            "量測結束，可以把手機從轉盤上拿起來了",
+            stringResource(R.string.dial_done_pick_up_phone),
             color = Color.White.copy(alpha = 0.6f),
             fontSize = 14.sp,
             textAlign = TextAlign.Center,
         )
         TextButton(onClick = onDismiss) {
-            Text("看分析結果", color = Color.White, fontSize = 20.sp)
+            Text(stringResource(R.string.dial_see_analysis), color = Color.White, fontSize = 20.sp)
         }
     }
 }

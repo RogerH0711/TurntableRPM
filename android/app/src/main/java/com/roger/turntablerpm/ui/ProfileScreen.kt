@@ -27,8 +27,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.roger.turntablerpm.R
 import com.roger.turntablerpm.profile.TurntableProfile
 
 private val Green = Color(0xFF2E7D32)
@@ -60,7 +62,7 @@ fun ProfileScreen(
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        Text("唱盤", style = MaterialTheme.typography.headlineSmall)
+        Text(stringResource(R.string.prof_title), style = MaterialTheme.typography.headlineSmall)
 
         if (profiles.isEmpty()) {
             Card(Modifier.fillMaxWidth()) {
@@ -68,14 +70,13 @@ fun ProfileScreen(
                     Modifier.padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    Text("還沒有唱盤設定檔", style = MaterialTheme.typography.titleSmall)
+                    Text(stringResource(R.string.prof_empty_title), style = MaterialTheme.typography.titleSmall)
                     Text(
-                        "記下原廠規格與傳動鏈尺寸之後，量測結果就能自動跟規格比對，" +
-                            "頻譜上的非諧波峰也能對上實體零件。",
+                        stringResource(R.string.prof_empty_body),
                         style = MaterialTheme.typography.bodySmall,
                     )
                     Button(onClick = onAdd, modifier = Modifier.fillMaxWidth()) {
-                        Text("新增唱盤")
+                        Text(stringResource(R.string.prof_add))
                     }
                 }
             }
@@ -84,12 +85,12 @@ fun ProfileScreen(
                 ProfileCard(p, onUpdate, onOpenLoadTest) { onDelete(p.id) }
             }
             OutlinedButton(onClick = onAdd, modifier = Modifier.fillMaxWidth()) {
-                Text("再新增一台")
+                Text(stringResource(R.string.prof_add_another))
             }
         }
 
         OutlinedButton(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
-            Text("回到量測")
+            Text(stringResource(R.string.back_to_measure))
         }
     }
 }
@@ -107,12 +108,15 @@ private fun ProfileCard(
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    profile.displayName,
+                    profile.displayName.ifBlank { stringResource(R.string.profile_untitled) },
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f),
                 )
                 if (profile.isActive) {
-                    Text("使用中", style = MaterialTheme.typography.bodySmall, color = Green)
+                    Text(
+                        stringResource(R.string.prof_active),
+                        style = MaterialTheme.typography.bodySmall, color = Green,
+                    )
                 }
                 Switch(
                     checked = profile.isActive,
@@ -125,105 +129,113 @@ private fun ProfileCard(
             OutlinedTextField(
                 value = profile.name,
                 onValueChange = { onUpdate(profile.copy(name = it)) },
-                label = { Text("型號") },
-                placeholder = { Text("例如 TD 235 EV") },
+                label = { Text(stringResource(R.string.prof_model)) },
+                placeholder = { Text(stringResource(R.string.prof_model_hint)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )
             OutlinedTextField(
                 value = profile.maker,
                 onValueChange = { onUpdate(profile.copy(maker = it)) },
-                label = { Text("廠牌") },
-                placeholder = { Text("例如 Thorens") },
+                label = { Text(stringResource(R.string.prof_maker)) },
+                placeholder = { Text(stringResource(R.string.prof_maker_hint)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )
 
             HorizontalDivider()
-            Text("原廠規格", style = MaterialTheme.typography.titleSmall)
+            Text(stringResource(R.string.prof_section_spec), style = MaterialTheme.typography.titleSmall)
             NumberField(
-                label = "抖晃率規格",
+                label = stringResource(R.string.prof_spec_wow),
                 unit = "%",
                 value = profile.specWowFlutterPercent,
                 onChange = { onUpdate(profile.copy(specWowFlutterPercent = it)) },
             )
             Text(
-                "填了之後，分析頁會直接標出你的盤超規格多少。手冊上通常寫成 WRMS 或 DIN。",
+                stringResource(R.string.prof_spec_note),
                 style = MaterialTheme.typography.bodySmall,
             )
 
             HorizontalDivider()
-            Text("傳動鏈尺寸（選填）", style = MaterialTheme.typography.titleSmall)
+            Text(
+                stringResource(R.string.prof_section_drive),
+                style = MaterialTheme.typography.titleSmall,
+            )
             NumberField(
-                label = "馬達皮帶輪直徑",
+                label = stringResource(R.string.prof_pulley),
                 unit = "mm",
                 value = profile.pulleyDiameterMM,
                 onChange = { onUpdate(profile.copy(pulleyDiameterMM = it)) },
             )
             NumberField(
-                label = "皮帶接觸的盤面直徑",
+                label = stringResource(R.string.prof_platter),
                 unit = "mm",
                 value = profile.platterDiameterMM,
                 onChange = { onUpdate(profile.copy(platterDiameterMM = it)) },
             )
             NumberField(
-                label = "皮帶厚度",
+                label = stringResource(R.string.prof_belt),
                 unit = "mm",
                 value = profile.beltThicknessMM,
                 onChange = { onUpdate(profile.copy(beltThicknessMM = it)) },
             )
             profile.expectedDriveRatio?.let {
-                StatRow("預期傳動比", "%.2f ×".format(it))
+                StatRow(stringResource(R.string.prof_expected_ratio), "%.2f ×".format(it))
             }
             Text(
-                "量了這幾個，頻譜上「非諧波的某某倍」就能對上實體零件 —— " +
-                    "剛好等於傳動比的那根峰就是馬達。皮帶跑在外盤緣就量外盤，" +
-                    "跑在內盤就量內盤。",
+                stringResource(R.string.prof_drive_note),
                 style = MaterialTheme.typography.bodySmall,
             )
             Text(
-                "皮帶厚度對比值影響很大：皮帶輪 8.5 mm 配厚度 0.5 mm，" +
-                    "光是厚度就讓比值差 5.6%。量不準沒關係 —— app 會把預期與量到的" +
-                    "兩個數字並排講出來，不做「符合／不符合」的判定。",
+                stringResource(R.string.prof_belt_sensitivity),
                 style = MaterialTheme.typography.bodySmall,
             )
 
             HorizontalDivider()
-            Text("載重", style = MaterialTheme.typography.titleSmall)
+            Text(stringResource(R.string.prof_section_load), style = MaterialTheme.typography.titleSmall)
             if (profile.hasLoadTest) {
-                StatRow("載重斜率", "%.5f RPM/g".format(profile.loadSlopeRPMPerGram ?: 0.0))
-                StatRow("手機造成的變化", "%+.4f RPM".format(profile.loadPhoneEffectRPM ?: 0.0))
+                StatRow(
+                    stringResource(R.string.load_slope),
+                    "%.5f RPM/g".format(profile.loadSlopeRPMPerGram ?: 0.0),
+                )
+                StatRow(
+                    stringResource(R.string.load_phone_effect),
+                    "%+.4f RPM".format(profile.loadPhoneEffectRPM ?: 0.0),
+                )
                 Text(
-                    if (profile.loadIsSignificant) "手機的重量確實會影響讀數。"
-                    else "這台盤對載重不敏感，手機的重量不影響讀數。",
+                    if (profile.loadIsSignificant) stringResource(R.string.load_significant)
+                    else stringResource(R.string.load_not_significant),
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
             Text(
-                "手機的重量會不會把唱盤拖慢，完全取決於馬達型式，查表沒有用，要實測。",
+                stringResource(R.string.prof_load_note),
                 style = MaterialTheme.typography.bodySmall,
             )
             OutlinedButton(onClick = onOpenLoadTest, modifier = Modifier.fillMaxWidth()) {
-                Text(if (profile.hasLoadTest) "重做載重測試" else "做載重測試")
+                Text(
+                    if (profile.hasLoadTest) stringResource(R.string.prof_redo_load_test)
+                    else stringResource(R.string.prof_do_load_test),
+                )
             }
 
             HorizontalDivider()
             OutlinedTextField(
                 value = profile.note,
                 onValueChange = { onUpdate(profile.copy(note = it)) },
-                label = { Text("備註") },
-                placeholder = { Text("例如：2026 換過皮帶、速度微調在底板右側") },
+                label = { Text(stringResource(R.string.prof_section_note)) },
+                placeholder = { Text(stringResource(R.string.prof_note_hint)) },
                 minLines = 2,
                 modifier = Modifier.fillMaxWidth(),
             )
 
             if (confirmDelete) {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    TextButton(onClick = onDelete) { Text("確定刪除") }
-                    TextButton(onClick = { confirmDelete = false }) { Text("取消") }
+                    TextButton(onClick = onDelete) { Text(stringResource(R.string.prof_confirm_delete)) }
+                    TextButton(onClick = { confirmDelete = false }) { Text(stringResource(R.string.prof_cancel)) }
                 }
             } else {
-                TextButton(onClick = { confirmDelete = true }) { Text("刪除這台唱盤") }
+                TextButton(onClick = { confirmDelete = true }) { Text(stringResource(R.string.prof_delete)) }
             }
         }
     }
@@ -259,7 +271,7 @@ private fun NumberField(
         )
         if (text.isNotEmpty()) {
             TextButton(onClick = { text = ""; onChange(null) }, modifier = Modifier.width(64.dp)) {
-                Text("清除", style = MaterialTheme.typography.bodySmall)
+                Text(stringResource(R.string.prof_clear_field), style = MaterialTheme.typography.bodySmall)
             }
         }
     }

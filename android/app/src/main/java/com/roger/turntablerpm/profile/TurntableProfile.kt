@@ -56,7 +56,11 @@ data class TurntableProfile(
             return (bigD + (beltThicknessMM ?: 0.0)) / (d + (beltThicknessMM ?: 0.0))
         }
 
+    /**
+     * 廠牌 + 型號。**兩者都空白時回空字串，不在這裡補預設名稱** ——
+     * 資料類別拿不到 Compose 的資源，硬寫中文就等於把這一條排除在多語系之外。
+     * UI 層用 `ifBlank { stringResource(R.string.profile_untitled) }` 補。
+     */
     val displayName: String
         get() = listOf(maker, name).filter { it.isNotBlank() }.joinToString(" ")
-            .ifBlank { "未命名唱盤" }
 }

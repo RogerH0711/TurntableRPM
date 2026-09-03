@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 13 起使用者可以在系統設定裡單獨指定某個 app 的語言。
+  沒有這份清單的話那個選項不會出現。
+
+  預設（values/）放英文而不是中文：values/ 是找不到符合語系時的後備，
+  而「看不懂的語言」對最多人來說是中文，不是英文（README 也是同一個決定）。
+-->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="en" />
+    <locale android:name="zh-TW" />
+    <locale android:name="ja" />
+    <locale android:name="de" />
+</locale-config>

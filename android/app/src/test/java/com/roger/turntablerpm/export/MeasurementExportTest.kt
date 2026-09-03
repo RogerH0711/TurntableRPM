@@ -49,13 +49,30 @@ class MeasurementExportTest {
     }
 
     @Test
-    fun `Android 沒有磁力計所以磁場欄位是 null`() {
+    fun `讀不到的感測器寫 null 而不是 0`() {
+        // 「沒量到」跟「量到 0」是兩回事 —— 後者會讓離線工具以為磁場真的是零。
         val f = MeasurementExport.write(frames(2), emptyMap(), temp.root)!!
         // 非最後一筆的樣本行結尾帶逗號，比對前先去掉。
         val line = f.readText().lines().first { it.startsWith("[0.00000") }.trimEnd(',')
         assertTrue(line.endsWith("null,null,null,null,null,null]"))
         // yaw 一個，已校準磁場三個，未校準磁力計三個。
         assertEquals(7, Regex("null").findAll(line).count())
+    }
+
+    @Test
+    fun `有磁力計時三組向量都寫得出來`() {
+        val frame = RawFrame(
+            t = 100.0, omega = 200.0, gravity = Vector3(0.0, 0.0, 9.8),
+            yaw = 1.234567, field = Vector3(-6.6, -38.1, 71.2),
+            rawField = Vector3(-7.0, -39.0, 470.5),
+        )
+        val f = MeasurementExport.write(listOf(frame, frame), emptyMap(), temp.root)!!
+        val line = f.readText().lines().first { it.startsWith("[0.00000") }.trimEnd(',')
+        assertEquals(
+            "[0.00000,200.00000,1.234567,0.00000,0.00000,9.80000," +
+                "-6.600,-38.100,71.200,-7.000,-39.000,470.500]",
+            line,
+        )
     }
 
     @Test

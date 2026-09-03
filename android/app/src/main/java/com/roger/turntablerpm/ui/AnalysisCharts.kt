@@ -27,8 +27,10 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.roger.turntablerpm.R
 import com.roger.turntablerpm.core.MeasurementAnalysis
 import com.roger.turntablerpm.core.PolarAccumulator
 import com.roger.turntablerpm.core.PolarBin
@@ -70,15 +72,13 @@ fun AnalysisCharts(a: MeasurementAnalysis, modifier: Modifier = Modifier) {
 private fun SpectrumCard(a: MeasurementAnalysis) {
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text("頻譜", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.chart_spectrum), style = MaterialTheme.typography.titleMedium)
             SpectrumChart(
                 a.spectrumFrequencies, a.spectrumAmplitudes, a.peaks,
                 Modifier.fillMaxWidth().height(190.dp),
             )
             Text(
-                "橫軸是頻率（對數，Hz），縱軸是振幅（%）。" +
-                    "橘點是轉盤的整數諧波 —— 跟著盤面轉的東西；灰點不是，那是傳動鏈上" +
-                    "轉速不同的零件。",
+                stringResource(R.string.chart_spectrum_caption),
                 style = MaterialTheme.typography.bodySmall,
             )
         }
@@ -188,7 +188,10 @@ private fun HeatmapCard(a: MeasurementAnalysis) {
 
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text("誤差在盤面的分布", style = MaterialTheme.typography.titleMedium)
+            Text(
+                stringResource(R.string.chart_heatmap),
+                style = MaterialTheme.typography.titleMedium,
+            )
             PolarHeatmap(
                 a.polarBins, scale, a.peakAngleDegrees,
                 Modifier.fillMaxWidth().height(260.dp),
@@ -196,21 +199,17 @@ private fun HeatmapCard(a: MeasurementAnalysis) {
             HeatmapLegend(scale)
             a.peakAngleDegrees?.let {
                 Text(
-                    "誤差最大的角度在 %.0f°（指針處）。顏色只集中在一邊代表偏心；".format(it) +
-                        "均勻散開代表隨機抖動。",
+                    stringResource(R.string.chart_peak_angle, it),
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
             Text(
-                "角度不能跨次量測比較。0° 是「按下開始的那一瞬間」盤面所在的位置，" +
-                    "而那是隨機的。要能比較，盤面貼一個記號，每次都等記號轉到同一個位置" +
-                    "（例如唱臂那側）才按開始。",
+                stringResource(R.string.chart_angle_not_comparable),
                 style = MaterialTheme.typography.bodySmall,
             )
             if (expanded) {
                 Text(
-                    "色階已放大到容納最大值 —— 跟別次量測比較時要看圖例上的數字，" +
-                        "不能只比顏色深淺。",
+                    stringResource(R.string.chart_scale_expanded),
                     style = MaterialTheme.typography.bodySmall,
                     color = Orange,
                 )
@@ -288,9 +287,18 @@ private fun HeatmapLegend(scale: Double) {
                 ),
         )
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("−%.2f%%（慢）".format(scale), style = MaterialTheme.typography.bodySmall)
-            Text("準", style = MaterialTheme.typography.bodySmall)
-            Text("+%.2f%%（快）".format(scale), style = MaterialTheme.typography.bodySmall)
+            Text(
+                stringResource(R.string.chart_legend_slow, scale),
+                style = MaterialTheme.typography.bodySmall,
+            )
+            Text(
+                stringResource(R.string.chart_legend_accurate),
+                style = MaterialTheme.typography.bodySmall,
+            )
+            Text(
+                stringResource(R.string.chart_legend_fast, scale),
+                style = MaterialTheme.typography.bodySmall,
+            )
         }
     }
 }
@@ -311,16 +319,16 @@ private fun heatColor(t: Double): Color {
 private fun RollingCard(a: MeasurementAnalysis) {
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text("瞬時偏差", style = MaterialTheme.typography.titleMedium)
+            Text(
+                stringResource(R.string.chart_rolling),
+                style = MaterialTheme.typography.titleMedium,
+            )
             RollingChart(
                 a.deviationPercent, a.sampleRate,
                 Modifier.fillMaxWidth().height(150.dp),
             )
             Text(
-                "未平滑的原始偏差，%。淡色的帶是每一小段的最大到最小值（快的抖），" +
-                    "深色的線是同一段的平均（慢的漂）。" +
-                    "分析路徑一律不套移動平均 —— 平滑會把 4 Hz 附近的抖晃挖掉，" +
-                    "數字會漂亮得沒有意義；這裡壓縮只影響畫面，不影響任何數字。",
+                stringResource(R.string.chart_rolling_caption),
                 style = MaterialTheme.typography.bodySmall,
             )
         }

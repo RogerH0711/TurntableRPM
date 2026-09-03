@@ -18,9 +18,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.roger.turntablerpm.R
 import com.roger.turntablerpm.history.MeasurementRecord
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -41,6 +43,7 @@ private val Orange = Color(0xFFCC6600)
 fun HistoryScreen(
     records: List<MeasurementRecord>,
     onDelete: (Long) -> Unit,
+    onOpen: (Long) -> Unit,
     onClear: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
@@ -54,47 +57,55 @@ fun HistoryScreen(
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Text("量測歷史", style = MaterialTheme.typography.headlineSmall)
+        Text(stringResource(R.string.hist_title), style = MaterialTheme.typography.headlineSmall)
 
         if (records.isEmpty()) {
             Card(Modifier.fillMaxWidth()) {
                 Text(
-                    "還沒有量測記錄。完成一次分析之後會自動存進來 —— 不需要手動按儲存。",
+                    stringResource(R.string.hist_empty),
                     Modifier.padding(16.dp),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
         } else {
             Text(
-                "共 ${records.size} 筆，由新到舊。所有百分比都不受校準影響" +
-                    "（那些是比值，陀螺儀的比例因子誤差會抵消）；只有 RPM 需要校準。",
+                stringResource(R.string.hist_count_and_note, records.size),
                 style = MaterialTheme.typography.bodySmall,
             )
             // 趨勢圖放在列表之前：使用者打開歷史是為了看「有沒有變好」，
             // 那個答案該第一眼就看到，不是往下捲十筆記錄之後才拼出來。
             Card(Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("趨勢", style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.hist_trend), style = MaterialTheme.typography.titleMedium)
                     TrendChart(records)
                 }
             }
             for (r in records) {
-                RecordCard(r, format.format(Date(r.epochMillis))) { onDelete(r.epochMillis) }
+                RecordCard(
+                    r, format.format(Date(r.epochMillis)),
+                    onOpen = { onOpen(r.epochMillis) },
+                    onDelete = { onDelete(r.epochMillis) },
+                )
             }
             TextButton(onClick = onClear, modifier = Modifier.fillMaxWidth()) {
-                Text("清除全部記錄")
+                Text(stringResource(R.string.hist_clear_all))
             }
         }
 
         OutlinedButton(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
-            Text("回到量測")
+            Text(stringResource(R.string.back_to_measure))
         }
     }
 }
 
 @Composable
-private fun RecordCard(r: MeasurementRecord, timestamp: String, onDelete: () -> Unit) {
-    Card(Modifier.fillMaxWidth()) {
+private fun RecordCard(
+    r: MeasurementRecord,
+    timestamp: String,
+    onOpen: () -> Unit,
+    onDelete: () -> Unit,
+) {
+    Card(onClick = onOpen, modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(
@@ -114,15 +125,21 @@ private fun RecordCard(r: MeasurementRecord, timestamp: String, onDelete: () -> 
                     style = MaterialTheme.typography.bodySmall,
                 )
                 if (!r.isCalibrated) {
-                    Text("未校準", style = MaterialTheme.typography.bodySmall, color = Orange)
+                    Text(
+                        stringResource(R.string.hist_uncalibrated),
+                        style = MaterialTheme.typography.bodySmall, color = Orange,
+                    )
                 }
             }
-            StatRow("加權 WRMS", "%.4f %%".format(r.wrmsPercent))
-            StatRow("每圈一次（會隨擺法變）", "%.4f %%".format(r.onePerRevPercent))
-            StatRow("最強成分佔比", "%.0f %%".format(r.dominantPeakShare * 100))
+            StatRow(stringResource(R.string.hist_weighted_wrms), "%.4f %%".format(r.wrmsPercent))
+            StatRow(stringResource(R.string.hist_one_per_rev), "%.4f %%".format(r.onePerRevPercent))
+            StatRow(
+                stringResource(R.string.hist_dominant_share),
+                "%.0f %%".format(r.dominantPeakShare * 100),
+            )
             if (r.trimmedSeconds > 0.05) {
                 Text(
-                    "切掉了 %.1f s 轉速不穩的區間".format(r.trimmedSeconds),
+                    stringResource(R.string.hist_trimmed, r.trimmedSeconds),
                     style = MaterialTheme.typography.bodySmall,
                     color = Orange,
                 )
@@ -146,7 +163,18 @@ private fun RecordCard(r: MeasurementRecord, timestamp: String, onDelete: () -> 
                     }
                 }
             }
-            TextButton(onClick = onDelete) { Text("刪除這一筆") }
+            if (r.note.isNotBlank()) {
+                Text(
+                    r.note,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 2,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                )
+            }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                TextButton(onClick = onOpen) { Text(stringResource(R.string.hist_detail_and_note)) }
+                TextButton(onClick = onDelete) { Text(stringResource(R.string.hist_delete_one)) }
+            }
         }
     }
 }

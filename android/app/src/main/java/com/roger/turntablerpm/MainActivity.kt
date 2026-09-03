@@ -17,14 +17,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.roger.turntablerpm.R
 import com.roger.turntablerpm.calibration.CalibrationStore
 import com.roger.turntablerpm.core.SpeedStatistics
 import com.roger.turntablerpm.history.HistoryStore
 import com.roger.turntablerpm.history.MeasurementRecord
 import com.roger.turntablerpm.sensor.Mode
 import com.roger.turntablerpm.sensor.SensorEngine
+import com.roger.turntablerpm.ui.AdvancedDiagnosticsScreen
 import com.roger.turntablerpm.ui.CalibrationScreen
 import com.roger.turntablerpm.ui.AboutScreen
+import com.roger.turntablerpm.ui.HistoryDetailScreen
 import com.roger.turntablerpm.ui.HistoryScreen
 import com.roger.turntablerpm.profile.ProfileStore
 import com.roger.turntablerpm.ui.OnboardingScreen
@@ -49,7 +52,10 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private enum class Screen { Measure, Diagnostics, Calibration, History, About, Profiles, LoadTest }
+private enum class Screen {
+    Measure, Diagnostics, Advanced, Calibration, History, HistoryDetail,
+    About, Profiles, LoadTest,
+}
 
 /**
  * 把匯出的 JSON 交給別的 app（郵件、雲端硬碟、傳訊）。
@@ -70,7 +76,11 @@ private fun shareExport(context: android.content.Context, path: String) {
         putExtra(android.content.Intent.EXTRA_SUBJECT, file.name)
         addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
-    context.startActivity(android.content.Intent.createChooser(intent, "分享原始資料"))
+    context.startActivity(
+        android.content.Intent.createChooser(
+            intent, context.getString(R.string.share_raw_data),
+        ),
+    )
 }
 
 /**
@@ -97,12 +107,13 @@ private fun AppRoot(modifier: Modifier = Modifier) {
 
     // 分析成功就自動存檔。不做手動按鈕 —— 使用者不會記得按。
     androidx.compose.runtime.DisposableEffect(engine) {
-        engine.onAnalysisComplete = { analysis, raw ->
+        engine.onAnalysisComplete = { analysis, raw, revolutions ->
             val nominal = SpeedStatistics.classify(analysis.meanRPM)
             history.add(
                 MeasurementRecord.from(
                     analysis = analysis,
                     rawMeanRPM = raw,
+                    revolutions = revolutions,
                     calibrationFactor = engine.calibrationFactor,
                     nominalLabel = nominal?.label,
                     errorPercent = nominal?.let {
@@ -114,6 +125,7 @@ private fun AppRoot(modifier: Modifier = Modifier) {
         onDispose { engine.onAnalysisComplete = null }
     }
     var screen by remember { mutableStateOf(Screen.Measure) }
+    var openRecordId by remember { mutableStateOf<Long?>(null) }
     var rotationOffset by remember { mutableStateOf(0.0) }
     var showDial by remember { mutableStateOf(false) }
     var mode by remember { mutableStateOf(Mode.AUTOMATIC) }
@@ -137,6 +149,7 @@ private fun AppRoot(modifier: Modifier = Modifier) {
     if (showOnboarding) {
         OnboardingScreen(
             onFinish = {
+                // 第一次看完就記下來。從說明入口重看時這一行是無害的重複寫入。
                 onboarding.edit().putBoolean("seenOnboarding", true).apply()
                 showOnboarding = false
             },
@@ -171,6 +184,8 @@ private fun AppRoot(modifier: Modifier = Modifier) {
             onOpenCalibration = { screen = Screen.Calibration },
             onOpenHistory = { screen = Screen.History },
             onOpenAbout = { screen = Screen.About },
+            onOpenAdvanced = { screen = Screen.Advanced },
+            onReplayOnboarding = { showOnboarding = true },
             onShareExport = { shareExport(context, it) },
             onOpenProfiles = { screen = Screen.Profiles },
             profile = profiles.firstOrNull { it.isActive },
@@ -231,7 +246,27 @@ private fun AppRoot(modifier: Modifier = Modifier) {
         Screen.History -> HistoryScreen(
             records = records,
             onDelete = { history.delete(it) },
+            onOpen = { openRecordId = it; screen = Screen.HistoryDetail },
             onClear = { history.clear() },
+            onBack = { screen = Screen.Measure },
+            modifier = modifier,
+        )
+        Screen.HistoryDetail -> {
+            val record = records.firstOrNull { it.epochMillis == openRecordId }
+            // 記錄被刪掉時退回列表，不要停在一個空白畫面上。
+            if (record == null) {
+                screen = Screen.History
+            } else {
+                HistoryDetailScreen(
+                    record = record,
+                    onNoteChange = { history.setNote(record.epochMillis, it) },
+                    onBack = { screen = Screen.History },
+                    modifier = modifier,
+                )
+            }
+        }
+        Screen.Advanced -> AdvancedDiagnosticsScreen(
+            state = state,
             onBack = { screen = Screen.Measure },
             modifier = modifier,
         )

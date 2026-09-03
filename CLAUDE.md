@@ -575,6 +575,36 @@ CI 另外還有 `.github/workflows/swift.yml`。
 
     **iOS 的 `AnalysisView.rollingPoints` 是同一個寫法，還沒修。**
 
+42. **macOS 的檔名不分大小寫 —— 這個 repo 裡 `app/` 就是 `App/`。**
+    多語系的產生腳本被傳錯根目錄，在 repo 根建出 `app/src/main/res/...`；
+    而那條路徑實際落在 iOS 的 `App/` 裡面。接著一句 `rm -rf app` 想清掉那批垃圾，
+    刪掉的是**整個 iOS 原始碼目錄**（22 個 .swift 加 Assets.xcassets）。
+
+    還原靠 `git checkout -- App/`，因為那些檔案都已經 commit 過，一個字都沒丟。
+    **這是「刪除前先看目標」的具體版本**：`ls app` 會列出 `App/` 的內容，
+    看一眼就知道那不是剛產生的東西。
+
+    腳本現在會先 assert 根目錄底下有 `app/build.gradle.kts`，傳錯就不動手。
+
+43. **Compose 的 `stringResource` 是 @Composable，純函式的文案助手全部要改。**
+    Android 版多語系化時，`interpretation(peak)`、`verdict(result)`、
+    `changeDescription(points)` 這幾個「回傳一句話」的純函式都拿不到資源，
+    只能改成 `@Composable`（或改成直接發 `Text`）。感測器層更麻煩 ——
+    `SensorEngine` 根本不在 Compose 裡，錯誤訊息要走 `context.getString()`，
+    而且要拿 `applicationContext`：引擎的生命週期比 Activity 長。
+
+    資料類別同理。`TurntableProfile.displayName` 原本在空白時回「未命名唱盤」，
+    那句中文寫死在資料層等於把它排除在多語系之外。**預設值要往 UI 層推**，
+    模型回空字串，畫面用 `ifBlank { stringResource(...) }` 補。
+
+    另外兩個 Android 特有的點：
+    - **含兩個以上參數的字串一定要用 `%1$s` 這種位置參數**，aapt2 會直接擋下
+      非位置的多參數字串。而那正好也是日文與德文換語序需要的東西
+      （「相比%1$s了 %2$.3f 個百分點」在日文是「%2$.3f ポイント%1$sしました」）。
+    - `values/` 是找不到符合語系時的後備，所以那裡放**英文**不是中文。
+      Android 13 以上還要 `res/xml/locales_config.xml` 加 `android:localeConfig`，
+      否則系統設定裡不會出現「單獨指定這個 app 的語言」。
+
 ## 設計原則
 
 - **比例因子校準原本被當成成敗關鍵，實測後證明不是。**
@@ -637,9 +667,22 @@ App 圖示已完成（`tools/make_icon.py` 產生，可重跑）—— 唱片加
 `App/Localizable.xcstrings`。四語系都在模擬器上實際跑過版面。日文與德文由 Claude 翻譯，
 還沒有母語者審過。
 
-**Android 版** — 核心移植完成（62 個 JVM 測試，golden.json 九項全覆蓋），
-感測器層與取樣診斷畫面完成。**拿 iOS 匯出的真實錄音交叉驗證過：兩個實作的結果
-差 0.002% 以內**（`make android-crosscheck`）。還沒做 UI 與 release APK。
+**Android 版** — 功能上已與 iOS 對齊。核心 92 個 JVM 測試（含
+`MagneticRevolutionCounter` / `ScaleCalibrator` / `CalibrationConfidence`，
+與 Swift 端同一組情境），app 層另有 17 個。**拿 iOS 匯出的真實錄音交叉驗證過：
+兩個實作的結果差 0.002% 以內**（`make android-crosscheck`）。CI 上會跑核心測試、
+app 測試與 debug APK 建置。
+
+畫面：量測主畫面、反旋轉盤面、自動／手動模式、碼錶校準、分析卡片與三張圖
+（頻譜、極座標熱圖、瞬時偏差）、歷史列表與詳情（含備註）、趨勢圖、唱盤設定檔、
+載重測試、說明頁、四頁導覽、取樣特性診斷、進階診斷、原始資料匯出。
+
+**多語系完成**：繁中／英／日／德，353 條字串。`values/` 放英文（找不到符合語系時的
+後備），繁中在 `values-zh-rTW/`。**四個 `strings.xml` 不要手改** ——
+改 `android/tools/strings_catalog.json` 再跑 `make android-strings`，
+那支腳本會強制四個語系的鍵完全一致、含參數的字串位置參數齊全。
+
+還沒做：release 簽章與上架。
 
 **還沒做的上架必要項目**：付費開發者帳號、上架素材（截圖／描述／隱私問卷）。
 截圖必須用實機拍 —— 模擬器沒有陀螺儀，畫面永遠是空狀態。

@@ -26,8 +26,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.roger.turntablerpm.R
 import com.roger.turntablerpm.core.LoadCompensationResult
 import com.roger.turntablerpm.core.LoadCompensator
 import com.roger.turntablerpm.history.MeasurementRecord
@@ -87,20 +89,20 @@ fun LoadTestScreen(
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        Text("載重測試", style = MaterialTheme.typography.headlineSmall)
+        Text(stringResource(R.string.load_title), style = MaterialTheme.typography.headlineSmall)
 
         Card(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text("怎麼做", style = MaterialTheme.typography.titleSmall)
                 Text(
-                    "正常量兩次：一次只放手機，一次在手機上再疊一個已知重量的東西。" +
-                        "然後在下面挑出那兩筆。",
+                    stringResource(R.string.load_how_to_title),
+                    style = MaterialTheme.typography.titleSmall,
+                )
+                Text(
+                    stringResource(R.string.load_how_to_body),
                     style = MaterialTheme.typography.bodySmall,
                 )
                 Text(
-                    "兩次的平衡狀態必須一樣，只有質量在變 —— 所以手機要置中放在唱片鎮上，" +
-                        "配重疊在手機正上方。手機偏在一邊時加配重，改變的是不平衡而不是載重，" +
-                        "量到的斜率會是錯的。",
+                    stringResource(R.string.load_balance_warning),
                     style = MaterialTheme.typography.bodySmall,
                     color = Orange,
                 )
@@ -110,7 +112,7 @@ fun LoadTestScreen(
         if (records.size < 2) {
             Card(Modifier.fillMaxWidth()) {
                 Text(
-                    "至少要有兩筆量測記錄才能做這個測試。先照上面的方法量兩次。",
+                    stringResource(R.string.load_need_two_records),
                     Modifier.padding(16.dp),
                     style = MaterialTheme.typography.bodyMedium,
                 )
@@ -118,19 +120,29 @@ fun LoadTestScreen(
         } else {
             Card(Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Text("挑出兩次量測", style = MaterialTheme.typography.titleSmall)
-                    RecordPicker("只放手機", records, base) { baseId = it.epochMillis }
-                    RecordPicker("加了配重", records, loaded) { loadedId = it.epochMillis }
+                    Text(
+                        stringResource(R.string.load_pick_two),
+                        style = MaterialTheme.typography.titleSmall,
+                    )
+                    RecordPicker(stringResource(R.string.load_phone_only), records, base) {
+                        baseId = it.epochMillis
+                    }
+                    RecordPicker(stringResource(R.string.load_with_mass), records, loaded) {
+                        loadedId = it.epochMillis
+                    }
                 }
             }
 
             Card(Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Text("重量", style = MaterialTheme.typography.titleSmall)
+                    Text(
+                        stringResource(R.string.load_weights),
+                        style = MaterialTheme.typography.titleSmall,
+                    )
                     OutlinedTextField(
                         value = if (phoneMassGrams > 0) trimGrams(phoneMassGrams) else "",
                         onValueChange = { onPhoneMassChange(it.toDoubleOrNull() ?: 0.0) },
-                        label = { Text("手機重量") },
+                        label = { Text(stringResource(R.string.load_phone_mass)) },
                         suffix = { Text("g") },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -139,14 +151,14 @@ fun LoadTestScreen(
                     OutlinedTextField(
                         value = addedText,
                         onValueChange = { addedText = it },
-                        label = { Text("加上去的配重") },
+                        label = { Text(stringResource(R.string.load_added_mass)) },
                         suffix = { Text("g") },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         modifier = Modifier.fillMaxWidth(),
                     )
                     Text(
-                        "配重用食譜秤量一下就好，不必很精確 —— 誤差只會等比例反映在斜率上。",
+                        stringResource(R.string.load_scale_note),
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }
@@ -158,10 +170,22 @@ fun LoadTestScreen(
                         Modifier.padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(6.dp),
                     ) {
-                        Text("結果", style = MaterialTheme.typography.titleMedium)
-                        StatRow("載重斜率", "%.5f RPM/g".format(result.slopeRPMPerGram))
-                        StatRow("手機造成的變化", "%+.4f RPM".format(result.phoneEffectRPM))
-                        StatRow("外插回零負載", "%.4f RPM".format(result.zeroLoadRPM))
+                        Text(
+                            stringResource(R.string.load_result),
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                        StatRow(
+                            stringResource(R.string.load_slope),
+                            "%.5f RPM/g".format(result.slopeRPMPerGram),
+                        )
+                        StatRow(
+                            stringResource(R.string.load_phone_effect),
+                            "%+.4f RPM".format(result.phoneEffectRPM),
+                        )
+                        StatRow(
+                            stringResource(R.string.load_zero_load),
+                            "%.4f RPM".format(result.zeroLoadRPM),
+                        )
                         Text(
                             verdict(result),
                             style = MaterialTheme.typography.bodySmall,
@@ -172,11 +196,18 @@ fun LoadTestScreen(
                                 onClick = { onSave(result) },
                                 modifier = Modifier.fillMaxWidth(),
                             ) {
-                                Text("存進「${profile.displayName}」")
+                                Text(
+                                    stringResource(
+                                        R.string.load_save_to_profile,
+                                        profile.displayName.ifBlank {
+                                            stringResource(R.string.profile_untitled)
+                                        },
+                                    ),
+                                )
                             }
                         } else {
                             Text(
-                                "還沒有唱盤設定檔，結果沒地方存。先去「唱盤設定檔」新增一台。",
+                                stringResource(R.string.load_no_profile),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Orange,
                             )
@@ -186,7 +217,7 @@ fun LoadTestScreen(
             } else {
                 Card(Modifier.fillMaxWidth()) {
                     Text(
-                        "挑出兩筆不同的量測，並填入配重的重量。",
+                        stringResource(R.string.load_pick_two_hint),
                         Modifier.padding(16.dp),
                         style = MaterialTheme.typography.bodyMedium,
                     )
@@ -197,19 +228,28 @@ fun LoadTestScreen(
         if (profile?.hasLoadTest == true) {
             Card(Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text("已存的結果", style = MaterialTheme.typography.titleSmall)
-                    StatRow("斜率", "%.5f RPM/g".format(profile.loadSlopeRPMPerGram ?: 0.0))
-                    StatRow("手機造成的變化", "%+.4f RPM".format(profile.loadPhoneEffectRPM ?: 0.0))
+                    Text(
+                        stringResource(R.string.load_saved_result),
+                        style = MaterialTheme.typography.titleSmall,
+                    )
+                    StatRow(
+                        stringResource(R.string.load_slope),
+                        "%.5f RPM/g".format(profile.loadSlopeRPMPerGram ?: 0.0),
+                    )
+                    StatRow(
+                        stringResource(R.string.load_phone_effect),
+                        "%+.4f RPM".format(profile.loadPhoneEffectRPM ?: 0.0),
+                    )
                     profile.loadMeasuredAtMillis?.let {
                         StatRow(
-                            "測於",
+                            stringResource(R.string.load_measured_at),
                             SimpleDateFormat("M/d HH:mm", Locale.getDefault()).format(Date(it)),
                         )
                     }
                     HorizontalDivider(Modifier.padding(vertical = 4.dp))
                     Text(
-                        if (profile.loadIsSignificant) "手機的重量確實會影響讀數。"
-                        else "這台盤對載重不敏感，手機的重量不影響讀數。",
+                        if (profile.loadIsSignificant) stringResource(R.string.load_significant)
+                        else stringResource(R.string.load_not_significant),
                         style = MaterialTheme.typography.bodySmall,
                         color = if (profile.loadIsSignificant) Orange else Color.Unspecified,
                     )
@@ -218,7 +258,7 @@ fun LoadTestScreen(
         }
 
         OutlinedButton(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
-            Text("回到唱盤設定檔")
+            Text(stringResource(R.string.load_back_to_profile))
         }
     }
 }
@@ -238,7 +278,8 @@ private fun RecordPicker(
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(label)
                 Text(
-                    selected?.let { "%.4f RPM".format(it.meanRPM) } ?: "尚未選擇",
+                    selected?.let { "%.4f RPM".format(it.meanRPM) }
+                        ?: stringResource(R.string.load_not_selected),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
@@ -258,16 +299,20 @@ private fun RecordPicker(
     }
 }
 
-/** 斜率有沒有超過量測雜訊，決定要不要當一回事。 */
+/**
+ * 斜率有沒有超過量測雜訊，決定要不要當一回事。
+ *
+ * 「拖慢／加快」是動詞，日文的語序跟中文相反 —— 所以整句用位置參數，
+ * 由翻譯決定動詞擺在哪裡（CLAUDE.md 坑 29c）。
+ */
+@Composable
 private fun verdict(r: LoadCompensationResult): String {
-    if (!r.isSignificant) {
-        return "斜率在量測雜訊以內 —— 這台唱盤對載重不敏感，手機的重量不影響讀數。"
-    }
+    if (!r.isSignificant) return stringResource(R.string.load_verdict_insignificant)
     val pct = abs(r.phoneEffectRPM / max(r.zeroLoadRPM, 0.001)) * 100
-    val dir = if (r.phoneEffectRPM < 0) "拖慢" else "加快"
-    return ("手機的重量把轉速%s了 %.4f RPM（%.3f%%）。這是量測方法本身造成的偏差，" +
-        "不是唱盤的問題 —— 真實的無載轉速是 %.4f RPM。")
-        .format(dir, abs(r.phoneEffectRPM), pct, r.zeroLoadRPM)
+    val dir = stringResource(if (r.phoneEffectRPM < 0) R.string.load_slows else R.string.load_speeds_up)
+    return stringResource(
+        R.string.load_verdict_significant, dir, abs(r.phoneEffectRPM), pct, r.zeroLoadRPM,
+    )
 }
 
 private fun trimGrams(v: Double): String =

@@ -23,8 +23,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.roger.turntablerpm.R
 import com.roger.turntablerpm.calibration.CalibrationStore
 import com.roger.turntablerpm.core.StopwatchCalibration
 
@@ -64,15 +66,20 @@ fun CalibrationScreen(
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        Text("碼錶校準", style = MaterialTheme.typography.headlineSmall)
+        Text(stringResource(R.string.cal_title), style = MaterialTheme.typography.headlineSmall)
 
         mismatched?.let {
             Card(Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text("先前的校準已失效", style = MaterialTheme.typography.titleSmall, color = Orange)
                     Text(
-                        "那次校準是在 ${it.deviceModel} 上做的，這台是 ${CalibrationStore.deviceModel} —— " +
-                            "校準倍率綁定在特定一支陀螺儀上，不能沿用。請重新校準。",
+                        stringResource(R.string.cal_invalidated_title),
+                        style = MaterialTheme.typography.titleSmall, color = Orange,
+                    )
+                    Text(
+                        stringResource(
+                            R.string.cal_invalidated_body,
+                            it.deviceModel, CalibrationStore.deviceModel,
+                        ),
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }
@@ -82,13 +89,25 @@ fun CalibrationScreen(
         current?.let {
             Card(Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text("目前生效的校準", style = MaterialTheme.typography.titleSmall)
-                    StatRow("倍率 k", "%.5f".format(it.factor))
-                    StatRow("陀螺儀偏差", "%+.3f %%".format((1.0 / it.factor - 1.0) * 100))
-                    StatRow("依據", "${it.revolutions} 圈 / %.2f s".format(it.seconds))
-                    StatRow("校準精度", "±%.3f %%".format(it.precision() * 100))
+                    Text(
+                        stringResource(R.string.cal_active_title),
+                        style = MaterialTheme.typography.titleSmall,
+                    )
+                    StatRow(stringResource(R.string.cal_factor_k), "%.5f".format(it.factor))
+                    StatRow(
+                        stringResource(R.string.cal_gyro_error),
+                        "%+.3f %%".format((1.0 / it.factor - 1.0) * 100),
+                    )
+                    StatRow(
+                        stringResource(R.string.cal_based_on),
+                        stringResource(R.string.cal_revs_over_seconds, it.revolutions, it.seconds),
+                    )
+                    StatRow(
+                        stringResource(R.string.cal_precision),
+                        "±%.3f %%".format(it.precision() * 100),
+                    )
                     OutlinedButton(onClick = onClear, modifier = Modifier.fillMaxWidth()) {
-                        Text("清除校準")
+                        Text(stringResource(R.string.cal_clear))
                     }
                 }
             }
@@ -97,7 +116,7 @@ fun CalibrationScreen(
         if (measuredRPM == null) {
             Card(Modifier.fillMaxWidth()) {
                 Text(
-                    "要先完成一次量測，才有可以拿來比對的轉速。回上一頁量一次再回來。",
+                    stringResource(R.string.cal_needs_measurement),
                     Modifier.padding(16.dp),
                     style = MaterialTheme.typography.bodyMedium,
                 )
@@ -105,12 +124,15 @@ fun CalibrationScreen(
         } else {
             Card(Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Text("這次校準", style = MaterialTheme.typography.titleSmall)
+                    Text(
+                        stringResource(R.string.cal_this_calibration),
+                        style = MaterialTheme.typography.titleSmall,
+                    )
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         OutlinedTextField(
                             value = revolutions,
                             onValueChange = { revolutions = it.filter(Char::isDigit) },
-                            label = { Text("圈數") },
+                            label = { Text(stringResource(R.string.cal_revolutions)) },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             singleLine = true,
                             modifier = Modifier.weight(1f),
@@ -118,26 +140,38 @@ fun CalibrationScreen(
                         OutlinedTextField(
                             value = seconds,
                             onValueChange = { seconds = it.filter { c -> c.isDigit() || c == '.' } },
-                            label = { Text("秒數") },
+                            label = { Text(stringResource(R.string.cal_seconds)) },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             singleLine = true,
                             modifier = Modifier.weight(1f),
                         )
                     }
 
-                    StatRow("App 量到的轉速", "%.4f RPM".format(measuredRPM))
+                    StatRow(stringResource(R.string.cal_app_reading), "%.4f RPM".format(measuredRPM))
                     if (candidate == null) {
-                        Text("填入圈數與秒數就會算出倍率。", style = MaterialTheme.typography.bodySmall)
+                        Text(
+                            stringResource(R.string.cal_fill_in_hint),
+                            style = MaterialTheme.typography.bodySmall,
+                        )
                     } else {
-                        StatRow("碼錶推算轉速", "%.4f RPM".format(candidate.trueRPM))
-                        StatRow("倍率 k", "%.5f".format(candidate.factor))
-                        StatRow("陀螺儀偏差", "%+.3f %%".format((1.0 / candidate.factor - 1.0) * 100))
-                        StatRow("這次校準的精度", "±%.3f %%".format(candidate.precision() * 100))
+                        StatRow(
+                            stringResource(R.string.cal_stopwatch_rpm),
+                            "%.4f RPM".format(candidate.trueRPM),
+                        )
+                        StatRow(stringResource(R.string.cal_factor_k), "%.5f".format(candidate.factor))
+                        StatRow(
+                            stringResource(R.string.cal_gyro_error),
+                            "%+.3f %%".format((1.0 / candidate.factor - 1.0) * 100),
+                        )
+                        StatRow(
+                            stringResource(R.string.cal_this_precision),
+                            "±%.3f %%".format(candidate.precision() * 100),
+                        )
 
                         if (!candidate.isPlausible) {
                             Text(
-                                "k = %.3f 不合理。MEMS 陀螺儀的比例因子誤差是百分之幾的等級，".format(candidate.factor) +
-                                    "不會到這種程度 —— 檢查圈數或秒數是不是打錯了。",
+                                stringResource(R.string.cal_implausible, candidate.factor) +
+                                    stringResource(R.string.cal_implausible_tail),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Orange,
                             )
@@ -146,7 +180,7 @@ fun CalibrationScreen(
                             onClick = { onSave(candidate) },
                             enabled = candidate.isPlausible,
                             modifier = Modifier.fillMaxWidth(),
-                        ) { Text("儲存") }
+                        ) { Text(stringResource(R.string.cal_save)) }
                     }
                 }
             }
@@ -154,28 +188,22 @@ fun CalibrationScreen(
 
         Card(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text("怎麼量", style = MaterialTheme.typography.titleSmall)
                 Text(
-                    "1. 盤面邊緣貼一個看得見的記號\n" +
-                        "2. 記號經過某個固定參考點時按下碼錶，同時開始數\n" +
-                        "3. 數滿設定的圈數，記號再次經過同一點時按停",
-                    style = MaterialTheme.typography.bodySmall,
+                    stringResource(R.string.cal_how_to_title),
+                    style = MaterialTheme.typography.titleSmall,
                 )
+                Text(stringResource(R.string.cal_how_to), style = MaterialTheme.typography.bodySmall)
                 HorizontalDivider()
                 Text(
-                    "100 圈在 33⅓ 轉大約 3 分鐘，精度 ±0.17%；200 圈約 6 分鐘，±0.08%。\n" +
-                        "圈數太少不值得做 —— 10 圈只有 1.7%，比不校準好不了多少。",
+                    stringResource(R.string.cal_precision_note),
                     style = MaterialTheme.typography.bodySmall,
                 )
-                Text(
-                    "碼錶要量的是同一段轉動。中途調過速度或換過轉速檔位，這個 k 就不對了。",
-                    style = MaterialTheme.typography.bodySmall,
-                )
+                Text(stringResource(R.string.cal_same_run), style = MaterialTheme.typography.bodySmall)
             }
         }
 
         OutlinedButton(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
-            Text("回到量測")
+            Text(stringResource(R.string.back_to_measure))
         }
     }
 }

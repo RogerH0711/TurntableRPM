@@ -7,8 +7,22 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-/** 一筆原始記錄。Android 沒有走磁力計路徑，所以只有時間、角速度與重力。 */
-data class RawFrame(val t: Double, val omega: Double, val gravity: Vector3)
+/**
+ * 一筆原始記錄。欄位跟 iOS 的 `RawFrame` 一一對應。
+ *
+ * 磁場記兩種來源：[field] 是系統已扣偏置的版本（Android 的 `TYPE_MAGNETIC_FIELD`、
+ * iOS 的 `CMDeviceMotion.magneticField`），[rawField] 是完全沒動過的感測器讀數。
+ * **兩者並排才能判斷偏置估計器有沒有在量測過程中改動讀數**（CLAUDE.md 坑 12、17）。
+ */
+data class RawFrame(
+    val t: Double,
+    val omega: Double,
+    val gravity: Vector3,
+    /** 融合方位角，弧度。裝置沒有 rotation vector 時為 null。 */
+    val yaw: Double? = null,
+    val field: Vector3? = null,
+    val rawField: Vector3? = null,
+)
 
 /**
  * 把一次量測的逐樣本資料寫成 JSON。
@@ -21,8 +35,7 @@ data class RawFrame(val t: Double, val omega: Double, val gravity: Vector3)
  * `tools/analyze_export.py` 與 `ExportCrossCheck` 不用改就能吃兩邊的檔案 ——
  * 為了少寫幾個 null 而讓兩個平台的檔案格式分岔，代價是每個離線工具都要分兩套。
  *
- * 磁場欄位（bx/by/bz、rx/ry/rz）一律是 null：Android 版沒有註冊磁力計。
- * 那條路在 iOS 上已經證明走不通（坑 15），不值得為了填滿欄位再開一顆感測器。
+ * 沒有對應感測器的裝置寫 null，不寫 0 —— 「沒量到」跟「量到 0」是兩回事。
  */
 object MeasurementExport {
 
@@ -52,9 +65,10 @@ object MeasurementExport {
             // 時間戳改成相對於第一筆，數字短很多也比較好讀。
             val t0 = frames.first().t
             for ((i, f) in frames.withIndex()) {
-                w.write("[${num(f.t - t0, 5)},${num(f.omega, 5)},null,")
-                w.write("${num(f.gravity.x, 5)},${num(f.gravity.y, 5)},${num(f.gravity.z, 5)},")
-                w.write("null,null,null,null,null,null]")
+                w.write("[${num(f.t - t0, 5)},${num(f.omega, 5)},${opt(f.yaw, 6)},")
+                w.write("${vec(f.gravity, 5)},")
+                w.write("${vec(f.field, 3)},")
+                w.write("${vec(f.rawField, 3)}]")
                 w.write(if (i == frames.size - 1) "\n" else ",\n")
             }
             w.write("]\n}\n")
@@ -82,6 +96,12 @@ object MeasurementExport {
 
     private fun num(v: Double, digits: Int): String =
         if (v.isFinite()) "%.${digits}f".format(Locale.US, v) else "null"
+
+    private fun opt(v: Double?, digits: Int): String = if (v == null) "null" else num(v, digits)
+
+    private fun vec(v: Vector3?, digits: Int): String =
+        if (v == null) "null,null,null"
+        else "${num(v.x, digits)},${num(v.y, digits)},${num(v.z, digits)}"
 
     /**
      * 手寫 JSON 而不用 org.json：`JSONObject.put` 遇到 NaN／Infinity 會丟例外，

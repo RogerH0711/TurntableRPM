@@ -43,6 +43,14 @@ class HistoryStore(context: Context) {
         persist()
     }
 
+    /** 只改備註。其他欄位是量到的，不該事後編輯。 */
+    fun setNote(epochMillis: Long, note: String) {
+        _records.value = _records.value.map {
+            if (it.epochMillis == epochMillis) it.copy(note = note) else it
+        }
+        persist()
+    }
+
     fun delete(epochMillis: Long) {
         _records.value = _records.value.filterNot { it.epochMillis == epochMillis }
         persist()

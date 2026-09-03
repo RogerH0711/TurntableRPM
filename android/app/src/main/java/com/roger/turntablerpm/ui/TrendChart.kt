@@ -1,5 +1,6 @@
 package com.roger.turntablerpm.ui
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,8 +23,10 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.roger.turntablerpm.R
 import com.roger.turntablerpm.history.MeasurementRecord
 import kotlin.math.abs
 
@@ -32,10 +35,10 @@ private val TrendOrange = Color(0xFFCC6600)
 private val TrendGreen = Color(0xFF2E7D32)
 
 /** 趨勢圖看的三個指標。 */
-private enum class Metric(val label: String) {
-    Error("偏差"),
-    Wow("抖晃率"),
-    Eccentricity("偏心"),
+private enum class Metric(@StringRes val label: Int) {
+    Error(R.string.trend_metric_error),
+    Wow(R.string.trend_metric_wow),
+    Eccentricity(R.string.trend_metric_eccentricity),
     ;
 
     /** 偏差有正負、目標是 0；另外兩個恆為正、愈小愈好。 */
@@ -75,14 +78,14 @@ fun TrendChart(records: List<MeasurementRecord>, modifier: Modifier = Modifier) 
                 FilterChip(
                     selected = metric == m,
                     onClick = { metric = m },
-                    label = { Text(m.label) },
+                    label = { Text(stringResource(m.label)) },
                 )
             }
         }
 
         if (points.size < 2) {
             Text(
-                "這個指標還沒有足夠的資料，至少要兩次量測才畫得出趨勢。",
+                stringResource(R.string.trend_not_enough_data),
                 style = MaterialTheme.typography.bodySmall,
             )
             return@Column
@@ -96,21 +99,18 @@ fun TrendChart(records: List<MeasurementRecord>, modifier: Modifier = Modifier) 
             // 喊多了真正該注意的那次就沒人看了。
             if (metric.hasZeroTarget) {
                 Text(
-                    "空心的點是未校準的量測。它的偏差是唱盤誤差與陀螺儀誤差相乘的結果，" +
-                        "不能拿來跟已校準的點比較。",
+                    stringResource(R.string.trend_uncalibrated_error_warning),
                     style = MaterialTheme.typography.bodySmall,
                     color = TrendOrange,
                 )
             } else {
                 Text(
-                    "空心的點是未校準的量測 —— 但這個指標是比值，不受校準影響，一樣可以比較。",
+                    stringResource(R.string.trend_uncalibrated_ratio_note),
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
         }
-        changeDescription(points, metric)?.let {
-            Text(it, style = MaterialTheme.typography.bodySmall)
-        }
+        ChangeDescription(points, metric)
     }
 }
 
@@ -122,6 +122,8 @@ private fun Plot(
 ) {
     val axis = MaterialTheme.colorScheme.onSurfaceVariant
     val labelPx = with(LocalDensity.current) { 11.sp.toPx() }
+    val older = stringResource(R.string.trend_axis_old)
+    val newer = stringResource(R.string.trend_axis_new)
 
     Canvas(modifier) {
         val values = points.map { it.first }
@@ -176,10 +178,9 @@ private fun Plot(
         val fmt = if (metric.hasZeroTarget) "%+.3f%%" else "%.3f%%"
         drawContext.canvas.nativeCanvas.drawText(fmt.format(hi), 4f, labelPx, paint)
         drawContext.canvas.nativeCanvas.drawText(fmt.format(lo), 4f, plotH - 2f, paint)
-        drawContext.canvas.nativeCanvas.drawText("舊", 0f, size.height - 2f, paint)
-        val newest = "新"
+        drawContext.canvas.nativeCanvas.drawText(older, 0f, size.height - 2f, paint)
         drawContext.canvas.nativeCanvas.drawText(
-            newest, size.width - paint.measureText(newest), size.height - 2f, paint,
+            newer, size.width - paint.measureText(newer), size.height - 2f, paint,
         )
     }
 }
@@ -190,14 +191,22 @@ private fun Plot(
  * 只拿已校準的點來比：未校準的偏差是唱盤誤差與陀螺儀誤差相乘的結果，
  * 跟已校準的點放在一起比較沒有意義。
  */
-private fun changeDescription(points: List<Pair<Double, Boolean>>, metric: Metric): String? {
+@Composable
+private fun ChangeDescription(points: List<Pair<Double, Boolean>>, metric: Metric) {
     val usable = if (metric.hasZeroTarget) points.filter { it.second } else points
-    if (usable.size < 2) return null
+    if (usable.size < 2) return
     val first = usable.first().first
     val last = usable.last().first
     val delta = abs(last) - abs(first)
-    if (abs(delta) <= 0.001) return "跟第一次相比幾乎沒有變化。"
-    val word = if (delta < 0) "改善" else "變差"
-    return "跟第一次相比%s了 %.3f 個百分點（%.3f%% → %.3f%%）。"
-        .format(word, abs(delta), first, last)
+    val text = if (abs(delta) <= 0.001) {
+        stringResource(R.string.trend_unchanged)
+    } else {
+        // 「改善／變差」是動詞，語序在日文裡跟中文相反 —— 所以整句用位置參數，
+        // 由翻譯決定動詞擺在哪裡（CLAUDE.md 坑 29c）。
+        val word = stringResource(
+            if (delta < 0) R.string.trend_improved else R.string.trend_worse,
+        )
+        stringResource(R.string.trend_change, word, abs(delta), first, last)
+    }
+    Text(text, style = MaterialTheme.typography.bodySmall)
 }

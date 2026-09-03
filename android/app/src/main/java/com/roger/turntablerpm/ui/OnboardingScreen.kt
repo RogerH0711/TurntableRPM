@@ -23,8 +23,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.roger.turntablerpm.R
 
 private val Amber = Color(0xFFCC6600)
 
@@ -53,31 +55,28 @@ fun OnboardingScreen(onFinish: () -> Unit, modifier: Modifier = Modifier) {
         ) {
             when (page) {
                 0 -> {
-                    Title("量唱盤的轉速")
-                    Body("把手機放在轉動的唱盤上，就能量出轉速、偏差和抖晃率。")
-                    Muted("不需要頻閃盤或其他硬體。")
+                    Title(stringResource(R.string.onb_title_measure_speed))
+                    Body(stringResource(R.string.onb_body_put_phone))
+                    Muted(stringResource(R.string.onb_no_strobe_needed))
                 }
                 1 -> {
-                    Title("手機這樣擺")
+                    Title(stringResource(R.string.onb_title_place_phone))
                     PlacementGuide()
                 }
                 2 -> {
-                    Title("怎麼量")
-                    Step(1, "轉盤停著，把手機照上一頁的方式放好")
-                    Step(2, "按下「準備好，開始偵測」")
-                    Step(3, "啟動轉盤 —— 轉速穩了會自動開始，停下時自動結束")
-                    Muted("量 90 秒以上頻譜才夠清楚；想要準確的振幅就量 3 分鐘。")
+                    Title(stringResource(R.string.onb_title_how_to_measure))
+                    Step(1, stringResource(R.string.onb_step_platter_stopped))
+                    Step(2, stringResource(R.string.onb_step_tap_ready))
+                    Step(3, stringResource(R.string.onb_step_start_platter))
+                    Muted(stringResource(R.string.onb_measure_90s))
                 }
                 else -> {
-                    Title("兩件要先知道的事")
-                    Body("它量的是盤，不是唱片。", emphasis = true)
-                    Muted("唱片中心孔偏心造成的抖動，這個方法看不到。")
-                    Body("校準之前，偏差 % 不能拿來調唱盤。", emphasis = true)
-                    Muted(
-                        "那是唱盤誤差和陀螺儀誤差相乘的結果。校準用碼錶做，一支手機做一次就好。" +
-                            "抖晃率與其他百分比不受影響，那些不必校準就能用。",
-                    )
-                    Muted("詳細說明在主畫面的「說明」裡。")
+                    Title(stringResource(R.string.onb_title_two_things))
+                    Body(stringResource(R.string.onb_measures_platter), emphasis = true)
+                    Muted(stringResource(R.string.onb_offcenter_hole_invisible))
+                    Body(stringResource(R.string.onb_error_needs_calibration), emphasis = true)
+                    Muted(stringResource(R.string.onb_error_explained))
+                    Muted(stringResource(R.string.onb_details_in_about))
                 }
             }
         }
@@ -108,7 +107,10 @@ fun OnboardingScreen(onFinish: () -> Unit, modifier: Modifier = Modifier) {
                 onClick = { if (page == last) onFinish() else page++ },
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
             ) {
-                Text(if (page == last) "開始使用" else "下一步")
+                Text(
+                    if (page == last) stringResource(R.string.onb_get_started)
+                    else stringResource(R.string.onb_next),
+                )
             }
         }
     }

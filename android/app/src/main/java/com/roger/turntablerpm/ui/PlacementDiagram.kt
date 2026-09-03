@@ -14,8 +14,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.roger.turntablerpm.R
 
 private val Amber = Color(0xFFCC6600)
 
@@ -88,7 +90,7 @@ fun PlacementGuide(modifier: Modifier = Modifier) {
         PlacementDiagram(Modifier.fillMaxWidth().height(200.dp))
         // 指示線畫在圖的正下方置中，標籤也要置中，否則兩者對不上。
         Text(
-            "↑ 這一側朝著你",
+            stringResource(R.string.place_this_side_faces_you),
             style = MaterialTheme.typography.bodySmall,
             color = Amber,
             textAlign = TextAlign.Center,
@@ -96,23 +98,21 @@ fun PlacementGuide(modifier: Modifier = Modifier) {
         )
 
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            bullet("手機橫跨轉軸放在唱片鎮上，讓質心落在轉軸正上方")
-            bullet("手機下緣朝著你（跟平放在桌上看一樣）")
-            bullet("螢幕朝上，唱片鎮放在轉盤原本的絨布墊上")
+            bullet(stringResource(R.string.place_across_spindle))
+            bullet(stringResource(R.string.place_bottom_edge_faces_you))
+            bullet(stringResource(R.string.place_screen_up_on_felt))
         }
 
         Text(
-            "手機偏在一邊會拖慢轉速並放大抖動 —— 實測轉速慢 0.3%、每圈一次的抖動大三成。" +
-                "置中最省事：不必找等重的東西，手機也躺得更平。",
+            stringResource(R.string.place_off_centre_slows_platter),
             style = MaterialTheme.typography.bodySmall,
         )
         Text(
-            "沒有唱片鎮也可以：手機右側長邊的中點貼著轉軸、機身放在左半邊，" +
-                "然後在對面放一個跟手機等重的東西（小馬克杯加水就很好用），距離轉軸差不多遠。",
+            stringResource(R.string.place_no_record_weight),
             style = MaterialTheme.typography.bodySmall,
         )
         Text(
-            "照這個擺法，量測畫面的文字也會正對著你。",
+            stringResource(R.string.place_text_faces_you),
             style = MaterialTheme.typography.bodySmall,
         )
     }

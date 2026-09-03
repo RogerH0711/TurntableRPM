@@ -24,6 +24,8 @@ data class MeasurementRecord(
     val nominalLabel: String?,
     val errorPercent: Double?,
     val durationSeconds: Double,
+    /** 這段量測轉了幾圈。iOS 端有存，移植時漏掉了 —— 詳情頁要顯示。 */
+    val revolutions: Int,
     val trimmedSeconds: Double,
     val sampleRate: Double,
     val rotationHz: Double,
@@ -42,7 +44,8 @@ data class MeasurementRecord(
         calibrationFactor?.let { put("k", it) }
         nominalLabel?.let { put("nom", it) }
         errorPercent?.let { put("err", it) }
-        put("dur", durationSeconds); put("trim", trimmedSeconds); put("fs", sampleRate)
+        put("dur", durationSeconds); put("rev", revolutions)
+        put("trim", trimmedSeconds); put("fs", sampleRate)
         put("rot", rotationHz); put("wrms", wrmsPercent); put("p2s", peak2SigmaPercent)
         put("one", onePerRevPercent); put("share", dominantPeakShare)
         peakAngleDegrees?.let { put("angle", it) }
@@ -53,6 +56,7 @@ data class MeasurementRecord(
         fun from(
             analysis: MeasurementAnalysis,
             rawMeanRPM: Double,
+            revolutions: Int,
             calibrationFactor: Double?,
             nominalLabel: String?,
             errorPercent: Double?,
@@ -67,6 +71,7 @@ data class MeasurementRecord(
             nominalLabel = nominalLabel,
             errorPercent = errorPercent,
             durationSeconds = analysis.durationSeconds,
+            revolutions = revolutions,
             trimmedSeconds = analysis.trimmedStartSeconds + analysis.trimmedEndSeconds,
             sampleRate = analysis.sampleRate,
             rotationHz = analysis.rotationHz,
@@ -89,6 +94,7 @@ data class MeasurementRecord(
                 nominalLabel = if (o.has("nom")) o.getString("nom") else null,
                 errorPercent = if (o.has("err")) o.getDouble("err") else null,
                 durationSeconds = o.getDouble("dur"),
+                revolutions = o.optInt("rev", 0),
                 trimmedSeconds = o.optDouble("trim", 0.0),
                 sampleRate = o.optDouble("fs", 100.0),
                 rotationHz = o.optDouble("rot", 0.0),

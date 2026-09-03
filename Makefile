@@ -66,6 +66,10 @@ ANDROID_JAVA_HOME ?= /Applications/Android Studio.app/Contents/jbr/Contents/Home
 android-test:
 	cd android && JAVA_HOME="$(ANDROID_JAVA_HOME)" ./gradlew :core:test :app:testDebugUnitTest
 
+## 重新產生 Android 的四語系 strings.xml（改 tools/strings_catalog.json 之後跑）
+android-strings:
+	cd android && python3 tools/gen_strings.py . tools/strings_catalog.json
+
 ## 建出 debug APK
 android-apk:
 	cd android && JAVA_HOME="$(ANDROID_JAVA_HOME)" ./gradlew :app:assembleDebug

@@ -1,0 +1,2826 @@
+[
+ {
+  "key": "place_this_side_faces_you",
+  "zh": "↑ 這一側朝著你",
+  "args": 0,
+  "en": "↑ This side faces you",
+  "ja": "↑ こちら側を手前に",
+  "de": "↑ Diese Seite zeigt zu Ihnen"
+ },
+ {
+  "key": "place_across_spindle",
+  "zh": "手機橫跨轉軸放在唱片鎮上，讓質心落在轉軸正上方",
+  "args": 0,
+  "en": "Rest the phone across the record weight, over the spindle, so its centre of mass sits on the axis",
+  "ja": "レコードウェイトの上にスピンドルをまたぐように iPhone を置き、重心が軸の真上に来るようにする",
+  "de": "Leg das Telefon quer über das Plattengewicht, mittig auf der Achse ab, damit sein Schwerpunkt auf der Drehachse liegt"
+ },
+ {
+  "key": "place_bottom_edge_faces_you",
+  "zh": "手機下緣朝著你（跟平放在桌上看一樣）",
+  "args": 0,
+  "en": "The phone’s bottom edge faces you (as if it were lying flat on a table)",
+  "ja": "iPhone の下端を自分の方へ（机に平置きして見るときと同じ向き）",
+  "de": "Die Unterkante zeigt zu dir (so, wie es flach auf dem Tisch läge)"
+ },
+ {
+  "key": "place_screen_up_on_felt",
+  "zh": "螢幕朝上，唱片鎮放在轉盤原本的絨布墊上",
+  "args": 0,
+  "en": "Screen up, with the record weight resting on the platter’s own felt mat",
+  "ja": "画面を上に向け、レコードウェイトはターンテーブル純正のフェルトマットの上に置く",
+  "de": "Display nach oben, das Plattengewicht liegt auf der originalen Filzmatte des Tellers"
+ },
+ {
+  "key": "place_off_centre_slows_platter",
+  "zh": "手機偏在一邊會拖慢轉速並放大抖動 —— 實測轉速慢 0.3%、每圈一次的抖動大三成。置中最省事：不必找等重的東西，手機也躺得更平。",
+  "args": 0,
+  "en": "A phone sitting off to one side slows the platter and amplifies the wobble — measured, 0.3% slower with a once-per-revolution wobble a third bigger. Centring is the least trouble: nothing to counterbalance with, and the phone lies flatter.",
+  "ja": "片側に寄せて置くと回転が遅くなり、揺れも大きくなります —— 実測で 0.3% 遅く、1回転に1回の揺れは3割増しでした。中央に置くのが一番手間がかかりません：釣り合わせるものが要らず、本体も水平に近くなります。",
+  "de": "Liegt das Telefon seitlich versetzt, bremst es den Teller und verstärkt die Schwankung — gemessen 0,3% langsamer, die Schwankung mit 1×/Umdrehung ein Drittel größer. Mittig ist am einfachsten: nichts zum Ausbalancieren nötig, und das Gerät liegt flacher."
+ },
+ {
+  "key": "place_no_record_weight",
+  "zh": "沒有唱片鎮也可以：手機右側長邊的中點貼著轉軸、機身放在左半邊，然後在對面放一個跟手機等重的東西（小馬克杯加水就很好用），距離轉軸差不多遠。",
+  "args": 0,
+  "en": "No record weight? That works too: put the midpoint of the phone’s right long edge against the spindle with the body on the left half, then place something of equal weight opposite it (a small mug filled with water does nicely), about the same distance from the spindle.",
+  "ja": "レコードウェイトがなくても構いません：iPhone の右の長辺の中点をスピンドルに当てて本体を左半分に置き、反対側に同じ重さのもの（水を入れた小さめのマグカップが便利）を、スピンドルからほぼ同じ距離に置いてください。",
+  "de": "Auch ohne Plattengewicht geht es: Lege die Mitte der rechten Längsseite an die Achse, das Gerät auf die linke Hälfte, und stelle gegenüber etwas gleich Schweres hin (eine kleine, mit Wasser gefüllte Tasse eignet sich gut), etwa gleich weit von der Achse entfernt."
+ },
+ {
+  "key": "place_text_faces_you",
+  "zh": "照這個擺法，量測畫面的文字也會正對著你。",
+  "args": 0,
+  "en": "Placed this way, the text on the measuring screen also faces you the right way up.",
+  "ja": "この置き方なら、測定画面の文字も正しい向きであなたを向きます。",
+  "de": "So aufgelegt steht auch der Text auf dem Messbildschirm richtig herum zu dir."
+ },
+ {
+  "key": "peak_eccentricity",
+  "zh": "每圈一次 —— 偏心（盤面、主軸或皮帶接觸面沒對正）",
+  "args": 0,
+  "en": "1×/rev — eccentricity (platter, spindle or belt contact surface off-center)",
+  "ja": "1回転に1回 —— 偏心（円盤・スピンドル・ベルト接触面の芯ずれ）",
+  "de": "1×/Umdrehung — Exzentrizität (Teller, Achse oder Riemenlauffläche nicht zentriert)"
+ },
+ {
+  "key": "peak_ovality",
+  "zh": "每圈兩次 —— 盤面橢圓或主軸兩點磨損。但如果上面的每圈一次很大，這根多半只是它的諧波，先把偏心降下來再看。",
+  "args": 0,
+  "en": "2×/rev — an out-of-round platter, or two-point wear on the spindle. But if the 1×/rev above is large, this is most likely just its harmonic: bring the eccentricity down first, then look again.",
+  "ja": "1回転に2回 —— 円盤が楕円、またはスピンドルの2点摩耗。ただし上の「1回転に1回」が大きい場合、これはたいていその高調波です。先に偏心を下げてから見直してください。",
+  "de": "2×/Umdrehung — ein unrunder Teller oder Verschleiß an zwei Stellen der Achse. Ist die 1×/Umdrehung oben aber groß, ist dies meist nur deren Oberwelle: Erst die Exzentrizität verringern, dann erneut schauen."
+ },
+ {
+  "key": "peak_harmonic",
+  "zh": "轉盤 %1$d× 諧波",
+  "args": 1,
+  "en": "Platter %1$d× harmonic",
+  "ja": "ターンテーブルの %1$d 次高調波",
+  "de": "%1$d. Harmonische des Tellers"
+ },
+ {
+  "key": "peak_slower_than_rotation",
+  "zh": "比一圈還慢 —— 皮帶循環或長週期漂移",
+  "args": 0,
+  "en": "Slower than one revolution — belt circulation, or a long-period drift",
+  "ja": "1回転より遅い —— ベルトの循環、または長周期のドリフト",
+  "de": "Langsamer als eine Umdrehung — Riemenumlauf oder eine langperiodische Drift"
+ },
+ {
+  "key": "peak_drive_chain",
+  "zh": "非諧波（轉盤的 %1$.1f 倍）—— 傳動鏈上的零件，馬達或皮帶輪的候選",
+  "args": 1,
+  "en": "Non-harmonic (%1$.1f× the platter) — a part of the drive chain; a candidate for the motor or a pulley",
+  "ja": "非調和成分（ターンテーブルの %1$.1f 倍）—— 駆動系の部品。モーターかプーリーの候補",
+  "de": "Nicht harmonisch (%1$.1f× des Tellers) — ein Teil des Antriebs; Kandidat für Motor oder Riemenscheibe"
+ },
+ {
+  "key": "stored_peak_eccentricity",
+  "zh": "每圈一次 —— 偏心",
+  "args": 0,
+  "en": "1×/rev — eccentricity",
+  "ja": "1回転に1回 —— 偏心",
+  "de": "1×/Umdrehung — Exzentrizität"
+ },
+ {
+  "key": "stored_peak_ovality",
+  "zh": "每圈兩次 —— 盤面橢圓（1× 大的時候多半只是它的諧波）",
+  "args": 0,
+  "en": "2×/rev — out-of-round platter (most likely just a harmonic when 1× is large)",
+  "ja": "1回転2回 —— ターンテーブルの真円度（1× が大きいときは多くの場合その高調波）",
+  "de": "2×/Umdr. — unrunder Teller (bei großem 1× meist nur dessen Harmonische)"
+ },
+ {
+  "key": "stored_peak_harmonic",
+  "zh": "轉盤 %1$d× 諧波",
+  "args": 1,
+  "en": "Platter %1$d× harmonic",
+  "ja": "ターンテーブルの %1$d 次高調波",
+  "de": "%1$d. Harmonische des Tellers"
+ },
+ {
+  "key": "stored_peak_slower",
+  "zh": "比一圈還慢 —— 皮帶循環",
+  "args": 0,
+  "en": "Slower than one revolution — belt cycle",
+  "ja": "1回転より遅い —— ベルトの周期",
+  "de": "Langsamer als eine Umdrehung — Riemenumlauf"
+ },
+ {
+  "key": "stored_peak_drive_chain",
+  "zh": "非諧波（%1$.1f 倍）—— 傳動鏈",
+  "args": 1,
+  "en": "Non-harmonic (%1$.1f×) — drive chain",
+  "ja": "非調和成分（%1$.1f 倍）—— 駆動系",
+  "de": "Nicht harmonisch (%1$.1f×) — Antrieb"
+ },
+ {
+  "key": "dial_uncalibrated",
+  "zh": "未校準",
+  "args": 0,
+  "en": "Uncalibrated",
+  "ja": "未校正",
+  "de": "Nicht kalibriert"
+ },
+ {
+  "key": "dial_nominal_rpm",
+  "zh": "%1$s 轉",
+  "args": 1,
+  "en": "%1$s RPM",
+  "ja": "%1$s 回転",
+  "de": "%1$s U/min"
+ },
+ {
+  "key": "dial_waiting_for_speed",
+  "zh": "等待轉速穩定",
+  "args": 0,
+  "en": "Waiting for speed",
+  "ja": "安定待ち",
+  "de": "Warte auf Drehzahl"
+ },
+ {
+  "key": "dial_not_steady",
+  "zh": "尚未穩定",
+  "args": 0,
+  "en": "Not steady",
+  "ja": "未安定",
+  "de": "Nicht stabil"
+ },
+ {
+  "key": "dial_elapsed_and_revs",
+  "zh": "%1$d:%2$02d  ·  %3$d 圈",
+  "args": 3,
+  "en": "%1$d:%2$02d  ·  %3$d rev",
+  "ja": "%1$d:%2$02d  ·  %3$d 回転",
+  "de": "%1$d:%2$02d  ·  %3$d Umdr."
+ },
+ {
+  "key": "dial_tap_top_to_stop",
+  "zh": "點上方畫面停止",
+  "args": 0,
+  "en": "Tap the top half to stop",
+  "ja": "画面上半分をタップで停止",
+  "de": "Obere Hälfte tippen zum Stoppen"
+ },
+ {
+  "key": "dial_rotate",
+  "zh": "轉向",
+  "args": 0,
+  "en": "Rotate",
+  "ja": "向き",
+  "de": "Drehen"
+ },
+ {
+  "key": "dial_done_pick_up_phone",
+  "zh": "量測結束，可以把手機從轉盤上拿起來了",
+  "args": 0,
+  "en": "Measurement finished — you can lift the phone off the platter",
+  "ja": "測定が終わりました。ターンテーブルからスマホを取り上げてかまいません",
+  "de": "Messung beendet — Sie können das Telefon vom Teller nehmen"
+ },
+ {
+  "key": "dial_see_analysis",
+  "zh": "看分析結果",
+  "args": 0,
+  "en": "Analysis",
+  "ja": "解析結果",
+  "de": "Analyse"
+ },
+ {
+  "key": "share_raw_data",
+  "zh": "分享原始資料",
+  "args": 0,
+  "en": "Share raw data",
+  "ja": "生データを共有",
+  "de": "Rohdaten teilen"
+ },
+ {
+  "key": "profile_untitled",
+  "zh": "未命名唱盤",
+  "args": 0,
+  "en": "Untitled turntable",
+  "ja": "名称未設定のターンテーブル",
+  "de": "Unbenannter Plattenspieler"
+ },
+ {
+  "key": "onb_title_measure_speed",
+  "zh": "量唱盤的轉速",
+  "args": 0,
+  "en": "Measure your turntable’s speed",
+  "ja": "ターンテーブルの回転数を測る",
+  "de": "Die Drehzahl deines Plattenspielers messen"
+ },
+ {
+  "key": "onb_body_put_phone",
+  "zh": "把手機放在轉動的唱盤上，就能量出轉速、偏差和抖晃率。",
+  "args": 0,
+  "en": "Put your phone on the spinning platter and it measures speed, error and wow & flutter.",
+  "ja": "回っている円盤の上に iPhone を置くだけで、回転数・誤差・ワウ・フラッターが測れます。",
+  "de": "Leg dein iPhone auf den drehenden Teller — es misst Drehzahl, Abweichung und Gleichlaufschwankungen."
+ },
+ {
+  "key": "onb_no_strobe_needed",
+  "zh": "不需要頻閃盤或其他硬體。",
+  "args": 0,
+  "en": "No strobe disc or extra hardware needed.",
+  "ja": "ストロボスコープなどの機材は要りません。",
+  "de": "Keine Stroboskopscheibe und keine zusätzliche Hardware nötig."
+ },
+ {
+  "key": "onb_title_place_phone",
+  "zh": "手機這樣擺",
+  "args": 0,
+  "en": "Place the phone like this",
+  "ja": "iPhone はこう置きます",
+  "de": "So legst du das iPhone auf"
+ },
+ {
+  "key": "onb_title_how_to_measure",
+  "zh": "怎麼量",
+  "args": 0,
+  "en": "How to measure",
+  "ja": "測り方",
+  "de": "So wird gemessen"
+ },
+ {
+  "key": "onb_step_platter_stopped",
+  "zh": "轉盤停著，把手機照上一頁的方式放好",
+  "args": 0,
+  "en": "With the platter stopped, place the phone as shown on the previous page",
+  "ja": "ターンテーブルを止めた状態で、前のページのとおりにスマホを置く",
+  "de": "Bei stehendem Teller das Telefon wie auf der vorigen Seite gezeigt auflegen"
+ },
+ {
+  "key": "onb_step_tap_ready",
+  "zh": "按下「準備好，開始偵測」",
+  "args": 0,
+  "en": "Tap “Ready — start detecting”",
+  "ja": "「準備完了 —— 検出を開始」をタップ",
+  "de": "Auf „Bereit — Erkennung starten“ tippen"
+ },
+ {
+  "key": "onb_step_start_platter",
+  "zh": "啟動轉盤 —— 轉速穩了會自動開始，停下時自動結束",
+  "args": 0,
+  "en": "Start the platter — recording begins once the speed is steady and ends when it stops",
+  "ja": "ターンテーブルを回す —— 回転が安定すると記録が始まり、止まると自動で終わります",
+  "de": "Teller starten — die Aufzeichnung beginnt bei stabiler Drehzahl und endet, wenn er stehen bleibt"
+ },
+ {
+  "key": "onb_measure_90s",
+  "zh": "量 90 秒以上頻譜才夠清楚；想要準確的振幅就量 3 分鐘。",
+  "args": 0,
+  "en": "Measure for at least 90 s for a clear spectrum; 3 minutes for accurate amplitudes.",
+  "ja": "スペクトルをはっきりさせるには 90 秒以上、振幅を正確に出すには 3 分。",
+  "de": "Mindestens 90 s für ein klares Spektrum; 3 Minuten für genaue Amplituden."
+ },
+ {
+  "key": "onb_title_two_things",
+  "zh": "兩件要先知道的事",
+  "args": 0,
+  "en": "Two things to know first",
+  "ja": "先に知っておくこと2つ",
+  "de": "Zwei Dinge vorab"
+ },
+ {
+  "key": "onb_measures_platter",
+  "zh": "它量的是盤，不是唱片。",
+  "args": 0,
+  "en": "It measures the platter, not the record.",
+  "ja": "測っているのは円盤であって、レコードではありません。",
+  "de": "Gemessen wird der Teller, nicht die Platte."
+ },
+ {
+  "key": "onb_offcenter_hole_invisible",
+  "zh": "唱片中心孔偏心造成的抖動，這個方法看不到。",
+  "args": 0,
+  "en": "Wow caused by an off-center record hole is invisible to this method.",
+  "ja": "レコードのセンターホールのずれによるワウは、この方法では見えません。",
+  "de": "Gleichlaufschwankungen durch ein außermittiges Mittelloch sieht diese Methode nicht."
+ },
+ {
+  "key": "onb_error_needs_calibration",
+  "zh": "校準之前，偏差 % 不能拿來調唱盤。",
+  "args": 0,
+  "en": "Before calibration, the error % cannot be used to adjust your deck.",
+  "ja": "校正するまで、誤差 % を調整の根拠にはできません。",
+  "de": "Vor der Kalibrierung taugt die Abweichung in % nicht zum Justieren."
+ },
+ {
+  "key": "onb_error_explained",
+  "zh": "那是唱盤誤差和陀螺儀誤差相乘的結果。校準用碼錶做，一支手機做一次就好。抖晃率與其他百分比不受影響，那些不必校準就能用。",
+  "args": 0,
+  "en": "That figure is the deck's error multiplied by the gyroscope's. Calibration uses a stopwatch and only has to be done once per phone. Wow & flutter and the other percentages are unaffected — those work without calibration.",
+  "ja": "それはターンテーブルの誤差とジャイロの誤差の積です。校正はストップウォッチで行い、スマホ 1 台につき 1 回で済みます。ワウフラッターなどの百分率は影響を受けず、校正なしで使えます。",
+  "de": "Das ist der Fehler des Plattenspielers multipliziert mit dem des Gyroskops. Die Kalibrierung erfolgt per Stoppuhr und ist pro Telefon nur einmal nötig. Gleichlauf und die anderen Prozentwerte sind davon unberührt — sie funktionieren ohne Kalibrierung."
+ },
+ {
+  "key": "onb_details_in_about",
+  "zh": "詳細說明在主畫面的「說明」裡。",
+  "args": 0,
+  "en": "The full explanation is under “About” on the main screen.",
+  "ja": "詳しい説明はメイン画面の「説明」にあります。",
+  "de": "Die ausführliche Erklärung finden Sie unter „Info“ auf dem Hauptbildschirm."
+ },
+ {
+  "key": "onb_get_started",
+  "zh": "開始使用",
+  "args": 0,
+  "en": "Get started",
+  "ja": "はじめる",
+  "de": "Los geht’s"
+ },
+ {
+  "key": "onb_next",
+  "zh": "下一步",
+  "args": 0,
+  "en": "Next",
+  "ja": "次へ",
+  "de": "Weiter"
+ },
+ {
+  "key": "trend_metric_error",
+  "zh": "偏差",
+  "args": 0,
+  "en": "Error",
+  "ja": "誤差",
+  "de": "Abweichung"
+ },
+ {
+  "key": "trend_metric_wow",
+  "zh": "抖晃率",
+  "args": 0,
+  "en": "Wow & flutter",
+  "ja": "ワウ・フラッター",
+  "de": "Gleichlaufschwankungen"
+ },
+ {
+  "key": "trend_metric_eccentricity",
+  "zh": "偏心",
+  "args": 0,
+  "en": "Eccentricity",
+  "ja": "偏心",
+  "de": "Exzentrizität"
+ },
+ {
+  "key": "trend_not_enough_data",
+  "zh": "這個指標還沒有足夠的資料，至少要兩次量測才畫得出趨勢。",
+  "args": 0,
+  "en": "Not enough data for this metric yet — a trend needs at least two measurements.",
+  "ja": "この指標はまだデータが足りません。傾向を描くには最低 2 回の測定が必要です。",
+  "de": "Für diese Kennzahl gibt es noch zu wenig Daten — ein Trend braucht mindestens zwei Messungen."
+ },
+ {
+  "key": "trend_uncalibrated_error_warning",
+  "zh": "空心的點是未校準的量測。它的偏差是唱盤誤差與陀螺儀誤差相乘的結果，不能拿來跟已校準的點比較。",
+  "args": 0,
+  "en": "Hollow points are uncalibrated runs. Their error is the deck's error multiplied by the gyroscope's, so it cannot be compared with calibrated points.",
+  "ja": "白抜きの点は未校正の測定です。その誤差はターンテーブルの誤差とジャイロの誤差の積なので、校正済みの点とは比較できません。",
+  "de": "Hohle Punkte sind unkalibrierte Messungen. Ihr Fehler ist der Fehler des Plattenspielers multipliziert mit dem des Gyroskops und daher nicht mit kalibrierten Punkten vergleichbar."
+ },
+ {
+  "key": "trend_uncalibrated_ratio_note",
+  "zh": "空心的點是未校準的量測 —— 但這個指標是比值，不受校準影響，一樣可以比較。",
+  "args": 0,
+  "en": "Hollow points are uncalibrated runs — but this metric is a ratio, unaffected by calibration, so it is still comparable.",
+  "ja": "白抜きの点は未校正の測定ですが、この指標は比率なので校正の影響を受けず、比較できます。",
+  "de": "Hohle Punkte sind unkalibrierte Messungen — diese Kennzahl ist jedoch ein Verhältnis und daher von der Kalibrierung unabhängig und weiterhin vergleichbar."
+ },
+ {
+  "key": "trend_axis_old",
+  "zh": "舊",
+  "args": 0,
+  "en": "older",
+  "ja": "古",
+  "de": "älter"
+ },
+ {
+  "key": "trend_axis_new",
+  "zh": "新",
+  "args": 0,
+  "en": "newer",
+  "ja": "新",
+  "de": "neuer"
+ },
+ {
+  "key": "trend_unchanged",
+  "zh": "跟第一次相比幾乎沒有變化。",
+  "args": 0,
+  "en": "Practically unchanged from the first run.",
+  "ja": "1回目とほとんど変わっていません。",
+  "de": "Praktisch unverändert gegenüber der ersten Messung."
+ },
+ {
+  "key": "trend_improved",
+  "zh": "改善",
+  "args": 0,
+  "en": "improved",
+  "ja": "改善し",
+  "de": "besser"
+ },
+ {
+  "key": "trend_worse",
+  "zh": "變差",
+  "args": 0,
+  "en": "got worse",
+  "ja": "悪化し",
+  "de": "schlechter"
+ },
+ {
+  "key": "trend_change",
+  "zh": "跟第一次相比%1$s了 %2$.3f 個百分點（%3$.3f%% → %4$.3f%%）。",
+  "args": 4,
+  "en": "%1$s by %2$.3f percentage points compared with the first run (%3$.3f%% → %4$.3f%%).",
+  "ja": "初回と比べて %2$.3f ポイント%1$sしました（%3$.3f%% → %4$.3f%%）。",
+  "de": "%1$s um %2$.3f Prozentpunkte gegenüber dem ersten Durchlauf (%3$.3f%% → %4$.3f%%)."
+ },
+ {
+  "key": "chart_spectrum",
+  "zh": "頻譜",
+  "args": 0,
+  "en": "Spectrum",
+  "ja": "スペクトル",
+  "de": "Spektrum"
+ },
+ {
+  "key": "chart_spectrum_caption",
+  "zh": "橫軸是頻率（對數，Hz），縱軸是振幅（%）。橘點是轉盤的整數諧波 —— 跟著盤面轉的東西；灰點不是，那是傳動鏈上轉速不同的零件。",
+  "args": 0,
+  "en": "Frequency on the horizontal axis (logarithmic, Hz), amplitude on the vertical (%). Orange dots are integer harmonics of the platter — things turning with it; grey dots are not, and belong to drive-chain parts turning at other speeds.",
+  "ja": "横軸は周波数（対数、Hz）、縦軸は振幅（%）。オレンジの点はターンテーブルの整数次高調波 —— 盤と一緒に回っているもの。灰色の点はそうではなく、回転数の異なる駆動系の部品です。",
+  "de": "Waagerecht die Frequenz (logarithmisch, Hz), senkrecht die Amplitude (%). Orange Punkte sind ganzzahlige Harmonische des Tellers — Dinge, die sich mit ihm drehen; graue Punkte nicht, sie gehören zu Antriebsteilen mit anderer Drehzahl."
+ },
+ {
+  "key": "chart_heatmap",
+  "zh": "誤差在盤面的分布",
+  "args": 0,
+  "en": "Error around the platter",
+  "ja": "円盤上の誤差の分布",
+  "de": "Verteilung der Abweichung auf dem Teller"
+ },
+ {
+  "key": "chart_peak_angle",
+  "zh": "誤差最大的角度在 %1$.0f°（指針處）。顏色只集中在一邊代表偏心；均勻散開代表隨機抖動。",
+  "args": 1,
+  "en": "The largest error is at %1$.0f° (the pointer). Colour concentrated on one side means eccentricity; spread evenly means random flutter.",
+  "ja": "誤差が最大なのは %1$.0f°（指針の位置）です。色が片側に集中していれば偏心、均等に散らばっていればランダムなゆらぎです。",
+  "de": "Der größte Fehler liegt bei %1$.0f° (der Zeiger). Farbe auf einer Seite konzentriert bedeutet Exzentrizität; gleichmäßig verteilt bedeutet zufälliges Flattern."
+ },
+ {
+  "key": "chart_angle_not_comparable",
+  "zh": "角度不能跨次量測比較。0° 是「按下開始的那一瞬間」盤面所在的位置，而那是隨機的。要能比較，盤面貼一個記號，每次都等記號轉到同一個位置（例如唱臂那側）才按開始。",
+  "args": 0,
+  "en": "Angles cannot be compared between runs. 0° is wherever the platter happened to be the instant you tapped Start, and that is random. To compare, put a mark on the platter and always wait until the mark reaches the same place (say, the tonearm side) before you start.",
+  "ja": "角度は測定どうしで比較できません。 0° は「開始をタップした瞬間」に円盤があった位置であり、それは毎回ランダムです。比較するには円盤に目印を貼り、毎回その目印が同じ位置（たとえばトーンアーム側）に来てから開始してください。",
+  "de": "Winkel lassen sich zwischen Messungen nicht vergleichen. 0° ist die Stelle, an der der Teller im Moment des Startens gerade stand — und die ist zufällig. Zum Vergleichen klebe eine Markierung auf den Teller und starte immer erst, wenn sie an derselben Stelle steht (etwa auf der Tonarmseite)."
+ },
+ {
+  "key": "chart_scale_expanded",
+  "zh": "色階已放大到容納最大值 —— 跟別次量測比較時要看圖例上的數字，不能只比顏色深淺。",
+  "args": 0,
+  "en": "The colour scale was expanded to fit the maximum — when comparing with another run, read the numbers on the legend rather than the shades.",
+  "ja": "最大値に合わせて色スケールを広げています。他の測定と比べるときは色の濃さではなく凡例の数値を見てください。",
+  "de": "Die Farbskala wurde auf das Maximum gedehnt — beim Vergleich mit anderen Messungen die Zahlen der Legende lesen, nicht die Farbtiefe."
+ },
+ {
+  "key": "chart_legend_slow",
+  "zh": "−%1$.2f%%（慢）",
+  "args": 1,
+  "en": "−%1$.2f%% (slow)",
+  "ja": "−%1$.2f%%（遅い）",
+  "de": "−%1$.2f%% (langsam)"
+ },
+ {
+  "key": "chart_legend_accurate",
+  "zh": "準",
+  "args": 0,
+  "en": "acc.",
+  "ja": "精度",
+  "de": "Gen."
+ },
+ {
+  "key": "chart_legend_fast",
+  "zh": "+%1$.2f%%（快）",
+  "args": 1,
+  "en": "+%1$.2f%% (fast)",
+  "ja": "+%1$.2f%%（速い）",
+  "de": "+%1$.2f%% (schnell)"
+ },
+ {
+  "key": "chart_rolling",
+  "zh": "瞬時偏差",
+  "args": 0,
+  "en": "Instantaneous error",
+  "ja": "瞬時誤差",
+  "de": "Momentane Abweichung"
+ },
+ {
+  "key": "chart_rolling_caption",
+  "zh": "未平滑的原始偏差，%。淡色的帶是每一小段的最大到最小值（快的抖），深色的線是同一段的平均（慢的漂）。分析路徑一律不套移動平均 —— 平滑會把 4 Hz 附近的抖晃挖掉，數字會漂亮得沒有意義；這裡壓縮只影響畫面，不影響任何數字。",
+  "args": 0,
+  "en": "Raw, unsmoothed error in %. The pale band is the min-to-max of each slice (fast flutter); the solid line is the mean of the same slice (slow drift). The analysis path never applies a moving average — smoothing carves out the flutter around 4 Hz and makes the numbers meaninglessly pretty. The compression here affects only the picture, never any number.",
+  "ja": "平滑化していない生の偏差（%）。淡い帯は各区間の最小〜最大（速いゆらぎ）、濃い線は同じ区間の平均（遅いドリフト）です。解析経路では移動平均を一切かけません —— 平滑化は 4 Hz 付近のゆらぎを削り取り、数字を意味なく美しくしてしまいます。ここでの圧縮は表示だけに影響し、数値には影響しません。",
+  "de": "Rohe, ungeglättete Abweichung in %. Das helle Band ist das Min-Max jedes Abschnitts (schnelles Flattern), die kräftige Linie der Mittelwert desselben Abschnitts (langsame Drift). Der Analysepfad verwendet nie einen gleitenden Mittelwert — Glättung schneidet das Flattern um 4 Hz heraus und macht die Zahlen bedeutungslos schön. Die Komprimierung hier betrifft nur die Darstellung, keine Zahl."
+ },
+ {
+  "key": "back_to_measure",
+  "zh": "回到量測",
+  "args": 0,
+  "en": "Back to measuring",
+  "ja": "測定に戻る",
+  "de": "Zurück zur Messung"
+ },
+ {
+  "key": "nominal_rpm_label",
+  "zh": "%1$s 轉",
+  "args": 1,
+  "en": "%1$s RPM",
+  "ja": "%1$s 回転",
+  "de": "%1$s U/min"
+ },
+ {
+  "key": "hist_title",
+  "zh": "量測歷史",
+  "args": 0,
+  "en": "Measurement history",
+  "ja": "測定履歴",
+  "de": "Messverlauf"
+ },
+ {
+  "key": "hist_empty",
+  "zh": "還沒有量測記錄。完成一次分析之後會自動存進來 —— 不需要手動按儲存。",
+  "args": 0,
+  "en": "No measurements yet. Each finished analysis is saved here automatically — there is no Save button to remember.",
+  "ja": "まだ測定記録がありません。解析が終わるたびに自動で保存されます —— 保存ボタンを押す必要はありません。",
+  "de": "Noch keine Messungen. Jede abgeschlossene Analyse wird hier automatisch gespeichert — es gibt keine Schaltfläche zum Speichern."
+ },
+ {
+  "key": "hist_count_and_note",
+  "zh": "共 %1$d 筆，由新到舊。所有百分比都不受校準影響（那些是比值，陀螺儀的比例因子誤差會抵消）；只有 RPM 需要校準。",
+  "args": 1,
+  "en": "%1$d in all, newest first. None of the percentages depend on calibration (they are ratios, so the gyroscope's scale-factor error cancels out); only RPM does.",
+  "ja": "全 %1$d 件、新しい順。百分率はいずれも校正の影響を受けません（比率なのでジャイロのスケール誤差は相殺されます）。校正が必要なのは RPM だけです。",
+  "de": "%1$d insgesamt, neueste zuerst. Keiner der Prozentwerte hängt von der Kalibrierung ab (es sind Verhältnisse, der Skalenfehler des Gyroskops kürzt sich heraus); nur RPM tut es."
+ },
+ {
+  "key": "hist_trend",
+  "zh": "趨勢",
+  "args": 0,
+  "en": "Trend",
+  "ja": "推移",
+  "de": "Verlauf"
+ },
+ {
+  "key": "hist_clear_all",
+  "zh": "清除全部記錄",
+  "args": 0,
+  "en": "Clear all records",
+  "ja": "すべての記録を消去",
+  "de": "Alle Einträge löschen"
+ },
+ {
+  "key": "hist_one_per_rev",
+  "zh": "每圈一次（會隨擺法變）",
+  "args": 0,
+  "en": "1×/rev (varies with placement)",
+  "ja": "1回転1回（置き方で変わる）",
+  "de": "1×/Umdr. (hängt von der Platzierung ab)"
+ },
+ {
+  "key": "hist_trimmed",
+  "zh": "切掉了 %1$.1f s 轉速不穩的區間",
+  "args": 1,
+  "en": "%1$.1f s of unsteady speed was trimmed off",
+  "ja": "回転が不安定な %1$.1f 秒を除外しました",
+  "de": "%1$.1f s mit instabiler Drehzahl wurden abgeschnitten"
+ },
+ {
+  "key": "hist_detail_and_note",
+  "zh": "詳細與備註",
+  "args": 0,
+  "en": "Details & note",
+  "ja": "詳細とメモ",
+  "de": "Details & Notiz"
+ },
+ {
+  "key": "hist_delete_one",
+  "zh": "刪除這一筆",
+  "args": 0,
+  "en": "Delete this record",
+  "ja": "この記録を削除",
+  "de": "Diesen Eintrag löschen"
+ },
+ {
+  "key": "hist_weighted_wrms",
+  "zh": "加權 WRMS",
+  "args": 0,
+  "en": "Weighted WRMS",
+  "ja": "重み付け WRMS",
+  "de": "Bewerteter WRMS"
+ },
+ {
+  "key": "hist_dominant_share",
+  "zh": "最強成分佔比",
+  "args": 0,
+  "en": "Strongest-component share",
+  "ja": "最大成分の割合",
+  "de": "Anteil der stärksten Komponente"
+ },
+ {
+  "key": "hist_uncalibrated",
+  "zh": "未校準",
+  "args": 0,
+  "en": "Uncalibrated",
+  "ja": "未校正",
+  "de": "Nicht kalibriert"
+ },
+ {
+  "key": "detail_section_speed",
+  "zh": "轉速",
+  "args": 0,
+  "en": "Speed",
+  "ja": "回転数",
+  "de": "Drehzahl"
+ },
+ {
+  "key": "detail_mean_rpm",
+  "zh": "平均轉速",
+  "args": 0,
+  "en": "Mean speed",
+  "ja": "平均回転数",
+  "de": "Mittlere Drehzahl"
+ },
+ {
+  "key": "detail_raw_reading",
+  "zh": "未修正讀數",
+  "args": 0,
+  "en": "Uncorrected reading",
+  "ja": "未補正の読み",
+  "de": "Unkorrigierter Messwert"
+ },
+ {
+  "key": "detail_nominal",
+  "zh": "標稱",
+  "args": 0,
+  "en": "Nominal",
+  "ja": "公称",
+  "de": "Nennwert"
+ },
+ {
+  "key": "detail_error",
+  "zh": "偏差",
+  "args": 0,
+  "en": "Error",
+  "ja": "誤差",
+  "de": "Abweichung"
+ },
+ {
+  "key": "detail_applied_factor",
+  "zh": "套用的倍率",
+  "args": 0,
+  "en": "Factor applied",
+  "ja": "適用した係数",
+  "de": "Angewendeter Faktor"
+ },
+ {
+  "key": "detail_uncalibrated_warning",
+  "zh": "這次量測沒有校準，偏差不能拿來調唱盤 —— 那是唱盤誤差與陀螺儀誤差相乘的結果，兩者分不開。",
+  "args": 0,
+  "en": "This run was not calibrated, so its error cannot be used to adjust the deck — it is the deck's error multiplied by the gyroscope's, and the two cannot be separated.",
+  "ja": "この測定は未校正のため、誤差をターンテーブルの調整に使うことはできません —— ターンテーブルの誤差とジャイロの誤差の積であり、両者を分離できないからです。",
+  "de": "Dieser Durchlauf war nicht kalibriert, sein Fehler taugt daher nicht zum Justieren — er ist der Fehler des Plattenspielers multipliziert mit dem des Gyroskops, und beide lassen sich nicht trennen."
+ },
+ {
+  "key": "detail_section_wow",
+  "zh": "抖晃率",
+  "args": 0,
+  "en": "Wow & flutter",
+  "ja": "ワウ・フラッター",
+  "de": "Gleichlaufschwankungen"
+ },
+ {
+  "key": "detail_din_peak",
+  "zh": "DIN 2σ 峰值",
+  "args": 0,
+  "en": "DIN 2σ peak",
+  "ja": "DIN 2σ ピーク",
+  "de": "DIN 2σ Spitze"
+ },
+ {
+  "key": "detail_one_per_rev",
+  "zh": "每圈一次成分",
+  "args": 0,
+  "en": "1×/rev component",
+  "ja": "1回転に1回の成分",
+  "de": "Anteil 1×/Umdrehung"
+ },
+ {
+  "key": "detail_peak_angle",
+  "zh": "誤差最大的角度",
+  "args": 0,
+  "en": "Angle of largest error",
+  "ja": "誤差が最大の角度",
+  "de": "Winkel des größten Fehlers"
+ },
+ {
+  "key": "detail_section_peaks",
+  "zh": "譜峰",
+  "args": 0,
+  "en": "Spectral peaks",
+  "ja": "スペクトルピーク",
+  "de": "Spektrale Spitzen"
+ },
+ {
+  "key": "detail_section_conditions",
+  "zh": "量測條件",
+  "args": 0,
+  "en": "Measurement conditions",
+  "ja": "測定条件",
+  "de": "Messbedingungen"
+ },
+ {
+  "key": "detail_duration",
+  "zh": "時長",
+  "args": 0,
+  "en": "Duration",
+  "ja": "測定時間",
+  "de": "Dauer"
+ },
+ {
+  "key": "detail_revolutions",
+  "zh": "圈數",
+  "args": 0,
+  "en": "Revolutions",
+  "ja": "回転数",
+  "de": "Umdrehungen"
+ },
+ {
+  "key": "detail_sample_rate",
+  "zh": "重取樣頻率",
+  "args": 0,
+  "en": "Resample rate",
+  "ja": "リサンプリング周波数",
+  "de": "Resampling-Rate"
+ },
+ {
+  "key": "detail_rotation_hz",
+  "zh": "轉盤基頻",
+  "args": 0,
+  "en": "Platter fundamental",
+  "ja": "ターンテーブル基本周波数",
+  "de": "Grundfrequenz des Tellers"
+ },
+ {
+  "key": "detail_trimmed",
+  "zh": "自動略過",
+  "args": 0,
+  "en": "Auto-skipped",
+  "ja": "自動でスキップ",
+  "de": "Automatisch übersprungen"
+ },
+ {
+  "key": "detail_section_note",
+  "zh": "備註",
+  "args": 0,
+  "en": "Notes",
+  "ja": "メモ",
+  "de": "Notizen"
+ },
+ {
+  "key": "detail_note_placeholder",
+  "zh": "例如：調整速度微調之後、冷機、45 轉",
+  "args": 0,
+  "en": "e.g. after adjusting the speed trimmer, from cold, at 45 RPM",
+  "ja": "例：速度調整の後、コールドスタート、45回転",
+  "de": "z. B. nach dem Justieren des Drehzahlreglers, kalt, bei 45 U/min"
+ },
+ {
+  "key": "detail_note_why",
+  "zh": "記下這次做了什麼。三個月後看到一排數字，沒有備註只知道有變，不知道為什麼變。",
+  "args": 0,
+  "en": "Write down what you did this time. Three months from now a column of numbers only tells you something changed, not why.",
+  "ja": "今回何をしたかを書いておきましょう。3 か月後に数字の列を見ても、メモがなければ「変わった」ことしか分からず、理由は分かりません。",
+  "de": "Notieren Sie, was Sie diesmal getan haben. In drei Monaten sagt Ihnen eine Zahlenspalte ohne Notiz nur, dass sich etwas geändert hat — nicht warum."
+ },
+ {
+  "key": "detail_back_to_history",
+  "zh": "回到歷史",
+  "args": 0,
+  "en": "Back to history",
+  "ja": "履歴に戻る",
+  "de": "Zurück zum Verlauf"
+ },
+ {
+  "key": "engine_no_gyro_no_gravity",
+  "zh": "這台裝置沒有陀螺儀，也讀不到重力感測器，無法量測。",
+  "args": 0,
+  "en": "This device has no gyroscope and no gravity sensor, so it cannot measure.",
+  "ja": "この端末にはジャイロも重力センサーもないため、測定できません。",
+  "de": "Dieses Gerät hat weder Gyroskop noch Schwerkraftsensor und kann daher nicht messen."
+ },
+ {
+  "key": "engine_no_gyro",
+  "zh": "這台裝置沒有陀螺儀。不是每一支 Android 手機都有 —— 中階機常常省掉。\n\n這個 app 靠陀螺儀量自轉角速度，沒有它就沒有辦法量，用加速度計或磁力計都替代不了。請換一支有陀螺儀的手機。",
+  "args": 0,
+  "en": "This device has no gyroscope. Not every Android phone does — mid-range models often leave it out.\n\nThis app measures rotation rate with the gyroscope; without one there is no way to measure, and neither the accelerometer nor the magnetometer can stand in. Please use a phone that has a gyroscope.",
+  "ja": "この端末にはジャイロがありません。すべての Android スマホにあるわけではなく、ミドルレンジでは省かれることがよくあります。\n\nこのアプリはジャイロで自転角速度を測ります。ジャイロがなければ測定できず、加速度センサーや磁気センサーでは代用できません。ジャイロを搭載したスマホをお使いください。",
+  "de": "Dieses Gerät hat kein Gyroskop. Nicht jedes Android-Telefon hat eines — bei Mittelklassemodellen fehlt es häufig.\n\nDiese App misst die Drehrate mit dem Gyroskop; ohne eines lässt sich nicht messen, und weder Beschleunigungs- noch Magnetsensor können es ersetzen. Bitte verwenden Sie ein Telefon mit Gyroskop."
+ },
+ {
+  "key": "engine_no_gravity",
+  "zh": "這台裝置讀不到重力或加速度感測器，無法量測。",
+  "args": 0,
+  "en": "This device has no gravity or accelerometer reading, so it cannot measure.",
+  "ja": "この端末は重力・加速度センサーを読み取れないため、測定できません。",
+  "de": "Dieses Gerät liefert keine Schwerkraft- oder Beschleunigungswerte und kann nicht messen."
+ },
+ {
+  "key": "engine_too_short",
+  "zh": "量測時間太短，只錄到 %1$d 筆資料。",
+  "args": 1,
+  "en": "The run was too short — only %1$d samples were recorded.",
+  "ja": "測定時間が短すぎます。記録されたのは %1$d 件だけです。",
+  "de": "Der Durchlauf war zu kurz — nur %1$d Messpunkte wurden aufgezeichnet."
+ },
+ {
+  "key": "engine_no_stable_window",
+  "zh": "整段量測都沒有穩定的轉速。轉盤有轉起來嗎？至少要連續穩定 5 秒。",
+  "args": 0,
+  "en": "The speed was never steady during the whole run. Was the platter actually spinning? At least 5 continuous seconds are needed.",
+  "ja": "測定中ずっと回転が安定しませんでした。ターンテーブルは回っていましたか？ 最低でも連続5秒の安定が必要です。",
+  "de": "Während der gesamten Messung war die Drehzahl nie stabil. Lief der Teller überhaupt? Nötig sind mindestens 5 zusammenhängende Sekunden."
+ },
+ {
+  "key": "engine_platter_not_spinning",
+  "zh": "量到的轉速只有 %1$.3f RPM —— 轉盤沒有轉起來。",
+  "args": 1,
+  "en": "Only %1$.3f RPM was measured — the platter was not spinning.",
+  "ja": "測定できた回転数はわずか %1$.3f RPM です —— ターンテーブルが回っていません。",
+  "de": "Es wurden nur %1$.3f U/min gemessen — der Teller drehte sich nicht."
+ },
+ {
+  "key": "engine_not_enough_data",
+  "zh": "資料不足以分析。試著量久一點，90 秒以上比較可靠。",
+  "args": 0,
+  "en": "Not enough data to analyze. Try measuring for longer — 90 s or more is more reliable.",
+  "ja": "解析するにはデータが足りません。もう少し長く、90 秒以上測ってみてください。",
+  "de": "Zu wenig Daten für eine Analyse. Miss länger — ab 90 s wird es zuverlässiger."
+ },
+ {
+  "key": "accuracy_high",
+  "zh": "高",
+  "args": 0,
+  "en": "High",
+  "ja": "高",
+  "de": "Hoch"
+ },
+ {
+  "key": "accuracy_medium",
+  "zh": "中",
+  "args": 0,
+  "en": "Medium",
+  "ja": "中",
+  "de": "Mittel"
+ },
+ {
+  "key": "accuracy_low",
+  "zh": "低",
+  "args": 0,
+  "en": "Low",
+  "ja": "低",
+  "de": "Niedrig"
+ },
+ {
+  "key": "accuracy_unreliable",
+  "zh": "不可靠",
+  "args": 0,
+  "en": "Unreliable",
+  "ja": "信頼できない",
+  "de": "Unzuverlässig"
+ },
+ {
+  "key": "cal_title",
+  "zh": "碼錶校準",
+  "args": 0,
+  "en": "Stopwatch calibration",
+  "ja": "ストップウォッチ校正",
+  "de": "Stoppuhr-Kalibrierung"
+ },
+ {
+  "key": "cal_invalidated_title",
+  "zh": "先前的校準已失效",
+  "args": 0,
+  "en": "The previous calibration is no longer valid",
+  "ja": "以前の校正は無効になりました",
+  "de": "Die frühere Kalibrierung gilt nicht mehr"
+ },
+ {
+  "key": "cal_invalidated_body",
+  "zh": "那次校準是在 %1$s 上做的，這台是 %2$s —— 校準倍率綁定在特定一支陀螺儀上，不能沿用。請重新校準。",
+  "args": 2,
+  "en": "That calibration was done on a %1$s; this is a %2$s. The factor is tied to one particular gyroscope and cannot carry over. Please calibrate again.",
+  "ja": "その校正は %1$s で行われましたが、この端末は %2$s です。校正係数は個々のジャイロに結び付いており引き継げません。もう一度校正してください。",
+  "de": "Diese Kalibrierung entstand auf einem %1$s, dies ist ein %2$s. Der Faktor ist an ein bestimmtes Gyroskop gebunden und lässt sich nicht übertragen. Bitte neu kalibrieren."
+ },
+ {
+  "key": "cal_active_title",
+  "zh": "目前生效的校準",
+  "args": 0,
+  "en": "Calibration in effect",
+  "ja": "現在有効な校正",
+  "de": "Aktive Kalibrierung"
+ },
+ {
+  "key": "cal_factor_k",
+  "zh": "倍率 k",
+  "args": 0,
+  "en": "Factor k",
+  "ja": "係数 k",
+  "de": "Faktor k"
+ },
+ {
+  "key": "cal_revs_over_seconds",
+  "zh": "%1$d 圈 / %2$.2f s",
+  "args": 2,
+  "en": "%1$d rev / %2$.2f s",
+  "ja": "%1$d 回転 / %2$.2f 秒",
+  "de": "%1$d Umdr. / %2$.2f s"
+ },
+ {
+  "key": "cal_clear",
+  "zh": "清除校準",
+  "args": 0,
+  "en": "Clear calibration",
+  "ja": "校正を消去",
+  "de": "Kalibrierung löschen"
+ },
+ {
+  "key": "cal_needs_measurement",
+  "zh": "要先完成一次量測，才有可以拿來比對的轉速。回上一頁量一次再回來。",
+  "args": 0,
+  "en": "You need one completed measurement first, so there is a reading to compare against. Go back, measure once, then return here.",
+  "ja": "比較する読みを得るには、先に測定を 1 回終える必要があります。前の画面で一度測ってから戻ってきてください。",
+  "de": "Zuerst braucht es eine abgeschlossene Messung als Vergleichswert. Gehen Sie zurück, messen Sie einmal und kommen Sie dann hierher."
+ },
+ {
+  "key": "cal_this_calibration",
+  "zh": "這次校準",
+  "args": 0,
+  "en": "This calibration",
+  "ja": "今回の校正",
+  "de": "Diese Kalibrierung"
+ },
+ {
+  "key": "cal_implausible",
+  "zh": "k = %1$.3f 不合理。MEMS 陀螺儀的比例因子誤差是百分之幾的等級，",
+  "args": 1,
+  "en": "k = %1$.3f is implausible. A MEMS gyroscope's scale-factor error is on the order of a few percent, ",
+  "ja": "k = %1$.3f は不合理です。MEMS ジャイロのスケール誤差は数パーセント程度で、",
+  "de": "k = %1$.3f ist unplausibel. Der Skalenfehler eines MEMS-Gyroskops liegt bei einigen Prozent, "
+ },
+ {
+  "key": "cal_implausible_tail",
+  "zh": "不會到這種程度 —— 檢查圈數或秒數是不是打錯了。",
+  "args": 0,
+  "en": "never this far off — check whether the revolution count or the seconds were mistyped.",
+  "ja": "ここまでずれることはありません —— 回転数か秒数の入力ミスを確認してください。",
+  "de": "niemals so weit daneben — prüfen Sie, ob Umdrehungszahl oder Sekunden vertippt sind."
+ },
+ {
+  "key": "cal_how_to",
+  "zh": "1. 盤面邊緣貼一個看得見的記號\n2. 記號經過某個固定參考點時按下碼錶，同時開始數\n3. 數滿設定的圈數，記號再次經過同一點時按停",
+  "args": 0,
+  "en": "1. Stick a visible mark on the edge of the platter\n2. Start the stopwatch and start counting as the mark passes a fixed reference point\n3. Stop when the mark passes the same point after the set number of revolutions",
+  "ja": "1. ターンテーブルの縁に見える印を貼る\n2. 印が固定した基準点を通過する瞬間にストップウォッチを押し、同時に数え始める\n3. 設定した回転数を数え終え、印が同じ点を通過したときに止める",
+  "de": "1. Kleben Sie eine sichtbare Marke an den Tellerrand\n2. Starten Sie die Stoppuhr und zählen Sie mit, wenn die Marke einen festen Bezugspunkt passiert\n3. Stoppen Sie, wenn die Marke nach der eingestellten Zahl von Umdrehungen denselben Punkt passiert"
+ },
+ {
+  "key": "cal_precision_note",
+  "zh": "100 圈在 33⅓ 轉大約 3 分鐘，精度 ±0.17%；200 圈約 6 分鐘，±0.08%。\n圈數太少不值得做 —— 10 圈只有 1.7%，比不校準好不了多少。",
+  "args": 0,
+  "en": "100 revolutions at 33⅓ takes about 3 minutes and gives ±0.17%; 200 revolutions about 6 minutes and ±0.08%.\nToo few revolutions is not worth doing — 10 gives only 1.7%, barely better than no calibration at all.",
+  "ja": "33⅓ 回転なら 100 回転で約 3 分、精度 ±0.17%。200 回転なら約 6 分で ±0.08% です。\n回転数が少なすぎると意味がありません —— 10 回転では 1.7% しかなく、校正しないのとほとんど変わりません。",
+  "de": "100 Umdrehungen bei 33⅓ dauern etwa 3 Minuten und ergeben ±0,17 %; 200 Umdrehungen etwa 6 Minuten und ±0,08 %.\nZu wenige Umdrehungen lohnen nicht — 10 ergeben nur 1,7 %, kaum besser als gar keine Kalibrierung."
+ },
+ {
+  "key": "load_title",
+  "zh": "載重測試",
+  "args": 0,
+  "en": "Load test",
+  "ja": "荷重テスト",
+  "de": "Lasttest"
+ },
+ {
+  "key": "load_how_to_title",
+  "zh": "怎麼做",
+  "args": 0,
+  "en": "How to do it",
+  "ja": "やり方",
+  "de": "So geht’s"
+ },
+ {
+  "key": "load_how_to_body",
+  "zh": "正常量兩次：一次只放手機，一次在手機上再疊一個已知重量的東西。然後在下面挑出那兩筆。",
+  "args": 0,
+  "en": "Measure twice as usual: once with just the phone, once with something of known weight stacked on top of it. Then pick those two runs below.",
+  "ja": "通常どおり 2 回測ります。1 回はスマホだけ、もう 1 回はスマホの上に重さの分かったものを載せて。そのあと下でその 2 件を選びます。",
+  "de": "Messen Sie zweimal wie gewohnt: einmal nur mit dem Telefon, einmal mit einem Gegenstand bekannten Gewichts darauf. Wählen Sie danach unten diese beiden Durchläufe aus."
+ },
+ {
+  "key": "load_balance_warning",
+  "zh": "兩次的平衡狀態必須一樣，只有質量在變 —— 所以手機要置中放在唱片鎮上，配重疊在手機正上方。手機偏在一邊時加配重，改變的是不平衡而不是載重，量到的斜率會是錯的。",
+  "args": 0,
+  "en": "Both runs must have the same balance, with only the mass changing — so the phone goes centred on the record weight and the extra mass stacks directly on top of it. Adding mass to an off-centre phone changes the imbalance, not the load, and the slope comes out wrong.",
+  "ja": "2 回の測定は釣り合いを同じにし、変わるのは質量だけにしてください —— スマホはレコードウェイトの上で中央に置き、追加の重りはその真上に積みます。スマホが片寄った状態で重りを足すと、変わるのは荷重ではなく不釣り合いで、傾きが誤った値になります。",
+  "de": "Beide Durchläufe müssen dieselbe Balance haben, nur die Masse darf sich ändern — das Telefon liegt also mittig auf dem Plattengewicht und die Zusatzmasse direkt darauf. Masse auf ein außermittiges Telefon zu legen ändert die Unwucht, nicht die Last, und die Steigung wird falsch."
+ },
+ {
+  "key": "load_need_two_records",
+  "zh": "至少要有兩筆量測記錄才能做這個測試。先照上面的方法量兩次。",
+  "args": 0,
+  "en": "This test needs at least two saved measurements. Measure twice as described above first.",
+  "ja": "このテストには少なくとも 2 件の測定記録が必要です。まず上の方法で 2 回測ってください。",
+  "de": "Für diesen Test braucht es mindestens zwei gespeicherte Messungen. Messen Sie zunächst zweimal wie oben beschrieben."
+ },
+ {
+  "key": "load_pick_two",
+  "zh": "挑出兩次量測",
+  "args": 0,
+  "en": "Pick the two runs",
+  "ja": "2 回の測定を選ぶ",
+  "de": "Die beiden Durchläufe wählen"
+ },
+ {
+  "key": "load_phone_only",
+  "zh": "只放手機",
+  "args": 0,
+  "en": "Phone only",
+  "ja": "iPhone のみ",
+  "de": "Nur iPhone"
+ },
+ {
+  "key": "load_with_mass",
+  "zh": "加了配重",
+  "args": 0,
+  "en": "With added weight",
+  "ja": "重りを追加",
+  "de": "Mit Zusatzgewicht"
+ },
+ {
+  "key": "load_not_selected",
+  "zh": "尚未選擇",
+  "args": 0,
+  "en": "Not selected",
+  "ja": "未選択",
+  "de": "Nicht ausgewählt"
+ },
+ {
+  "key": "load_weights",
+  "zh": "重量",
+  "args": 0,
+  "en": "Weight",
+  "ja": "重さ",
+  "de": "Gewicht"
+ },
+ {
+  "key": "load_phone_mass",
+  "zh": "手機重量",
+  "args": 0,
+  "en": "Phone weight",
+  "ja": "iPhone の重さ",
+  "de": "Gewicht des iPhone"
+ },
+ {
+  "key": "load_added_mass",
+  "zh": "加上去的配重",
+  "args": 0,
+  "en": "Added weight",
+  "ja": "追加した重り",
+  "de": "Zusatzgewicht"
+ },
+ {
+  "key": "load_scale_note",
+  "zh": "配重用食譜秤量一下就好，不必很精確 —— 誤差只會等比例反映在斜率上。",
+  "args": 0,
+  "en": "A kitchen scale is precise enough for the added weight — any error just scales the slope proportionally.",
+  "ja": "重りはキッチンスケールで量れば十分です。誤差は傾きに比例して現れるだけです。",
+  "de": "Eine Küchenwaage genügt für das Zusatzgewicht — ein Fehler skaliert die Steigung lediglich proportional."
+ },
+ {
+  "key": "load_result",
+  "zh": "結果",
+  "args": 0,
+  "en": "Result",
+  "ja": "結果",
+  "de": "Ergebnis"
+ },
+ {
+  "key": "load_slope",
+  "zh": "載重斜率",
+  "args": 0,
+  "en": "Load slope",
+  "ja": "荷重の傾き",
+  "de": "Laststeigung"
+ },
+ {
+  "key": "load_phone_effect",
+  "zh": "手機造成的變化",
+  "args": 0,
+  "en": "Change caused by the phone",
+  "ja": "iPhone による変化",
+  "de": "Änderung durch das iPhone"
+ },
+ {
+  "key": "load_zero_load",
+  "zh": "外插回零負載",
+  "args": 0,
+  "en": "Extrapolated to zero load",
+  "ja": "無負荷への外挿",
+  "de": "Extrapoliert auf Null-Last"
+ },
+ {
+  "key": "load_save_to_profile",
+  "zh": "存進「%1$s」",
+  "args": 1,
+  "en": "Save to “%1$s”",
+  "ja": "「%1$s」に保存",
+  "de": "In „%1$s“ speichern"
+ },
+ {
+  "key": "load_no_profile",
+  "zh": "還沒有唱盤設定檔，結果沒地方存。先去「唱盤設定檔」新增一台。",
+  "args": 0,
+  "en": "There is no turntable profile yet, so the result has nowhere to go. Add one under “Turntable profiles” first.",
+  "ja": "ターンテーブルのプロファイルがまだないため、結果を保存できません。先に「ターンテーブルのプロファイル」で 1 台追加してください。",
+  "de": "Es gibt noch kein Plattenspieler-Profil, das Ergebnis kann nirgends hin. Legen Sie zuerst unter „Plattenspieler-Profile“ eines an."
+ },
+ {
+  "key": "load_pick_two_hint",
+  "zh": "挑出兩筆不同的量測，並填入配重的重量。",
+  "args": 0,
+  "en": "Pick two different runs and enter the added weight.",
+  "ja": "異なる 2 件の測定を選び、追加した重さを入力してください。",
+  "de": "Wählen Sie zwei verschiedene Durchläufe und geben Sie das Zusatzgewicht ein."
+ },
+ {
+  "key": "load_saved_result",
+  "zh": "已存的結果",
+  "args": 0,
+  "en": "Saved result",
+  "ja": "保存済みの結果",
+  "de": "Gespeichertes Ergebnis"
+ },
+ {
+  "key": "load_measured_at",
+  "zh": "測於",
+  "args": 0,
+  "en": "Measured on",
+  "ja": "測定日",
+  "de": "Gemessen am"
+ },
+ {
+  "key": "load_significant",
+  "zh": "手機的重量確實會影響讀數。",
+  "args": 0,
+  "en": "The phone’s weight does affect the reading.",
+  "ja": "iPhone の重さは表示値に影響します。",
+  "de": "Das Gewicht des iPhone beeinflusst die Anzeige tatsächlich."
+ },
+ {
+  "key": "load_not_significant",
+  "zh": "這台盤對載重不敏感，手機的重量不影響讀數。",
+  "args": 0,
+  "en": "This deck is insensitive to load — the phone’s weight does not affect the reading.",
+  "ja": "このターンテーブルは荷重の影響を受けにくく、iPhone の重さは表示値に影響しません。",
+  "de": "Dieses Laufwerk reagiert kaum auf Last — das Gewicht des iPhone beeinflusst die Anzeige nicht."
+ },
+ {
+  "key": "load_back_to_profile",
+  "zh": "回到唱盤設定檔",
+  "args": 0,
+  "en": "Back to turntable profiles",
+  "ja": "ターンテーブルのプロファイルに戻る",
+  "de": "Zurück zu den Plattenspieler-Profilen"
+ },
+ {
+  "key": "cal_gyro_error",
+  "zh": "陀螺儀偏差",
+  "args": 0,
+  "en": "Gyro error",
+  "ja": "ジャイロ誤差",
+  "de": "Gyro-Fehler"
+ },
+ {
+  "key": "cal_based_on",
+  "zh": "依據",
+  "args": 0,
+  "en": "Based on",
+  "ja": "根拠",
+  "de": "Grundlage"
+ },
+ {
+  "key": "cal_precision",
+  "zh": "校準精度",
+  "args": 0,
+  "en": "Calibration precision",
+  "ja": "校正の精度",
+  "de": "Genauigkeit der Kalibrierung"
+ },
+ {
+  "key": "cal_revolutions",
+  "zh": "圈數",
+  "args": 0,
+  "en": "Revolutions",
+  "ja": "回転数",
+  "de": "Umdrehungen"
+ },
+ {
+  "key": "cal_seconds",
+  "zh": "秒數",
+  "args": 0,
+  "en": "Seconds",
+  "ja": "秒数",
+  "de": "Sekunden"
+ },
+ {
+  "key": "cal_app_reading",
+  "zh": "App 量到的轉速",
+  "args": 0,
+  "en": "Speed measured by the app",
+  "ja": "アプリが測った回転数",
+  "de": "Von der App gemessene Drehzahl"
+ },
+ {
+  "key": "cal_fill_in_hint",
+  "zh": "填入圈數與秒數就會算出倍率。",
+  "args": 0,
+  "en": "Enter the revolutions and seconds and the factor is calculated.",
+  "ja": "回転数と秒数を入れると係数が計算されます。",
+  "de": "Gib Umdrehungen und Sekunden ein, dann wird der Faktor berechnet."
+ },
+ {
+  "key": "cal_stopwatch_rpm",
+  "zh": "碼錶推算轉速",
+  "args": 0,
+  "en": "Speed from the stopwatch",
+  "ja": "ストップウォッチから求めた回転数",
+  "de": "Drehzahl laut Stoppuhr"
+ },
+ {
+  "key": "cal_this_precision",
+  "zh": "這次校準的精度",
+  "args": 0,
+  "en": "Precision of this calibration",
+  "ja": "今回の校正の精度",
+  "de": "Genauigkeit dieser Kalibrierung"
+ },
+ {
+  "key": "cal_save",
+  "zh": "儲存",
+  "args": 0,
+  "en": "Save",
+  "ja": "保存",
+  "de": "Sichern"
+ },
+ {
+  "key": "cal_how_to_title",
+  "zh": "怎麼量",
+  "args": 0,
+  "en": "How to measure",
+  "ja": "測り方",
+  "de": "So wird gemessen"
+ },
+ {
+  "key": "cal_same_run",
+  "zh": "碼錶要量的是同一段轉動。中途調過速度或換過轉速檔位，這個 k 就不對了。",
+  "args": 0,
+  "en": "The stopwatch has to time the same stretch of rotation. If you adjusted the speed or changed speed settings partway through, this k is wrong.",
+  "ja": "ストップウォッチで計るのは同じ回転区間でなければなりません。途中で速度を調整したり回転数を切り替えたりすると、この k は正しくありません。",
+  "de": "Die Stoppuhr muss denselben Drehabschnitt messen. Wurde zwischendurch die Drehzahl verstellt oder umgeschaltet, stimmt dieses k nicht."
+ },
+ {
+  "key": "load_verdict_insignificant",
+  "zh": "斜率在量測雜訊以內 —— 這台唱盤對載重不敏感，手機的重量不影響讀數。",
+  "args": 0,
+  "en": "The slope is within measurement noise — this deck is insensitive to load, so the phone’s weight does not affect the reading.",
+  "ja": "傾きは測定ノイズの範囲内です —— このターンテーブルは荷重の影響を受けにくく、iPhone の重さは表示値に影響しません。",
+  "de": "Die Steigung liegt im Messrauschen — dieses Laufwerk reagiert kaum auf Last, das Gewicht des iPhone beeinflusst die Anzeige nicht."
+ },
+ {
+  "key": "load_slows",
+  "zh": "拖慢",
+  "args": 0,
+  "en": "slowed",
+  "ja": "遅くしました",
+  "de": "verlangsamt"
+ },
+ {
+  "key": "load_speeds_up",
+  "zh": "加快",
+  "args": 0,
+  "en": "sped up",
+  "ja": "速くしました",
+  "de": "beschleunigt"
+ },
+ {
+  "key": "load_verdict_significant",
+  "zh": "手機的重量把轉速%1$s了 %2$.4f RPM（%3$.3f%%）。這是量測方法本身造成的偏差，不是唱盤的問題 —— 真實的無載轉速是 %4$.4f RPM。",
+  "args": 4,
+  "en": "The phone's weight %1$s the platter by %2$.4f RPM (%3$.3f%%). That is a bias of the measurement method, not a fault of the deck — the true unloaded speed is %4$.4f RPM.",
+  "ja": "スマホの重さが回転を %2$.4f RPM（%3$.3f%%）%1$sました。これは測定方法そのものによる偏りで、ターンテーブルの問題ではありません —— 無負荷時の真の回転数は %4$.4f RPM です。",
+  "de": "Das Gewicht des Telefons hat den Teller um %2$.4f U/min (%3$.3f%%) %1$s. Das ist ein Bias der Messmethode, kein Fehler des Plattenspielers — die wahre unbelastete Drehzahl beträgt %4$.4f U/min."
+ },
+ {
+  "key": "prof_title",
+  "zh": "唱盤",
+  "args": 0,
+  "en": "Turntables",
+  "ja": "ターンテーブル",
+  "de": "Plattenspieler"
+ },
+ {
+  "key": "prof_empty_title",
+  "zh": "還沒有唱盤設定檔",
+  "args": 0,
+  "en": "No turntable profiles yet",
+  "ja": "まだターンテーブル設定がありません",
+  "de": "Noch keine Laufwerksprofile"
+ },
+ {
+  "key": "prof_empty_body",
+  "zh": "記下原廠規格與傳動鏈尺寸之後，量測結果就能自動跟規格比對，頻譜上的非諧波峰也能對上實體零件。",
+  "args": 0,
+  "en": "Once the factory spec and drive-chain dimensions are recorded, results are compared against the spec automatically and non-harmonic peaks can be matched to real parts.",
+  "ja": "工場仕様と駆動系の寸法を記録しておけば、測定結果は自動的に仕様と比較され、スペクトル上の非調和成分も実際の部品に対応づけられます。",
+  "de": "Sind Werksangabe und Antriebsmaße hinterlegt, werden Ergebnisse automatisch mit der Spezifikation verglichen und nicht harmonische Spitzen realen Teilen zugeordnet."
+ },
+ {
+  "key": "prof_add",
+  "zh": "新增唱盤",
+  "args": 0,
+  "en": "Add a turntable",
+  "ja": "ターンテーブルを追加",
+  "de": "Plattenspieler hinzufügen"
+ },
+ {
+  "key": "prof_add_another",
+  "zh": "再新增一台",
+  "args": 0,
+  "en": "Add another",
+  "ja": "もう 1 台追加",
+  "de": "Weiteren hinzufügen"
+ },
+ {
+  "key": "prof_active",
+  "zh": "使用中",
+  "args": 0,
+  "en": "In use",
+  "ja": "使用中",
+  "de": "In Benutzung"
+ },
+ {
+  "key": "prof_model",
+  "zh": "型號",
+  "args": 0,
+  "en": "Model",
+  "ja": "型番",
+  "de": "Modell"
+ },
+ {
+  "key": "prof_model_hint",
+  "zh": "例如 TD 235 EV",
+  "args": 0,
+  "en": "e.g. TD 235 EV",
+  "ja": "例：TD 235 EV",
+  "de": "z. B. TD 235 EV"
+ },
+ {
+  "key": "prof_maker",
+  "zh": "廠牌",
+  "args": 0,
+  "en": "Make",
+  "ja": "メーカー",
+  "de": "Hersteller"
+ },
+ {
+  "key": "prof_maker_hint",
+  "zh": "例如 Thorens",
+  "args": 0,
+  "en": "e.g. Thorens",
+  "ja": "例：Thorens",
+  "de": "z. B. Thorens"
+ },
+ {
+  "key": "prof_section_spec",
+  "zh": "原廠規格",
+  "args": 0,
+  "en": "Factory spec",
+  "ja": "メーカー規格",
+  "de": "Werksangabe"
+ },
+ {
+  "key": "prof_spec_wow",
+  "zh": "抖晃率規格",
+  "args": 0,
+  "en": "Wow & flutter spec",
+  "ja": "ワウ・フラッター規格",
+  "de": "Gleichlauf-Spezifikation"
+ },
+ {
+  "key": "prof_spec_note",
+  "zh": "填了之後，分析頁會直接標出你的盤超規格多少。手冊上通常寫成 WRMS 或 DIN。",
+  "args": 0,
+  "en": "Fill this in and the analysis page will show exactly how far your deck is over spec. Manuals usually quote it as WRMS or DIN.",
+  "ja": "入力しておくと、解析画面で規格をどれだけ超えているかが表示されます。取扱説明書では WRMS または DIN と書かれていることが多いです。",
+  "de": "Eingetragen zeigt die Analyse direkt, wie weit dein Laufwerk über der Spezifikation liegt. In Handbüchern steht sie meist als WRMS oder DIN."
+ },
+ {
+  "key": "prof_section_drive",
+  "zh": "傳動鏈尺寸（選填）",
+  "args": 0,
+  "en": "Drive-chain dimensions (optional)",
+  "ja": "駆動系の寸法（任意）",
+  "de": "Maße des Antriebs (optional)"
+ },
+ {
+  "key": "prof_pulley",
+  "zh": "馬達皮帶輪直徑",
+  "args": 0,
+  "en": "Motor pulley diameter",
+  "ja": "モータープーリー径",
+  "de": "Durchmesser des Motorpulleys"
+ },
+ {
+  "key": "prof_platter",
+  "zh": "皮帶接觸的盤面直徑",
+  "args": 0,
+  "en": "Platter diameter where the belt runs",
+  "ja": "ベルトが接する円盤の直径",
+  "de": "Tellerdurchmesser am Riemen"
+ },
+ {
+  "key": "prof_belt",
+  "zh": "皮帶厚度",
+  "args": 0,
+  "en": "Belt thickness",
+  "ja": "ベルトの厚み",
+  "de": "Riemenstärke"
+ },
+ {
+  "key": "prof_expected_ratio",
+  "zh": "預期傳動比",
+  "args": 0,
+  "en": "Expected drive ratio",
+  "ja": "予想される駆動比",
+  "de": "Erwartete Übersetzung"
+ },
+ {
+  "key": "prof_drive_note",
+  "zh": "量了這幾個，頻譜上「非諧波的某某倍」就能對上實體零件 —— 剛好等於傳動比的那根峰就是馬達。皮帶跑在外盤緣就量外盤，跑在內盤就量內盤。",
+  "args": 0,
+  "en": "Fill these in and the “non-harmonic ×N” peaks in the spectrum can be matched to real parts — the peak that lands right on the drive ratio is the motor. Measure the outer rim if the belt runs there, the sub-platter if it runs inside.",
+  "ja": "これらを入力すると、スペクトル上の「非高調波の◯倍」を実際の部品に対応づけられます —— 駆動比とちょうど一致するピークがモーターです。ベルトが外周を走るなら外周を、サブプラッターを走るならそちらを測ってください。",
+  "de": "Mit diesen Angaben lassen sich die „nicht harmonischen ×N“-Spitzen im Spektrum echten Bauteilen zuordnen — die Spitze genau auf der Übersetzung ist der Motor. Miss den äußeren Tellerrand, wenn der Riemen dort läuft, sonst den Subteller."
+ },
+ {
+  "key": "prof_belt_sensitivity",
+  "zh": "皮帶厚度對比值影響很大：皮帶輪 8.5 mm 配厚度 0.5 mm，光是厚度就讓比值差 5.6%。量不準沒關係 —— app 會把預期與量到的兩個數字並排講出來，不做「符合／不符合」的判定。",
+  "args": 0,
+  "en": "Belt thickness moves the ratio a lot: with an 8.5 mm pulley and 0.5 mm of belt, the thickness alone shifts it by 5.6%. Rough measurements are fine — the app always states the expected and the measured figure side by side rather than passing a match/no-match verdict.",
+  "ja": "ベルトの厚みは比に大きく効きます。8.5 mm のプーリーに 0.5 mm のベルトでは、厚みだけで比が 5.6% 変わります。多少不正確でも問題ありません —— アプリは「一致／不一致」の判定はせず、予想値と実測値を並べて示します。",
+  "de": "Die Riemendicke verschiebt das Verhältnis stark: Bei 8,5 mm Riemenscheibe und 0,5 mm Riemen allein um 5,6 %. Ungenaue Messungen sind kein Problem — die App nennt stets Erwartung und Messwert nebeneinander, statt ein Urteil „passt/passt nicht“ zu fällen."
+ },
+ {
+  "key": "prof_section_load",
+  "zh": "載重",
+  "args": 0,
+  "en": "Load",
+  "ja": "荷重",
+  "de": "Last"
+ },
+ {
+  "key": "prof_load_note",
+  "zh": "手機的重量會不會把唱盤拖慢，完全取決於馬達型式，查表沒有用，要實測。",
+  "args": 0,
+  "en": "Whether the phone’s weight slows your deck depends entirely on the motor type — no table can tell you, you have to measure it.",
+  "ja": "iPhone の重さでターンテーブルが遅くなるかどうかはモーターの方式次第で、表を調べても分かりません。実測するしかありません。",
+  "de": "Ob das Gewicht des iPhone dein Laufwerk bremst, hängt allein von der Motorbauart ab — keine Tabelle sagt es dir, du musst es messen."
+ },
+ {
+  "key": "prof_redo_load_test",
+  "zh": "重做載重測試",
+  "args": 0,
+  "en": "Redo the load test",
+  "ja": "荷重テストをやり直す",
+  "de": "Lasttest wiederholen"
+ },
+ {
+  "key": "prof_do_load_test",
+  "zh": "做載重測試",
+  "args": 0,
+  "en": "Run a load test",
+  "ja": "荷重テストを行う",
+  "de": "Lasttest durchführen"
+ },
+ {
+  "key": "prof_section_note",
+  "zh": "備註",
+  "args": 0,
+  "en": "Notes",
+  "ja": "メモ",
+  "de": "Notizen"
+ },
+ {
+  "key": "prof_note_hint",
+  "zh": "例如：2026 換過皮帶、速度微調在底板右側",
+  "args": 0,
+  "en": "e.g. belt replaced in 2026; speed trimmer is on the right of the base plate",
+  "ja": "例：2026年にベルト交換、速度調整は底板の右側",
+  "de": "z. B. Riemen 2026 gewechselt; Drehzahlregler rechts an der Bodenplatte"
+ },
+ {
+  "key": "prof_confirm_delete",
+  "zh": "確定刪除",
+  "args": 0,
+  "en": "Delete for real",
+  "ja": "本当に削除",
+  "de": "Wirklich löschen"
+ },
+ {
+  "key": "prof_cancel",
+  "zh": "取消",
+  "args": 0,
+  "en": "Cancel",
+  "ja": "キャンセル",
+  "de": "Abbrechen"
+ },
+ {
+  "key": "prof_delete",
+  "zh": "刪除這台唱盤",
+  "args": 0,
+  "en": "Delete this turntable",
+  "ja": "このターンテーブルを削除",
+  "de": "Diesen Plattenspieler löschen"
+ },
+ {
+  "key": "prof_clear_field",
+  "zh": "清除",
+  "args": 0,
+  "en": "Clear",
+  "ja": "消去",
+  "de": "Löschen"
+ },
+ {
+  "key": "about_title",
+  "zh": "說明",
+  "args": 0,
+  "en": "About",
+  "ja": "詳細",
+  "de": "Info"
+ },
+ {
+  "key": "about_sec_blind_spots",
+  "zh": "這個方法看不到什麼",
+  "args": 0,
+  "en": "What this method cannot see",
+  "ja": "この方法で見えないもの",
+  "de": "Was diese Methode nicht sieht"
+ },
+ {
+  "key": "about_measures_platter",
+  "zh": "手機是跟著盤面一起轉的，量到的是「盤」的轉速。唱片中心孔沒對準所造成的音高起伏，這個方法完全偵測不到 —— 而那在實務上經常是你聽到的抖動裡最大的一項。",
+  "args": 0,
+  "en": "The phone turns with the platter, so what it measures is the speed of the platter. Pitch variation caused by an off-centre record hole is completely invisible to this method — and in practice that is often the largest single component of the wow you actually hear.",
+  "ja": "スマホは盤と一緒に回るので、測っているのは「盤」の回転です。レコードの中心穴のずれによるピッチの揺れは、この方法ではまったく検出できません —— しかも実際に耳で聞こえるワウの中では、それが最大の成分であることがよくあります。",
+  "de": "Das Telefon dreht sich mit dem Teller, gemessen wird also die Drehzahl des Tellers. Tonhöhenschwankungen durch ein außermittiges Mittelloch der Platte sind für diese Methode vollständig unsichtbar — und in der Praxis oft der größte Einzelanteil des tatsächlich hörbaren Gleichlaufjaulens."
+ },
+ {
+  "key": "about_pretty_numbers",
+  "zh": "換句話說：這裡讀到很漂亮的數字，不保證放起來就不抖。它能告訴你的是「唱盤本身好不好」，不是「這張唱片放起來好不好」。",
+  "args": 0,
+  "en": "In other words: a pretty number here does not guarantee steady playback. It tells you how good the deck itself is, not how good this particular record will sound.",
+  "ja": "つまり、ここで良い数字が出たからといって再生が安定するとは限りません。分かるのは「ターンテーブル自体の良し悪し」であって、「このレコードをかけたときの良し悪し」ではありません。",
+  "de": "Mit anderen Worten: Eine schöne Zahl hier garantiert keine ruhige Wiedergabe. Sie sagt, wie gut das Laufwerk selbst ist — nicht, wie gut diese eine Platte klingen wird."
+ },
+ {
+  "key": "about_sec_calibration",
+  "zh": "關於校準",
+  "args": 0,
+  "en": "About calibration",
+  "ja": "校正について",
+  "de": "Über die Kalibrierung"
+ },
+ {
+  "key": "about_scale_error",
+  "zh": "陀螺儀可能有固定比例的讀數誤差，它是乘性的、量再久也平均不掉，只能靠外部參考校掉。這個 app 用碼錶：盤面貼個記號，數 100 圈計時，算出真實轉速再跟 app 的讀數比。",
+  "args": 0,
+  "en": "A gyroscope can have a fixed proportional reading error. It is multiplicative and never averages out, no matter how long you measure — only an external reference can remove it. This app uses a stopwatch: put a mark on the platter, time 100 revolutions, work out the true speed and compare it with the app's reading.",
+  "ja": "ジャイロには一定比率の読み取り誤差があることがあります。乗算的なので、いくら長く測っても平均化されず、外部基準でしか補正できません。このアプリはストップウォッチを使います。盤に印を貼り、100 回転を計時し、真の回転数を求めてアプリの読みと比べます。",
+  "de": "Ein Gyroskop kann einen festen proportionalen Ablesefehler haben. Er ist multiplikativ und mittelt sich nie heraus, egal wie lange man misst — nur eine externe Referenz beseitigt ihn. Diese App nutzt eine Stoppuhr: Marke auf den Teller kleben, 100 Umdrehungen stoppen, wahre Drehzahl ausrechnen und mit der Anzeige vergleichen."
+ },
+ {
+  "key": "about_error_not_usable",
+  "zh": "沒有校準之前，「偏差 %」不能拿來調唱盤 —— 你看到的偏差是「唱盤誤差」和「陀螺儀誤差」相乘的結果，分不開。",
+  "args": 0,
+  "en": "Until you calibrate, the error % cannot be used to adjust the deck — what you see is the deck's error multiplied by the gyroscope's, and the two cannot be separated.",
+  "ja": "校正するまで、「偏差 %」をターンテーブルの調整に使うことはできません —— 表示されているのはターンテーブルの誤差とジャイロの誤差の積で、分離できません。",
+  "de": "Bis zur Kalibrierung taugt der Fehler in % nicht zum Justieren — angezeigt wird der Fehler des Laufwerks multipliziert mit dem des Gyroskops, und beide lassen sich nicht trennen."
+ },
+ {
+  "key": "about_ratios_unaffected",
+  "zh": "但抖晃率與所有百分比都不受影響：那些是比值，陀螺儀的比例因子誤差會完全抵消。所以診斷功能不必校準就能用，校準只影響「我的盤轉速對不對」。",
+  "args": 0,
+  "en": "Wow & flutter and every other percentage are unaffected, though: they are ratios, so the gyroscope's scale-factor error cancels out exactly. The diagnostics therefore work without calibration; calibration only affects “is my deck running at the right speed”.",
+  "ja": "ただしワウフラッターをはじめとする百分率は影響を受けません。比率なので、ジャイロのスケール誤差はきれいに相殺されます。したがって診断機能は校正なしで使え、校正が効くのは「うちの盤の回転数は正しいか」だけです。",
+  "de": "Gleichlauf und alle anderen Prozentwerte bleiben davon unberührt: Es sind Verhältnisse, der Skalenfehler des Gyroskops kürzt sich exakt heraus. Die Diagnose funktioniert also ohne Kalibrierung; diese betrifft nur die Frage „läuft mein Laufwerk richtig schnell?“."
+ },
+ {
+  "key": "about_calibration_per_device",
+  "zh": "校準結果綁定在這一台裝置上（不同手機的陀螺儀不一樣），換手機要重做。",
+  "args": 0,
+  "en": "A calibration belongs to this one device (every phone's gyroscope differs) — switch phones and it has to be redone.",
+  "ja": "校正はこの端末に固有です（スマホごとにジャイロが異なります）。端末を変えたらやり直しが必要です。",
+  "de": "Eine Kalibrierung gilt nur für dieses Gerät (jedes Telefon hat ein anderes Gyroskop) — bei einem Gerätewechsel muss sie neu gemacht werden."
+ },
+ {
+  "key": "about_sec_phone_eccentricity",
+  "zh": "報出來的偏心有一大半是手機造成的",
+  "args": 0,
+  "en": "Much of the reported eccentricity is the phone, not the deck",
+  "ja": "表示される偏心の多くはスマホによるものです",
+  "de": "Ein Großteil der angezeigten Exzentrizität stammt vom Telefon"
+ },
+ {
+  "key": "about_phone_is_a_mass",
+  "zh": "手機放在盤上就是一個偏心質量，它自己會產生每圈一次的擾動。實測這台開發用的唱盤：報出來的 1× 有一半以上來自手機而不是唱盤。",
+  "args": 0,
+  "en": "A phone sitting on the platter is itself an off-centre mass and generates its own once-per-revolution disturbance. Measured on the deck this app was developed with: more than half of the reported 1× came from the phone, not the turntable.",
+  "ja": "盤の上のスマホ自体が偏心質量であり、1 回転に 1 回の外乱を自ら生みます。開発に使ったターンテーブルでの実測では、表示される 1× の半分以上がターンテーブルではなくスマホ由来でした。",
+  "de": "Ein Telefon auf dem Teller ist selbst eine außermittige Masse und erzeugt seine eigene Störung einmal pro Umdrehung. Gemessen am Entwicklungslaufwerk: Mehr als die Hälfte des angezeigten 1× kam vom Telefon, nicht vom Plattenspieler."
+ },
+ {
+  "key": "about_rotate_180",
+  "zh": "想知道唱盤自己有多少：量一次、把手機原地轉 180°、再量一次。手機的貢獻會反相、唱盤的不會，兩次的差就是手機的份。",
+  "args": 0,
+  "en": "To find out how much is the deck's own: measure once, rotate the phone 180° in place, measure again. The phone's contribution flips phase and the deck's does not, so the difference between the two runs is the phone's share.",
+  "ja": "ターンテーブル自身の分を知るには、1 回測り、スマホをその場で 180° 回してもう 1 回測ります。スマホの寄与は位相が反転し、ターンテーブルの分は変わらないので、2 回の差がスマホの分です。",
+  "de": "So finden Sie den Anteil des Laufwerks heraus: einmal messen, das Telefon an Ort und Stelle um 180° drehen, noch einmal messen. Der Beitrag des Telefons kehrt die Phase um, der des Laufwerks nicht — die Differenz ist der Anteil des Telefons."
+ },
+ {
+  "key": "about_2x_is_harmonic",
+  "zh": "同理，如果「每圈一次」很大，下面那根「每圈兩次」多半只是它的諧波，不是盤面橢圓 —— 先把偏心降下來再看。",
+  "args": 0,
+  "en": "By the same token, if the 1×/rev is large, the 2×/rev below it is most likely just its harmonic rather than an out-of-round platter — bring the eccentricity down first, then look again.",
+  "ja": "同様に、1 回転 1 回が大きい場合、その下の 1 回転 2 回はたいていその高調波であって、盤の真円度の問題ではありません —— まず偏心を下げてから見てください。",
+  "de": "Ebenso: Ist das 1×/Umdr. groß, so ist das 2×/Umdr. darunter meist nur dessen Harmonische und kein unrunder Teller — senken Sie zuerst die Exzentrizität."
+ },
+ {
+  "key": "about_sec_accuracy",
+  "zh": "怎麼量得準",
+  "args": 0,
+  "en": "How to measure accurately",
+  "ja": "正確に測るには",
+  "de": "So misst du genau"
+ },
+ {
+  "key": "about_accuracy_tips",
+  "zh": "・手機置中（見擺法圖）—— 這是影響最大的一項\n・唱盤放水平，手機也放水平\n・至少量 90 秒；頻譜的解析度是 1 ÷ 量測時長\n・想要準確的譜峰振幅就量 3 分鐘 —— 1 分鐘的量測會低估約 8%，\n　因為解析度不夠細，峰值落在兩個頻率格之間\n・校準時碼錶跟 app 要同步 —— 同一段轉動才算得準\n・量測中不要碰唱盤或桌子",
+  "args": 0,
+  "en": "• Centre the phone (see the placement diagram) — this matters most\n• Level the deck, and the phone with it\n• Measure at least 90 s; spectral resolution is 1 ÷ measurement length\n• For accurate peak amplitudes measure 3 minutes — a 1-minute run underestimates by\n  about 8%, because the resolution is too coarse and the peak falls between two bins\n• Run the stopwatch and the app on the same stretch of rotation when calibrating\n• Do not touch the deck or the table while measuring",
+  "ja": "・スマホを中央に置く（配置図を参照）—— 影響が最も大きい項目です\n・ターンテーブルを水平に、スマホも水平に\n・最低 90 秒測る。スペクトルの分解能は 1 ÷ 測定時間\n・ピーク振幅を正確に出すには 3 分測る —— 1 分の測定では約 8% 過小評価されます。\n　分解能が粗く、ピークが 2 つの周波数ビンの間に落ちるためです\n・校正ではストップウォッチとアプリを同じ回転区間で動かす\n・測定中はターンテーブルやテーブルに触れない",
+  "de": "• Telefon mittig platzieren (siehe Platzierungsskizze) — das wirkt am stärksten\n• Laufwerk waagerecht ausrichten, das Telefon ebenso\n• Mindestens 90 s messen; die spektrale Auflösung ist 1 ÷ Messdauer\n• Für genaue Spitzenamplituden 3 Minuten messen — eine Minute unterschätzt um\n  etwa 8 %, weil die Auflösung zu grob ist und die Spitze zwischen zwei Bins fällt\n• Beim Kalibrieren Stoppuhr und App auf denselben Drehabschnitt beziehen\n• Während der Messung weder Laufwerk noch Tisch berühren"
+ },
+ {
+  "key": "about_sec_placement",
+  "zh": "手機怎麼擺",
+  "args": 0,
+  "en": "How to place the phone",
+  "ja": "iPhone の置き方",
+  "de": "So legst du das iPhone auf"
+ },
+ {
+  "key": "about_sec_safety",
+  "zh": "安全",
+  "args": 0,
+  "en": "Safety",
+  "ja": "安全のために",
+  "de": "Sicherheit"
+ },
+ {
+  "key": "about_safety_magnets",
+  "zh": "拿掉磁吸配件與含磁鐵的手機殼。磁鐵靠近 MC 唱頭可能造成永久損傷。",
+  "args": 0,
+  "en": "Take off magnetic accessories and cases with magnets in them. A magnet near an MC cartridge can damage it permanently.",
+  "ja": "マグネット式のアクセサリーや磁石入りケースを外してください。MC カートリッジの近くの磁石は永久的な損傷を招くことがあります。",
+  "de": "Magnetisches Zubehör und Hüllen mit Magneten abnehmen. Ein Magnet nahe einem MC-Tonabnehmer kann diesen dauerhaft schädigen."
+ },
+ {
+  "key": "about_safety_tonearm",
+  "zh": "把唱臂鎖在臂座上，不要讓唱頭懸在盤面上方。手機在盤上時碰到唱針，壞的是唱針。",
+  "args": 0,
+  "en": "Lock the tonearm into its rest; never leave the cartridge hanging over the platter. If it meets the phone while the phone is on the platter, it is the stylus that loses.",
+  "ja": "トーンアームはアームレストに固定し、カートリッジを円盤の上に張り出させないでください。iPhone が載っている状態で当たれば、壊れるのは針のほうです。",
+  "de": "Arretiere den Tonarm in seiner Stütze und lass den Tonabnehmer nie über dem Teller hängen. Trifft er auf das aufliegende iPhone, verliert die Nadel."
+ },
+ {
+  "key": "about_safety_mat",
+  "zh": "絨布墊、不織布墊、橡膠墊都可以，不需要另外放一張唱片。重點是不要讓手機直接壓在裸露的盤面上 —— 兩邊都會刮。放之前確認手機背面和墊子上沒有沙粒。",
+  "args": 0,
+  "en": "Felt, non-woven or rubber mats all work; you do not need to put a record down as well. What matters is not pressing the phone straight onto the bare platter — that scratches both. Check the back of the phone and the mat for grit first.",
+  "ja": "フェルト、不織布、ゴムのマット、どれでも構いません。レコードを別に敷く必要もありません。大事なのは iPhone を裸の円盤に直接押し当てないことで、そうすると両方が傷つきます。置く前に iPhone の背面とマットに砂粒がないか確認してください。",
+  "de": "Matten aus Filz, Vlies oder Gummi gehen alle; eine Platte musst du nicht zusätzlich auflegen. Wichtig ist nur, das iPhone nicht direkt auf den blanken Teller zu drücken — das zerkratzt beide. Prüfe vorher Rückseite und Matte auf Sandkörner."
+ },
+ {
+  "key": "about_safety_78",
+  "zh": "78 轉時放靠近中心：偏心擺放的離心力在 78 轉時是 33 轉的 5.5 倍。",
+  "args": 0,
+  "en": "At 78 rpm keep it near the centre: the centrifugal force on an off-centre placement is 5.5× what it is at 33 rpm.",
+  "ja": "78 回転では中心寄りに置いてください。偏心配置にかかる遠心力は 33 回転の 5.5 倍です。",
+  "de": "Bei 78 U/min nahe der Mitte platzieren: Die Fliehkraft bei außermittiger Lage ist 5,5-mal so groß wie bei 33 U/min."
+ },
+ {
+  "key": "about_sec_how",
+  "zh": "怎麼量的",
+  "args": 0,
+  "en": "How it works",
+  "ja": "測定のしくみ",
+  "de": "Wie es funktioniert"
+ },
+ {
+  "key": "about_how_gyro",
+  "zh": "手機放在轉動的盤面上，用陀螺儀量自轉角速度。三軸角速度會投影到重力方向，所以手機擺得歪一點也不影響讀數 —— 傾斜 5° 若只讀單軸就會低估 0.38%，已經超過目標精度。",
+  "args": 0,
+  "en": "The phone sits on the spinning platter and the gyroscope measures its rotation rate. The three-axis rate is projected onto the direction of gravity, so a slightly crooked placement does not affect the reading — a 5° tilt read on a single axis would underestimate by 0.38%, already past the accuracy target.",
+  "ja": "回転する盤の上にスマホを置き、ジャイロで自転角速度を測ります。3 軸の角速度は重力方向へ投影されるので、多少傾けて置いても読みには影響しません —— 5° の傾きを単軸だけで読むと 0.38% 過小評価となり、目標精度をすでに超えてしまいます。",
+  "de": "Das Telefon liegt auf dem drehenden Teller, das Gyroskop misst die Drehrate. Die dreiachsige Rate wird auf die Schwerkraftrichtung projiziert, eine leicht schiefe Lage verfälscht die Anzeige also nicht — 5° Neigung nur auf einer Achse gelesen würden um 0,38 % danebenliegen, bereits über dem Genauigkeitsziel."
+ },
+ {
+  "key": "about_how_sampling",
+  "zh": "Android 的取樣率設定只是建議值，實際頻率由廠商實作決定。所以時間戳一律用感測器自己的時鐘，不假設每筆間隔相等，分析前也會重採樣到等間隔。實際拿到多少可以在「取樣特性診斷」看到。",
+  "args": 0,
+  "en": "On Android the requested sample rate is only a hint; the actual rate is up to the vendor's implementation. Timestamps therefore always come from the sensor's own clock, no interval is assumed equal, and the data is resampled to a uniform grid before analysis. What you actually got is shown under “Sampling diagnostics”.",
+  "ja": "Android では要求したサンプリングレートはあくまで目安で、実際の周波数はベンダーの実装次第です。そのためタイムスタンプは常にセンサー自身のクロックを使い、間隔が等しいとは仮定せず、解析前に等間隔へリサンプリングします。実際の値は「サンプリング特性診断」で確認できます。",
+  "de": "Unter Android ist die angeforderte Abtastrate nur ein Hinweis; die tatsächliche Rate bestimmt die Implementierung des Herstellers. Zeitstempel stammen daher immer von der Uhr des Sensors, gleiche Abstände werden nicht angenommen, und vor der Analyse wird auf ein gleichmäßiges Raster resampelt. Was tatsächlich ankam, zeigt „Abtastdiagnose“."
+ },
+ {
+  "key": "about_sec_privacy",
+  "zh": "隱私",
+  "args": 0,
+  "en": "Privacy",
+  "ja": "プライバシー",
+  "de": "Datenschutz"
+ },
+ {
+  "key": "about_privacy_body",
+  "zh": "量測資料只留在這台裝置上，不會上傳到任何地方。",
+  "args": 0,
+  "en": "Measurement data stays on this device and is never uploaded anywhere.",
+  "ja": "測定データはこの端末内にとどまり、どこにもアップロードされません。",
+  "de": "Messdaten bleiben auf diesem Gerät und werden nirgendwohin hochgeladen."
+ },
+ {
+  "key": "meas_title",
+  "zh": "轉速量測",
+  "args": 0,
+  "en": "Speed",
+  "ja": "回転数",
+  "de": "Drehzahl"
+ },
+ {
+  "key": "meas_unavailable",
+  "zh": "這台裝置缺少陀螺儀或重力感測器，無法量測。",
+  "args": 0,
+  "en": "This device lacks a gyroscope or gravity sensor and cannot measure.",
+  "ja": "この端末にはジャイロまたは重力センサーがないため、測定できません。",
+  "de": "Diesem Gerät fehlt ein Gyroskop oder Schwerkraftsensor; es kann nicht messen."
+ },
+ {
+  "key": "meas_mode",
+  "zh": "模式",
+  "args": 0,
+  "en": "Mode",
+  "ja": "モード",
+  "de": "Modus"
+ },
+ {
+  "key": "meas_mode_auto",
+  "zh": "自動",
+  "args": 0,
+  "en": "Auto",
+  "ja": "自動",
+  "de": "Auto"
+ },
+ {
+  "key": "meas_mode_manual",
+  "zh": "手動",
+  "args": 0,
+  "en": "Manual",
+  "ja": "手動",
+  "de": "Manuell"
+ },
+ {
+  "key": "meas_auto_hint",
+  "zh": "按下按鈕後把手機放上轉盤，程式會等轉速穩定才開始記錄，盤面停下時自動結束。",
+  "args": 0,
+  "en": "Tap the button, then put the phone on the platter. Recording only starts once the speed is steady, and ends automatically when the platter stops.",
+  "ja": "ボタンを押してから iPhone を円盤に置いてください。回転が安定してはじめて記録が始まり、円盤が止まると自動で終了します。",
+  "de": "Tippe auf die Taste und lege dann das iPhone auf den Teller. Die Aufzeichnung beginnt erst bei stabiler Drehzahl und endet automatisch, wenn der Teller steht."
+ },
+ {
+  "key": "meas_manual_hint",
+  "zh": "自己按開始與停止。記得先讓轉盤轉起來、手機放好，再按開始。",
+  "args": 0,
+  "en": "You start and stop it yourself. Remember to get the platter spinning and the phone placed before you tap Start.",
+  "ja": "開始と停止を自分で操作します。先にターンテーブルを回し、iPhone を置いてから開始を押してください。",
+  "de": "Du startest und stoppst selbst. Denk daran, den Teller laufen zu lassen und das iPhone aufzulegen, bevor du auf Start tippst."
+ },
+ {
+  "key": "meas_stop",
+  "zh": "停止",
+  "args": 0,
+  "en": "Stop",
+  "ja": "停止",
+  "de": "Stopp"
+ },
+ {
+  "key": "meas_start_auto",
+  "zh": "準備好，開始偵測",
+  "args": 0,
+  "en": "Ready — start detecting",
+  "ja": "準備完了 —— 検出を開始",
+  "de": "Bereit — Erkennung starten"
+ },
+ {
+  "key": "meas_start_manual",
+  "zh": "開始量測",
+  "args": 0,
+  "en": "Start measuring",
+  "ja": "測定開始",
+  "de": "Messung starten"
+ },
+ {
+  "key": "meas_before_title",
+  "zh": "放上唱盤之前",
+  "args": 0,
+  "en": "Before you put it on the platter",
+  "ja": "円盤に載せる前に",
+  "de": "Bevor du es auflegst"
+ },
+ {
+  "key": "meas_analyzing",
+  "zh": "分析中…",
+  "args": 0,
+  "en": "Analyzing…",
+  "ja": "解析中…",
+  "de": "Analyse läuft…"
+ },
+ {
+  "key": "meas_analysis_failed",
+  "zh": "分析不出來",
+  "args": 0,
+  "en": "Analysis failed",
+  "ja": "解析できません",
+  "de": "Analyse fehlgeschlagen"
+ },
+ {
+  "key": "meas_cal_calibrated",
+  "zh": "已校準",
+  "args": 0,
+  "en": "Calibrated",
+  "ja": "校正済み",
+  "de": "Kalibriert"
+ },
+ {
+  "key": "meas_cal_uncalibrated",
+  "zh": "未校準",
+  "args": 0,
+  "en": "Uncalibrated",
+  "ja": "未校正",
+  "de": "Nicht kalibriert"
+ },
+ {
+  "key": "meas_cal_none",
+  "zh": "還沒校準。目前的偏差 % 是唱盤誤差與陀螺儀誤差相乘的結果，兩者分不開，還不能拿來調唱盤。",
+  "args": 0,
+  "en": "Not calibrated yet. The “error %” you see is turntable error multiplied by gyroscope error; the two cannot be separated, so it is not usable for adjusting your deck.",
+  "ja": "まだ校正していません。表示中の「誤差 %」はターンテーブルの誤差とジャイロの誤差の積で、両者を分離できないため、調整の根拠には使えません。",
+  "de": "Noch nicht kalibriert. Die angezeigte „Abweichung %“ ist der Fehler des Laufwerks mal dem Fehler des Gyroskops; beide lassen sich nicht trennen, deshalb taugt sie nicht zum Justieren."
+ },
+ {
+  "key": "meas_cal_redo",
+  "zh": "重新校準",
+  "args": 0,
+  "en": "Recalibrate",
+  "ja": "再校正",
+  "de": "Neu kalibrieren"
+ },
+ {
+  "key": "meas_cal_start",
+  "zh": "開始碼錶校準",
+  "args": 0,
+  "en": "Start stopwatch calibration",
+  "ja": "ストップウォッチ校正を始める",
+  "de": "Stoppuhr-Kalibrierung starten"
+ },
+ {
+  "key": "meas_about",
+  "zh": "說明",
+  "args": 0,
+  "en": "About",
+  "ja": "詳細",
+  "de": "Info"
+ },
+ {
+  "key": "meas_replay_onboarding",
+  "zh": "重看操作導覽",
+  "args": 0,
+  "en": "Show the walkthrough again",
+  "ja": "操作ガイドをもう一度見る",
+  "de": "Einführung erneut ansehen"
+ },
+ {
+  "key": "meas_advanced_diagnostics",
+  "zh": "進階診斷",
+  "args": 0,
+  "en": "Advanced diagnostics",
+  "ja": "詳細診断",
+  "de": "Erweiterte Diagnose"
+ },
+ {
+  "key": "meas_rpm_unstable",
+  "zh": "轉速尚未穩定或不在標稱範圍內",
+  "args": 0,
+  "en": "Speed is not steady yet, or outside the nominal range",
+  "ja": "回転が安定していないか、公称範囲から外れています",
+  "de": "Drehzahl noch nicht stabil oder außerhalb des Nennbereichs"
+ },
+ {
+  "key": "meas_wow_title",
+  "zh": "抖晃率",
+  "args": 0,
+  "en": "Wow & flutter",
+  "ja": "ワウ・フラッター",
+  "de": "Gleichlaufschwankungen"
+ },
+ {
+  "key": "meas_wrms_unit",
+  "zh": "% WRMS",
+  "args": 0,
+  "en": "% WRMS",
+  "ja": "% WRMS",
+  "de": "% WRMS"
+ },
+ {
+  "key": "meas_din_peak",
+  "zh": "DIN 2σ 峰值",
+  "args": 0,
+  "en": "DIN 2σ peak",
+  "ja": "DIN 2σ ピーク",
+  "de": "DIN 2σ Spitze"
+ },
+ {
+  "key": "meas_one_per_rev",
+  "zh": "每圈一次成分",
+  "args": 0,
+  "en": "1×/rev component",
+  "ja": "1回転に1回の成分",
+  "de": "Anteil 1×/Umdrehung"
+ },
+ {
+  "key": "meas_dominant_share",
+  "zh": "最強成分佔比",
+  "args": 0,
+  "en": "Strongest-component share",
+  "ja": "最大成分の割合",
+  "de": "Anteil der stärksten Komponente"
+ },
+ {
+  "key": "meas_where_problem",
+  "zh": "問題出在哪",
+  "args": 0,
+  "en": "Where the problem is",
+  "ja": "原因はどこか",
+  "de": "Wo das Problem liegt"
+ },
+ {
+  "key": "meas_no_peaks",
+  "zh": "沒有找到顯著的週期性成分 —— 這是好事，代表沒有單一零件在主導誤差。",
+  "args": 0,
+  "en": "No significant periodic component found — that is good news: no single part dominates the error.",
+  "ja": "目立った周期成分は見つかりません —— これは良い結果で、誤差を支配している部品が1つもないということです。",
+  "de": "Keine nennenswerte periodische Komponente — das ist gut: kein einzelnes Teil dominiert den Fehler."
+ },
+ {
+  "key": "meas_harmonic_legend",
+  "zh": "整數倍 = 跟著盤面轉的東西（偏心、變形）。非整數倍 = 傳動鏈上轉速不同的零件（馬達、皮帶輪）。",
+  "args": 0,
+  "en": "Integer multiples = something turning with the platter (eccentricity, distortion). Non-integer = a part of the drive chain running at a different speed (motor, pulley).",
+  "ja": "整数倍＝円盤と一緒に回っているもの（偏心・変形）。非整数倍＝駆動系にある別の回転数の部品（モーター、プーリー）。",
+  "de": "Ganzzahlige Vielfache = etwas, das mit dem Teller dreht (Exzentrizität, Verformung). Nicht ganzzahlig = ein Teil des Antriebs mit anderer Drehzahl (Motor, Pulley)."
+ },
+ {
+  "key": "meas_is_the_motor",
+  "zh": "符合這台盤的傳動比（%1$.1f×）—— 這是馬達。",
+  "args": 1,
+  "en": "Matches this deck’s drive ratio (%1$.1f×) — this is the motor.",
+  "ja": "このターンテーブルの駆動比（%1$.1f×）と一致 —— これはモーターです。",
+  "de": "Passt zur Übersetzung dieses Laufwerks (%1$.1f×) — das ist der Motor."
+ },
+ {
+  "key": "meas_ratio_mismatch",
+  "zh": "這台盤的傳動比是 %1$.1f×，量到 %2$.1f×（差 %3$+.0f%%）—— 可能是傳動鏈尺寸填得不夠準，也可能這根不是馬達。",
+  "args": 3,
+  "en": "This deck’s drive ratio is %1$.1f×; the measured order is %2$.1f× (%3$+.0f%%) — either the drive-chain dimensions are a little off, or this peak is not the motor.",
+  "ja": "このターンテーブルの駆動比は %1$.1f× ですが、測定値は %2$.1f×（差 %3$+.0f%%）—— 駆動系の寸法が少しずれているか、このピークがモーターではない可能性があります。",
+  "de": "Die Übersetzung dieses Laufwerks ist %1$.1f×, gemessen wurde %2$.1f× (%3$+.0f%%) — entweder stimmen die eingetragenen Maße nicht ganz, oder diese Spitze ist nicht der Motor."
+ },
+ {
+  "key": "meas_before_magnets",
+  "zh": "拿掉磁吸配件與含磁鐵的手機殼，鎖好唱臂。",
+  "en": "Take off magnetic accessories and cases with magnets, and lock the tonearm down.",
+  "ja": "マグネット式アクセサリーと磁石入りケースを外し、トーンアームをロックしてください。",
+  "de": "Magnetisches Zubehör und Hüllen mit Magneten abnehmen und den Tonarm arretieren.",
+  "args": 0
+ },
+ {
+  "key": "meas_before_placement",
+  "zh": "手機橫跨轉軸放在唱片鎮上，讓質心落在轉軸正上方 —— 這是最省事的擺法。沒有唱片鎮的話，手機右側長邊中點貼轉軸、機身放左半邊，對面放一個等重的東西配平。",
+  "en": "Rest the phone across the spindle on the record weight so its centre of mass sits over the axis — that is the least trouble. Without a record weight, put the midpoint of the phone's right long edge against the spindle with the body on the left half, and counterbalance with something of equal weight opposite.",
+  "ja": "スマホをレコードウェイトの上でスピンドルをまたいで置き、重心が軸の真上に来るようにします —— これがいちばん手間がかかりません。レコードウェイトがない場合は、スマホ右側長辺の中点をスピンドルに当てて本体を左半分に置き、反対側に同じ重さのもので釣り合いを取ります。",
+  "de": "Legen Sie das Telefon quer über die Achse auf das Plattengewicht, sodass sein Schwerpunkt über der Achse liegt — das ist am einfachsten. Ohne Plattengewicht die Mitte der rechten Längskante an die Achse legen, den Körper auf die linke Hälfte, und gegenüber mit etwas gleich Schwerem auswuchten.",
+  "args": 0
+ },
+ {
+  "key": "meas_before_offcentre",
+  "zh": "手機偏在一邊會拖慢轉速 0.3%、放大每圈一次的抖動三成。實測顯示「每圈一次」裡有一大半是手機造成的，不是唱盤的 —— 想知道唱盤自己有多少，把手機轉 180° 再量一次，兩次的差就是手機的貢獻。",
+  "en": "A phone off to one side slows the platter by 0.3% and swells the once-per-revolution wobble by a third. Measurements show most of that 1×/rev comes from the phone, not the deck — to find the deck's own share, rotate the phone 180° and measure again; the difference is the phone's contribution.",
+  "ja": "スマホが片寄っていると回転が 0.3% 遅くなり、1 回転 1 回のゆらぎが 3 割増えます。実測では 1×/回転の大半がターンテーブルではなくスマホ由来でした —— ターンテーブル自身の分を知るには、スマホを 180° 回してもう一度測り、2 回の差を見てください。",
+  "de": "Ein außermittiges Telefon bremst den Teller um 0,3 % und vergrößert das Wanken einmal pro Umdrehung um ein Drittel. Messungen zeigen, dass der Großteil dieses 1×/Umdr. vom Telefon stammt, nicht vom Laufwerk — drehen Sie das Telefon um 180° und messen Sie erneut; die Differenz ist der Anteil des Telefons.",
+  "args": 0
+ },
+ {
+  "key": "meas_cal_applied",
+  "zh": "倍率 k = %1$.5f，所有轉速讀數都已套用。",
+  "en": "Factor k = %1$.5f, applied to every speed reading.",
+  "ja": "係数 k = %1$.5f。すべての回転数の読みに適用されています。",
+  "de": "Faktor k = %1$.5f, auf jeden Drehzahlwert angewendet.",
+  "args": 1
+ },
+ {
+  "key": "meas_history",
+  "zh": "量測歷史",
+  "en": "Measurement history",
+  "ja": "測定履歴",
+  "de": "Messverlauf",
+  "args": 0
+ },
+ {
+  "key": "meas_profile_named",
+  "zh": "唱盤：%1$s",
+  "en": "Turntable: %1$s",
+  "ja": "ターンテーブル：%1$s",
+  "de": "Plattenspieler: %1$s",
+  "args": 1
+ },
+ {
+  "key": "meas_profile_none",
+  "zh": "唱盤設定檔",
+  "en": "Turntable profiles",
+  "ja": "ターンテーブルのプロファイル",
+  "de": "Plattenspieler-Profile",
+  "args": 0
+ },
+ {
+  "key": "meas_sampling_diagnostics",
+  "zh": "取樣特性診斷",
+  "en": "Sampling diagnostics",
+  "ja": "サンプリング特性診断",
+  "de": "Abtastdiagnose",
+  "args": 0
+ },
+ {
+  "key": "meas_raw_data",
+  "zh": "原始資料",
+  "en": "Raw data",
+  "ja": "生データ",
+  "de": "Rohdaten",
+  "args": 0
+ },
+ {
+  "key": "meas_raw_data_body",
+  "zh": "這次量測的逐樣本資料已經存成 JSON（時間戳、角速度、重力向量）。傳到電腦上可以用 tools/analyze_export.py 重新分析，或是拿去跟別的量測工具對照。",
+  "en": "This run's per-sample data has been saved as JSON (timestamps, rotation rate, gravity vector). Copy it to a computer and re-analyse it with tools/analyze_export.py, or compare it against another measuring tool.",
+  "ja": "今回の測定のサンプルごとのデータを JSON で保存しました（タイムスタンプ、角速度、重力ベクトル）。パソコンに移して tools/analyze_export.py で解析し直したり、別の測定ツールと照合したりできます。",
+  "de": "Die Messpunkte dieses Durchlaufs wurden als JSON gespeichert (Zeitstempel, Drehrate, Schwerkraftvektor). Auf einen Rechner kopieren und mit tools/analyze_export.py neu auswerten oder mit einem anderen Messwerkzeug vergleichen.",
+  "args": 0
+ },
+ {
+  "key": "meas_nominal_and_error",
+  "zh": "%1$s 轉  %2$+.3f%%",
+  "en": "%1$s RPM  %2$+.3f%%",
+  "ja": "%1$s 回転  %2$+.3f%%",
+  "de": "%1$s U/min  %2$+.3f%%",
+  "args": 2
+ },
+ {
+  "key": "meas_elapsed",
+  "zh": "經過時間 %1$.0f s",
+  "en": "Elapsed %1$.0f s",
+  "ja": "経過 %1$.0f 秒",
+  "de": "Verstrichen %1$.0f s",
+  "args": 1
+ },
+ {
+  "key": "meas_revs",
+  "zh": "%1$d 圈",
+  "en": "%1$d rev",
+  "ja": "%1$d 回転",
+  "de": "%1$d Umdr.",
+  "args": 1
+ },
+ {
+  "key": "meas_samples",
+  "zh": "%1$d 筆",
+  "en": "%1$d samples",
+  "ja": "%1$d 件",
+  "de": "%1$d Punkte",
+  "args": 1
+ },
+ {
+  "key": "meas_sampling_line",
+  "zh": "取樣 %1$.2f Hz，抖動比 %2$.3f%%，長空隙 %3$d 次",
+  "en": "Sampling %1$.2f Hz, jitter %2$.3f%%, %3$d long gaps",
+  "ja": "サンプリング %1$.2f Hz、ジッタ %2$.3f%%、長い欠落 %3$d 回",
+  "de": "Abtastung %1$.2f Hz, Jitter %2$.3f%%, %3$d lange Lücken",
+  "args": 3
+ },
+ {
+  "key": "meas_duration_hint",
+  "zh": "至少量 90 秒；想要準確的譜峰振幅就量 3 分鐘 —— 1 分鐘的量測會低估約 8%，因為解析度不夠細，峰值落在兩個頻率格之間。",
+  "en": "Measure at least 90 s; for accurate peak amplitudes make it 3 minutes — a 1-minute run underestimates by about 8%, because the resolution is too coarse and the peak falls between two bins.",
+  "ja": "最低 90 秒測ってください。ピーク振幅を正確に出すには 3 分 —— 1 分の測定では分解能が粗く、ピークが 2 つの周波数ビンの間に落ちるため約 8% 過小評価されます。",
+  "de": "Mindestens 90 s messen; für genaue Spitzenamplituden 3 Minuten — eine Minute unterschätzt um etwa 8 %, weil die Auflösung zu grob ist und die Spitze zwischen zwei Bins fällt.",
+  "args": 0
+ },
+ {
+  "key": "meas_mean_trimmed",
+  "zh": "平均轉速（切過）",
+  "en": "Mean speed (trimmed)",
+  "ja": "平均回転数（切り出し後）",
+  "de": "Mittlere Drehzahl (beschnitten)",
+  "args": 0
+ },
+ {
+  "key": "meas_analysis_duration",
+  "zh": "分析時長",
+  "en": "Analysed length",
+  "ja": "解析した長さ",
+  "de": "Analysierte Länge",
+  "args": 0
+ },
+ {
+  "key": "meas_resample_rate",
+  "zh": "重取樣頻率",
+  "en": "Resample rate",
+  "ja": "リサンプリング周波数",
+  "de": "Resampling-Rate",
+  "args": 0
+ },
+ {
+  "key": "meas_trimmed",
+  "zh": "已自動略過轉速不穩的區間：開頭 %1$.1f s、尾端 %2$.1f s。",
+  "en": "Unsteady stretches were skipped automatically: %1$.1f s at the start, %2$.1f s at the end.",
+  "ja": "回転が不安定な区間を自動的に除外しました：先頭 %1$.1f 秒、末尾 %2$.1f 秒。",
+  "de": "Instabile Abschnitte wurden automatisch übersprungen: %1$.1f s am Anfang, %2$.1f s am Ende.",
+  "args": 2
+ },
+ {
+  "key": "meas_trimmed_tail",
+  "zh": "下面所有數字都是剩下那一段算出來的。",
+  "en": "Every number below comes from what remains.",
+  "ja": "以下の数値はすべて残った区間から算出しています。",
+  "de": "Alle Zahlen unten stammen aus dem verbleibenden Abschnitt.",
+  "args": 0
+ },
+ {
+  "key": "meas_spec_row",
+  "zh": "原廠規格（%1$s）",
+  "en": "Factory spec (%1$s)",
+  "ja": "工場仕様（%1$s）",
+  "de": "Werksangabe (%1$s)",
+  "args": 1
+ },
+ {
+  "key": "meas_within_spec",
+  "zh": "在規格內（規格的 %1$.0f%%）。",
+  "en": "Within spec (%1$.0f%% of it).",
+  "ja": "仕様内（仕様の %1$.0f%%）。",
+  "de": "Innerhalb der Spezifikation (%1$.0f %% davon).",
+  "args": 1
+ },
+ {
+  "key": "meas_over_spec",
+  "zh": "超出規格 %1$.2f 倍。",
+  "en": "%1$.2f× over spec.",
+  "ja": "仕様の %1$.2f 倍です。",
+  "de": "%1$.2f× über der Spezifikation.",
+  "args": 1
+ },
+ {
+  "key": "samp_intro",
+  "zh": "Android 的取樣率設定只是建議值，實際頻率由廠商實作決定。手機靜止不動就能量 —— 取樣特性跟盤面有沒有轉無關。",
+  "en": "On Android the requested sample rate is only a hint; the actual rate is up to the vendor's implementation. You can run this with the phone lying still — sampling behaviour has nothing to do with whether the platter turns.",
+  "ja": "Android では要求したサンプリングレートはあくまで目安で、実際の周波数はベンダーの実装次第です。スマホを静止させたままでも測れます —— サンプリング特性は盤が回っているかどうかとは無関係です。",
+  "de": "Unter Android ist die angeforderte Abtastrate nur ein Hinweis; die tatsächliche Rate bestimmt die Implementierung des Herstellers. Das Telefon darf dabei still liegen — das Abtastverhalten hat nichts damit zu tun, ob sich der Teller dreht.",
+  "args": 0
+ },
+ {
+  "key": "samp_requested_rate",
+  "zh": "要求的取樣率",
+  "en": "Requested rate",
+  "ja": "要求したレート",
+  "de": "Angeforderte Rate",
+  "args": 0
+ },
+ {
+  "key": "samp_section",
+  "zh": "取樣",
+  "en": "Sampling",
+  "ja": "サンプリング",
+  "de": "Abtastung",
+  "args": 0
+ },
+ {
+  "key": "samp_hz_actual",
+  "zh": "Hz 實際",
+  "en": "Hz actual",
+  "ja": "Hz 実測",
+  "de": "Hz tatsächlich",
+  "args": 0
+ },
+ {
+  "key": "samp_count",
+  "zh": "樣本數",
+  "en": "Samples",
+  "ja": "サンプル数",
+  "de": "Messpunkte",
+  "args": 0
+ },
+ {
+  "key": "samp_duration",
+  "zh": "時長",
+  "en": "Length",
+  "ja": "長さ",
+  "de": "Dauer",
+  "args": 0
+ },
+ {
+  "key": "samp_median_interval",
+  "zh": "間隔中位數",
+  "en": "Median interval",
+  "ja": "間隔の中央値",
+  "de": "Median-Intervall",
+  "args": 0
+ },
+ {
+  "key": "samp_stddev_interval",
+  "zh": "間隔標準差",
+  "en": "Interval std. dev.",
+  "ja": "間隔の標準偏差",
+  "de": "Std.-Abw. des Intervalls",
+  "args": 0
+ },
+ {
+  "key": "samp_jitter",
+  "zh": "抖動比",
+  "en": "Jitter ratio",
+  "ja": "ジッタ比",
+  "de": "Jitter-Verhältnis",
+  "args": 0
+ },
+ {
+  "key": "samp_min_max",
+  "zh": "最小／最大",
+  "en": "Min / max",
+  "ja": "最小／最大",
+  "de": "Min / Max",
+  "args": 0
+ },
+ {
+  "key": "samp_long_gaps",
+  "zh": "長空隙",
+  "en": "Long gaps",
+  "ja": "長い欠落",
+  "de": "Lange Lücken",
+  "args": 0
+ },
+ {
+  "key": "samp_gap_count",
+  "zh": "%1$d 次",
+  "en": "%1$d",
+  "ja": "%1$d 回",
+  "de": "%1$d",
+  "args": 1
+ },
+ {
+  "key": "samp_worst_gap",
+  "zh": "最糟空隙",
+  "en": "Worst gap",
+  "ja": "最悪の欠落",
+  "de": "Schlimmste Lücke",
+  "args": 0
+ },
+ {
+  "key": "samp_wall_clock",
+  "zh": "牆鐘時長",
+  "en": "Wall-clock length",
+  "ja": "実時間の長さ",
+  "de": "Wanduhr-Dauer",
+  "args": 0
+ },
+ {
+  "key": "samp_clock_ratio",
+  "zh": "時間戳 ÷ 牆鐘",
+  "en": "Timestamp ÷ wall clock",
+  "ja": "タイムスタンプ ÷ 実時間",
+  "de": "Zeitstempel ÷ Wanduhr",
+  "args": 0
+ },
+ {
+  "key": "samp_clock_honest",
+  "zh": "時間戳誠實（與牆鐘差 %1$.3f%%）—— 取樣率比要求值高只是感測器本來就跑比較快，對這個 app 無害，因為積分一律用真實時間戳。",
+  "en": "The timestamps are honest (%1$.3f%% off the wall clock) — a rate above what was requested just means the sensor runs faster, which is harmless here because integration always uses the real timestamps.",
+  "ja": "タイムスタンプは正直です（実時間との差 %1$.3f%%）—— 要求より高いレートは単にセンサーが速く動いているだけで、積分は常に実際のタイムスタンプを使うため無害です。",
+  "de": "Die Zeitstempel sind ehrlich (%1$.3f%% Abweichung zur Wanduhr) — eine höhere Rate als angefordert heißt nur, dass der Sensor schneller läuft; das ist hier harmlos, weil die Integration stets die echten Zeitstempel verwendet.",
+  "args": 1
+ },
+ {
+  "key": "samp_clock_dishonest",
+  "zh": "⚠ 時間戳與牆鐘差 %1$.2f%% —— 頻域結果會整體偏移同樣的量，譜峰的倍數判讀不可信，必須先校正時基。",
+  "en": "⚠ The timestamps differ from the wall clock by %1$.2f%% — every frequency-domain result shifts by the same amount, the order readings on the peaks cannot be trusted, and the time base has to be corrected first.",
+  "ja": "⚠ タイムスタンプが実時間と %1$.2f%% ずれています —— 周波数領域の結果はすべて同じだけずれ、ピークの次数判定は信用できません。まず時間基準を補正する必要があります。",
+  "de": "⚠ Die Zeitstempel weichen um %1$.2f%% von der Wanduhr ab — jedes Frequenzbereichsergebnis verschiebt sich um denselben Betrag, die Ordnungsangaben der Spitzen sind unbrauchbar, und die Zeitbasis muss zuerst korrigiert werden.",
+  "args": 1
+ },
+ {
+  "key": "samp_need_10s",
+  "zh": "時間戳比值要量滿 10 秒才有意義（第一筆事件的派送延遲會被短時距放大）。",
+  "en": "The timestamp ratio only means something after 10 s (the dispatch delay of the first event is magnified over a short span).",
+  "ja": "タイムスタンプ比は 10 秒以上測って初めて意味を持ちます（最初のイベントの配信遅延が短い区間では拡大されるため）。",
+  "de": "Das Zeitstempelverhältnis ist erst ab 10 s aussagekräftig (die Zustellverzögerung des ersten Ereignisses wird über kurze Zeiträume vergrößert).",
+  "args": 0
+ },
+ {
+  "key": "samp_ios_baseline",
+  "zh": "iOS 基準（iPhone 15 Pro Max）：中位數 9.990 ms、標準差 0.005 ms、抖動比 0.05%、最糟空隙 1.00×",
+  "en": "iOS baseline (iPhone 15 Pro Max): median 9.990 ms, std. dev. 0.005 ms, jitter 0.05%, worst gap 1.00×",
+  "ja": "iOS の基準（iPhone 15 Pro Max）：中央値 9.990 ms、標準偏差 0.005 ms、ジッタ 0.05%、最悪の欠落 1.00×",
+  "de": "iOS-Referenz (iPhone 15 Pro Max): Median 9,990 ms, Std.-Abw. 0,005 ms, Jitter 0,05 %, schlimmste Lücke 1,00×",
+  "args": 0
+ },
+ {
+  "key": "samp_sensors_section",
+  "zh": "感測器與轉速",
+  "en": "Sensors and speed",
+  "ja": "センサーと回転数",
+  "de": "Sensoren und Drehzahl",
+  "args": 0
+ },
+ {
+  "key": "samp_instant_rpm",
+  "zh": "瞬時轉速",
+  "en": "Instantaneous speed",
+  "ja": "瞬時回転数",
+  "de": "Momentane Drehzahl",
+  "args": 0
+ },
+ {
+  "key": "samp_mean_rpm",
+  "zh": "平均轉速",
+  "en": "Mean speed",
+  "ja": "平均回転数",
+  "de": "Mittlere Drehzahl",
+  "args": 0
+ },
+ {
+  "key": "samp_timestamp_base",
+  "zh": "時間戳基準",
+  "en": "Timestamp base",
+  "ja": "タイムスタンプ基準",
+  "de": "Zeitstempelbasis",
+  "args": 0
+ },
+ {
+  "key": "samp_gravity_source",
+  "zh": "重力來源",
+  "en": "Gravity source",
+  "ja": "重力の取得元",
+  "de": "Schwerkraftquelle",
+  "args": 0
+ },
+ {
+  "key": "samp_gravity_fused",
+  "zh": "TYPE_GRAVITY（融合）",
+  "en": "TYPE_GRAVITY (fused)",
+  "ja": "TYPE_GRAVITY（融合）",
+  "de": "TYPE_GRAVITY (fusioniert)",
+  "args": 0
+ },
+ {
+  "key": "samp_gravity_accel",
+  "zh": "加速度計（未融合）",
+  "en": "Accelerometer (not fused)",
+  "ja": "加速度センサー（非融合）",
+  "de": "Beschleunigungssensor (nicht fusioniert)",
+  "args": 0
+ },
+ {
+  "key": "samp_gyro_name",
+  "zh": "陀螺儀：%1$s",
+  "en": "Gyroscope: %1$s",
+  "ja": "ジャイロ：%1$s",
+  "de": "Gyroskop: %1$s",
+  "args": 1
+ },
+ {
+  "key": "samp_gravity_name",
+  "zh": "重力：%1$s",
+  "en": "Gravity: %1$s",
+  "ja": "重力：%1$s",
+  "de": "Schwerkraft: %1$s",
+  "args": 1
+ },
+ {
+  "key": "adv_disclaimer",
+  "zh": "下面兩區是已經證實失敗的自動校準嘗試，留著只為診斷用途。唯一可信的校準是主畫面的碼錶校準。",
+  "en": "The two sections below are automatic-calibration attempts that have been proven to fail; they are kept for diagnostics only. The only calibration you can trust is the stopwatch calibration on the main screen.",
+  "ja": "以下の 2 つのセクションは、失敗が確認済みの自動校正の試みです。診断目的でのみ残してあります。信頼できる校正はメイン画面のストップウォッチ校正だけです。",
+  "de": "Die beiden folgenden Abschnitte sind nachweislich gescheiterte Versuche automatischer Kalibrierung; sie bleiben nur zur Diagnose erhalten. Verlässlich ist allein die Stoppuhr-Kalibrierung auf dem Hauptbildschirm.",
+  "args": 0
+ },
+ {
+  "key": "adv_sec_sensors",
+  "zh": "感測器",
+  "en": "Sensors",
+  "ja": "センサー",
+  "de": "Sensoren",
+  "args": 0
+ },
+ {
+  "key": "adv_instant_omega",
+  "zh": "瞬時角速度",
+  "en": "Instantaneous rate",
+  "ja": "瞬時角速度",
+  "de": "Momentane Drehrate",
+  "args": 0
+ },
+ {
+  "key": "adv_mean_calibrated",
+  "zh": "平均轉速（已校準）",
+  "en": "Mean speed (calibrated)",
+  "ja": "平均回転数（校正済み）",
+  "de": "Mittlere Drehzahl (kalibriert)",
+  "args": 0
+ },
+ {
+  "key": "adv_mean_raw",
+  "zh": "平均轉速（未修正）",
+  "en": "Mean speed (uncorrected)",
+  "ja": "平均回転数（未補正）",
+  "de": "Mittlere Drehzahl (unkorrigiert)",
+  "args": 0
+ },
+ {
+  "key": "adv_actual_rate",
+  "zh": "實際取樣率",
+  "en": "Actual sample rate",
+  "ja": "実際のサンプリングレート",
+  "de": "Tatsächliche Abtastrate",
+  "args": 0
+ },
+ {
+  "key": "adv_phase",
+  "zh": "圈內相位",
+  "en": "Phase within revolution",
+  "ja": "1 回転内の位相",
+  "de": "Phase innerhalb der Umdrehung",
+  "args": 0
+ },
+ {
+  "key": "adv_gyro_total",
+  "zh": "陀螺儀總轉角",
+  "en": "Gyroscope total angle",
+  "ja": "ジャイロの総回転角",
+  "de": "Gesamtwinkel des Gyroskops",
+  "args": 0
+ },
+ {
+  "key": "adv_mag_total",
+  "zh": "磁北總轉角",
+  "en": "Magnetic-north total angle",
+  "ja": "磁北の総回転角",
+  "de": "Gesamtwinkel gegen magnetisch Nord",
+  "args": 0
+ },
+ {
+  "key": "adv_mag_yaw",
+  "zh": "磁北方位角",
+  "en": "Magnetic-north bearing",
+  "ja": "磁北方位角",
+  "de": "Magnetischer Kurswinkel",
+  "args": 0
+ },
+ {
+  "key": "adv_gravity_vector",
+  "zh": "重力向量",
+  "en": "Gravity vector",
+  "ja": "重力ベクトル",
+  "de": "Schwerkraftvektor",
+  "args": 0
+ },
+ {
+  "key": "adv_rotation_rate",
+  "zh": "原始角速度",
+  "en": "Raw rotation rate",
+  "ja": "生の角速度",
+  "de": "Rohe Drehrate",
+  "args": 0
+ },
+ {
+  "key": "adv_field_calibrated",
+  "zh": "已校準磁場",
+  "en": "Calibrated field",
+  "ja": "校正済み磁場",
+  "de": "Kalibriertes Feld",
+  "args": 0
+ },
+ {
+  "key": "adv_field_raw",
+  "zh": "未校準磁場",
+  "en": "Uncalibrated field",
+  "ja": "未校正磁場",
+  "de": "Unkalibriertes Feld",
+  "args": 0
+ },
+ {
+  "key": "adv_mag_samples",
+  "zh": "磁力計樣本數",
+  "en": "Magnetometer samples",
+  "ja": "磁気センサーのサンプル数",
+  "de": "Magnetometer-Messpunkte",
+  "args": 0
+ },
+ {
+  "key": "adv_sec_fused",
+  "zh": "融合路徑校準（方位角）",
+  "en": "Fused-path calibration (bearing)",
+  "ja": "融合経路の校正（方位角）",
+  "de": "Kalibrierung über den fusionierten Pfad (Kurswinkel)",
+  "args": 0
+ },
+ {
+  "key": "adv_no_factor_yet",
+  "zh": "還沒滿一圈，算不出倍率。",
+  "en": "Not one full revolution yet — no factor can be computed.",
+  "ja": "まだ 1 回転に達していないため、係数を計算できません。",
+  "de": "Noch keine volle Umdrehung — es lässt sich kein Faktor berechnen.",
+  "args": 0
+ },
+ {
+  "key": "adv_gyro_error",
+  "zh": "陀螺儀偏差",
+  "en": "Gyroscope error",
+  "ja": "ジャイロ誤差",
+  "de": "Gyroskop-Fehler",
+  "args": 0
+ },
+ {
+  "key": "adv_corrected_rpm",
+  "zh": "校準後轉速",
+  "en": "Speed after calibration",
+  "ja": "校正後の回転数",
+  "de": "Drehzahl nach Kalibrierung",
+  "args": 0
+ },
+ {
+  "key": "adv_corrected_error",
+  "zh": "校準後誤差",
+  "en": "Error after calibration",
+  "ja": "校正後の誤差",
+  "de": "Fehler nach Kalibrierung",
+  "args": 0
+ },
+ {
+  "key": "adv_conf_insufficient",
+  "zh": "還不滿一圈，算不出倍率。",
+  "en": "Not one full revolution yet — no factor can be computed.",
+  "ja": "まだ 1 回転に達していないため、係数を計算できません。",
+  "de": "Noch keine volle Umdrehung — es lässt sich kein Faktor berechnen.",
+  "args": 0
+ },
+ {
+  "key": "adv_conf_indistinguishable",
+  "zh": "兩條路徑只差 %1$.0f°，低於 %2$.0f° 的雜訊底線 —— 這個倍率不可採信。\n\n盤面高速轉動時系統把磁修正降權到幾乎沒有貢獻，方位角退化成陀螺儀積分本身。這種情況下「陀螺儀很準」和「方位角就是陀螺儀積分」無法區分，資料本身不含這個資訊。",
+  "en": "The two paths differ by only %1$.0f°, below the %2$.0f° noise floor — this factor cannot be trusted.\n\nWhile the platter spins fast the system weights the magnetic correction down to almost nothing and the bearing degenerates into the gyroscope integral itself. In that state “the gyroscope is accurate” and “the bearing is the gyroscope integral” are indistinguishable; the data simply does not contain that information.",
+  "ja": "2 つの経路の差はわずか %1$.0f° で、%2$.0f° のノイズフロアを下回ります —— この係数は信用できません。\n\n盤が高速で回っている間、システムは磁気補正の重みをほぼゼロまで下げ、方位角はジャイロの積分そのものに退化します。この状態では「ジャイロが正確」と「方位角がジャイロの積分」を区別できず、データ自体にその情報がありません。",
+  "de": "Die beiden Pfade unterscheiden sich um nur %1$.0f°, unterhalb der Rauschgrenze von %2$.0f° — dieser Faktor ist unbrauchbar.\n\nBei schnell drehendem Teller gewichtet das System die Magnetkorrektur auf nahezu null herab, und der Kurswinkel entartet zum Gyroskop-Integral selbst. Dann sind „das Gyroskop ist genau“ und „der Kurswinkel ist das Gyroskop-Integral“ nicht unterscheidbar; die Daten enthalten diese Information schlicht nicht.",
+  "args": 2
+ },
+ {
+  "key": "adv_conf_usable",
+  "zh": "兩條路徑真的有分歧，這個倍率有意義。相對精度 %1$.3f%%。",
+  "en": "The two paths genuinely diverge, so this factor means something. Relative precision %1$.3f%%.",
+  "ja": "2 つの経路が実際に食い違っているので、この係数には意味があります。相対精度 %1$.3f%%。",
+  "de": "Die beiden Pfade weichen tatsächlich voneinander ab, der Faktor ist also aussagekräftig. Relative Genauigkeit %1$.3f%%.",
+  "args": 1
+ },
+ {
+  "key": "adv_sec_magnetic",
+  "zh": "獨立校準（磁力計）",
+  "en": "Independent calibration (magnetometer)",
+  "ja": "独立した校正（磁気センサー）",
+  "de": "Unabhängige Kalibrierung (Magnetometer)",
+  "args": 0
+ },
+ {
+  "key": "adv_revs_and_samples",
+  "zh": "%1$d 圈 · 用到 %2$d 筆",
+  "en": "%1$d rev · %2$d samples used",
+  "ja": "%1$d 回転 · %2$d 件を使用",
+  "de": "%1$d Umdr. · %2$d Punkte verwendet",
+  "args": 2
+ },
+ {
+  "key": "adv_geomag_total",
+  "zh": "地磁總轉角",
+  "en": "Geomagnetic total angle",
+  "ja": "地磁気の総回転角",
+  "de": "Gesamtwinkel des Erdfelds",
+  "args": 0
+ },
+ {
+  "key": "adv_horizontal",
+  "zh": "水平分量",
+  "en": "Horizontal component",
+  "ja": "水平成分",
+  "de": "Horizontalkomponente",
+  "args": 0
+ },
+ {
+  "key": "adv_horizontal_range",
+  "zh": "水平分量範圍",
+  "en": "Horizontal range",
+  "ja": "水平成分の範囲",
+  "de": "Bereich der Horizontalkomponente",
+  "args": 0
+ },
+ {
+  "key": "adv_geomag_radius",
+  "zh": "地磁水平分量（半徑）",
+  "en": "Geomagnetic horizontal (radius)",
+  "ja": "地磁気の水平成分（半径）",
+  "de": "Erdfeld horizontal (Radius)",
+  "args": 0
+ },
+ {
+  "key": "adv_local_field",
+  "zh": "本地磁場（跟著轉）",
+  "en": "Local field (turns with the phone)",
+  "ja": "ローカル磁場（一緒に回る）",
+  "de": "Lokales Feld (dreht sich mit)",
+  "args": 0
+ },
+ {
+  "key": "adv_local_field_wins",
+  "zh": "本地磁場蓋過地磁，圓沒有包住原點 —— 角度只能來回擺盪，這條路徑不成立。先把磁吸配件與含磁鐵的手機殼拿掉；台灣的地磁水平分量約 37 µT，本地磁場超過這個數就不行。",
+  "en": "The local field overwhelms the geomagnetic one and the circle no longer encloses the origin — the angle can only swing back and forth, so this path does not hold. Remove magnetic accessories and cases with magnets first; the geomagnetic horizontal component in Taiwan is about 37 µT, and anything larger than that breaks it.",
+  "ja": "ローカル磁場が地磁気を上回り、円が原点を囲まなくなっています —— 角度は往復するだけで、この経路は成立しません。まずマグネット式アクセサリーと磁石入りケースを外してください。台湾の地磁気水平成分は約 37 µT で、それを超えるローカル磁場では成り立ちません。",
+  "de": "Das lokale Feld überwiegt das Erdfeld, und der Kreis umschließt den Ursprung nicht mehr — der Winkel kann nur hin- und herschwingen, dieser Pfad trägt also nicht. Entfernen Sie zuerst magnetisches Zubehör und Hüllen mit Magneten; die horizontale Erdfeldkomponente beträgt in Taiwan etwa 37 µT, alles darüber macht es unmöglich.",
+  "args": 0
+ },
+ {
+  "key": "adv_field_accuracy",
+  "zh": "磁力計校準等級",
+  "en": "Magnetometer accuracy",
+  "ja": "磁気センサーの精度",
+  "de": "Magnetometer-Genauigkeit",
+  "args": 0
+ },
+ {
+  "key": "adv_sec_refined",
+  "zh": "扣掉圓心偏移後",
+  "en": "After removing the centre offset",
+  "ja": "中心オフセットを除いた後",
+  "de": "Nach Abzug des Mittelpunktversatzes",
+  "args": 0
+ },
+ {
+  "key": "adv_refined_pending",
+  "zh": "樣本還不夠擬合圓心，或是量測還沒結束。圓擬合只在停止之後算一次。",
+  "en": "Not enough samples to fit a centre yet, or the run is still going. The circle fit is computed once, after you stop.",
+  "ja": "中心を当てはめるサンプルがまだ足りないか、測定が続いています。円のフィッティングは停止後に一度だけ計算されます。",
+  "de": "Noch zu wenige Messpunkte für eine Kreisanpassung, oder die Messung läuft noch. Die Kreisanpassung wird einmal nach dem Stoppen berechnet.",
+  "args": 0
+ },
+ {
+  "key": "adv_revolutions",
+  "zh": "圈數",
+  "en": "Revolutions",
+  "ja": "回転数",
+  "de": "Umdrehungen",
+  "args": 0
+ },
+ {
+  "key": "adv_fit_radius",
+  "zh": "擬合半徑（地磁）",
+  "en": "Fitted radius (geomagnetic)",
+  "ja": "当てはめ半径（地磁気）",
+  "de": "Angepasster Radius (Erdfeld)",
+  "args": 0
+ },
+ {
+  "key": "adv_fit_centre",
+  "zh": "擬合圓心偏移",
+  "en": "Fitted centre offset",
+  "ja": "当てはめ中心オフセット",
+  "de": "Angepasster Mittelpunktversatz",
+  "args": 0
+ },
+ {
+  "key": "adv_fit_residual",
+  "zh": "擬合殘差",
+  "en": "Fit residual",
+  "ja": "当てはめ残差",
+  "de": "Anpassungsrest",
+  "args": 0
+ },
+ {
+  "key": "adv_residual_value",
+  "zh": "%1$.2f µT（半徑的 %2$.1f%%）",
+  "en": "%1$.2f µT (%2$.1f%% of the radius)",
+  "ja": "%1$.2f µT（半径の %2$.1f%%）",
+  "de": "%1$.2f µT (%2$.1f %% des Radius)",
+  "args": 2
+ },
+ {
+  "key": "adv_fit_trustworthy",
+  "zh": "擬合殘差遠小於半徑，這組資料確實是一個圓。",
+  "en": "The residual is far smaller than the radius — this data really is a circle.",
+  "ja": "残差が半径よりはるかに小さく、このデータは確かに円です。",
+  "de": "Der Rest ist weit kleiner als der Radius — diese Daten sind tatsächlich ein Kreis.",
+  "args": 0
+ },
+ {
+  "key": "adv_fit_untrustworthy",
+  "zh": "擬合殘差跟半徑同一量級 —— 這組資料不是一個穩定的圓，結果不能採信。來源是房間裡靜止磁源的空間梯度，換個擺放位置就會完全不一樣。",
+  "en": "The residual is the same order as the radius — this data is not a stable circle and the result cannot be trusted. The cause is the spatial gradient of stationary magnetic sources in the room; move the phone and it comes out completely different.",
+  "ja": "残差が半径と同じオーダーです —— このデータは安定した円ではなく、結果は信用できません。原因は部屋の中の静止した磁気源の空間勾配で、置き場所を変えるとまったく違う値になります。",
+  "de": "Der Rest liegt in derselben Größenordnung wie der Radius — diese Daten sind kein stabiler Kreis, das Ergebnis ist unbrauchbar. Ursache ist der räumliche Gradient ruhender Magnetquellen im Raum; an anderer Stelle kommt etwas völlig anderes heraus.",
+  "args": 0
+ },
+ {
+  "key": "adv_sec_raw_mag",
+  "zh": "未校準磁力計（獨立於系統的偏置估計）",
+  "en": "Uncalibrated magnetometer (independent of the system's bias estimate)",
+  "ja": "未校正の磁気センサー（システムのバイアス推定から独立）",
+  "de": "Unkalibriertes Magnetometer (unabhängig von der Bias-Schätzung des Systems)",
+  "args": 0
+ },
+ {
+  "key": "adv_refined_total",
+  "zh": "扣圓心後總轉角",
+  "en": "Total angle after removing the centre",
+  "ja": "中心を除いた後の総回転角",
+  "de": "Gesamtwinkel nach Abzug des Mittelpunkts",
+  "args": 0
+ },
+ {
+  "key": "adv_raw_mag_note",
+  "zh": "系統的偏置估計器會在量測過程中持續改動已校準磁場的讀數。把未校準的原始讀數並排放在這裡，兩條算出來的 k 若差很多，就代表那個估計器是干擾源。",
+  "en": "The system's bias estimator keeps altering the calibrated field reading during a run. The uncalibrated raw reading is shown alongside it here: if the two k values differ a lot, that estimator is the disturbance.",
+  "ja": "システムのバイアス推定器は測定中も校正済み磁場の読みを変え続けます。ここでは未校正の生の読みを並べています。2 つの k が大きく食い違えば、その推定器が擾乱源です。",
+  "de": "Der Bias-Schätzer des Systems verändert während einer Messung fortlaufend den kalibrierten Feldwert. Daneben steht hier der unkalibrierte Rohwert: Weichen die beiden k-Werte stark ab, ist dieser Schätzer die Störquelle.",
+  "args": 0
+ }
+]

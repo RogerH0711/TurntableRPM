@@ -9,6 +9,9 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.SystemClock
 import java.util.concurrent.Executors
+import com.roger.turntablerpm.R
+import com.roger.turntablerpm.core.MagneticRevolutionCounter
+import com.roger.turntablerpm.core.PhaseIntegrator
 import com.roger.turntablerpm.core.MeasurementAnalysis
 import com.roger.turntablerpm.core.SamplingStats
 import com.roger.turntablerpm.core.SpinProjector
@@ -72,6 +75,45 @@ data class EngineState(
     val analyzing: Boolean = false,
     /** 這次量測的原始資料 JSON 檔路徑。分析失敗時也會有 —— 那時最需要它。 */
     val exportPath: String? = null,
+
+    // ── 進階診斷 ──────────────────────────────────────────────
+    //
+    // 下面這些是**兩條已經證實失敗的自動校準路徑**留下來的診斷資料。
+    // 它們不參與任何對外讀數，唯一可信的校準是碼錶（見 CLAUDE.md 坑 11、15）。
+
+    /** 瞬時角速度，°/s。 */
+    val latestOmega: Double = 0.0,
+    /** 圈內相位，0–360°。 */
+    val phaseDegrees: Double = 0.0,
+    /** 陀螺儀積分的總轉角。 */
+    val gyroTotalDegrees: Double = 0.0,
+    /** 融合方位角（TYPE_ROTATION_VECTOR）解捲出來的總轉角。 */
+    val magneticTotalDegrees: Double = 0.0,
+    /** 最新一筆的融合方位角，度。 */
+    val magneticYawDegrees: Double? = null,
+    /** 融合路徑估出來的 k。**幾乎一定是 1.0，那正是它不可信的證據。** */
+    val fusedCalibration: Double? = null,
+    val gravityVector: Vector3? = null,
+    val rotationRate: Vector3? = null,
+    /** 已校準磁場（TYPE_MAGNETIC_FIELD），µT。 */
+    val calibratedField: Vector3? = null,
+    /** 未校準磁力計（TYPE_MAGNETIC_FIELD_UNCALIBRATED），µT。 */
+    val rawField: Vector3? = null,
+    val fieldAccuracy: String = "—",
+    /** 已校準磁場路徑：直接解捲。 */
+    val magneticTotal: Double = 0.0,
+    val magneticRevolutions: Int = 0,
+    val magneticSampleCount: Int = 0,
+    val magneticHorizontal: Double = 0.0,
+    /** (較大, 較小)。會繞圈時大的是半徑，繞不起來時大的是圓心偏移。 */
+    val magneticHorizontalRange: Pair<Double, Double>? = null,
+    /** 扣掉擬合圓心之後的結果。 */
+    val refined: MagneticRevolutionCounter.Refined? = null,
+    /** 未校準磁力計路徑：完全獨立於任何融合器。 */
+    val rawMagneticTotal: Double = 0.0,
+    val rawMagneticRevolutions: Int = 0,
+    val rawMagneticSampleCount: Int = 0,
+    val rawRefined: MagneticRevolutionCounter.Refined? = null,
 )
 
 /**
@@ -90,10 +132,29 @@ data class EngineState(
 class SensorEngine(context: Context) : SensorEventListener {
 
     private val manager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+
+    /**
+     * 錯誤訊息要在地化，而感測器層看不到 Compose 的 `stringResource`。
+     * 拿 applicationContext 而不是傳進來的那個 —— 引擎的生命週期比 Activity 長。
+     */
+    private val app: Context = context.applicationContext
     private val gyroscope: Sensor? = manager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
     private val gravity: Sensor? = manager.getDefaultSensor(Sensor.TYPE_GRAVITY)
         ?: manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
     private val gravityIsFused = manager.getDefaultSensor(Sensor.TYPE_GRAVITY) != null
+
+    /**
+     * 診斷用的三顆感測器。**全部是選配** —— 少了任何一顆只是那一區沒有數字，
+     * 量測本身完全不受影響。
+     *
+     * `TYPE_ROTATION_VECTOR` 是 Android 的融合姿態，對應 iOS 的 `attitude.yaw`；
+     * 兩顆磁力計對應 iOS 的 `CMDeviceMotion.magneticField` 與 `CMMagnetometerData`。
+     * 並排記錄兩種來源才能判斷偏置估計器有沒有在量測過程中改動讀數（坑 12）。
+     */
+    private val rotationVector: Sensor? = manager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
+    private val magnetometer: Sensor? = manager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
+    private val rawMagnetometer: Sensor? =
+        manager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED)
 
     /**
      * 匯出目錄。用 app 專屬的外部空間而不是 filesDir：不需要任何權限，
@@ -129,7 +190,7 @@ class SensorEngine(context: Context) : SensorEventListener {
      * **不做手動的「儲存」按鈕** —— 使用者不會記得按，而歷史的價值就在
      * 「調整前後能比較」，漏存一次就斷了（iOS 端的結論，見 CLAUDE.md 坑 40）。
      */
-    var onAnalysisComplete: ((MeasurementAnalysis, rawMeanRPM: Double) -> Unit)? = null
+    var onAnalysisComplete: ((MeasurementAnalysis, rawMeanRPM: Double, revolutions: Int) -> Unit)? = null
 
     private var thread: HandlerThread? = null
     private var handler: Handler? = null
@@ -139,8 +200,21 @@ class SensorEngine(context: Context) : SensorEventListener {
     // 匯出要逐筆的重力向量：離線工具靠它把感測器座標系的東西投影到水平面。
     // 只留一個 latestGravity 不夠 —— 盤面章動時每一筆的重力方向都不一樣（坑 14）。
     private val gravities = ArrayList<Vector3>()
+    // 磁場逐筆存下來，讓匯出的檔案跟 iOS 一樣可以拿去分段圓擬合。
+    private val fields = ArrayList<Vector3?>()
+    private val rawFields = ArrayList<Vector3?>()
     private val rawTimestamps = ArrayList<Double>()
     private var latestGravity: Vector3? = null
+    private var latestRotationRate: Vector3? = null
+    private var latestYawRadians: Double? = null
+    private var latestField: Vector3? = null
+    private var latestRawField: Vector3? = null
+    private var fieldAccuracy: String = "—"
+    // 相位與兩條校準路徑的累積。核心的 PhaseIntegrator 已經處理好「錨點要推進
+    // 剛好一整圈」與「yaw 可能遞減」這兩個坑（CLAUDE.md 坑 3、4）。
+    private var phase = PhaseIntegrator()
+    private var magneticCounter = MagneticRevolutionCounter()
+    private var rawMagneticCounter = MagneticRevolutionCounter()
     private var baseNanos: Long = 0
     private var baseWallNanos: Long = 0
     private var latestWallNanos: Long = 0
@@ -181,14 +255,12 @@ class SensorEngine(context: Context) : SensorEventListener {
     val unavailableReason: String?
         get() = when {
             gyroscope == null && gravity == null ->
-                "這台裝置沒有陀螺儀，也讀不到重力感測器，無法量測。"
+                app.getString(R.string.engine_no_gyro_no_gravity)
             gyroscope == null ->
                 // Compose 的 Text 不吃 markdown，這裡是純文字。
-                "這台裝置沒有陀螺儀。不是每一支 Android 手機都有 —— 中階機常常省掉。\n\n" +
-                    "這個 app 靠陀螺儀量自轉角速度，沒有它就沒有辦法量，" +
-                    "用加速度計或磁力計都替代不了。請換一支有陀螺儀的手機。"
+                app.getString(R.string.engine_no_gyro)
             gravity == null ->
-                "這台裝置讀不到重力或加速度感測器，無法量測。"
+                app.getString(R.string.engine_no_gravity)
             else -> null
         }
 
@@ -207,6 +279,9 @@ class SensorEngine(context: Context) : SensorEventListener {
         }
         synchronized(lock) {
             samples.clear()
+            gravities.clear()
+            fields.clear()
+            rawFields.clear()
             rawTimestamps.clear()
             latestGravity = null
             baseNanos = 0
@@ -216,6 +291,14 @@ class SensorEngine(context: Context) : SensorEventListener {
             lastSampleTime = null
             lastOmega = 0.0
             timestampBase = null
+            latestRotationRate = null
+            latestYawRadians = null
+            latestField = null
+            latestRawField = null
+            fieldAccuracy = "—"
+            phase = PhaseIntegrator()
+            magneticCounter = MagneticRevolutionCounter()
+            rawMagneticCounter = MagneticRevolutionCounter()
         }
         // 防禦性解除：萬一有殘留的註冊（例如上一輪的競態），先清乾淨再註冊。
         manager.unregisterListener(this)
@@ -225,6 +308,13 @@ class SensorEngine(context: Context) : SensorEventListener {
         active = true
         manager.registerListener(this, grav, samplingPeriodUs, handler)
         manager.registerListener(this, gyro, samplingPeriodUs, handler)
+        // 診斷用的三顆用 SENSOR_DELAY_GAME（約 50 Hz）而不是 100 Hz：
+        // 磁力計本來就跟不上 100 Hz，而且事件流愈多、陀螺儀那條愈容易被排擠
+        // （坑 37 的教訓是量測本身的成本會算進被量的東西裡）。
+        // 解捲只要求相鄰樣本之間不超過半圈，50 Hz 對 33 轉綽綽有餘。
+        rotationVector?.let { manager.registerListener(this, it, DIAGNOSTIC_PERIOD_US, handler) }
+        magnetometer?.let { manager.registerListener(this, it, DIAGNOSTIC_PERIOD_US, handler) }
+        rawMagnetometer?.let { manager.registerListener(this, it, DIAGNOSTIC_PERIOD_US, handler) }
         displayDegrees = 0.0          // **只有這裡歸零** —— 手機此刻還照著指示擺著
         lastDisplayTime = 0.0
         lastDisplayOmega = 0.0
@@ -275,7 +365,7 @@ class SensorEngine(context: Context) : SensorEventListener {
             _state.update {
                 it.copy(
                     analysis = null,
-                    analysisFailureReason = "量測時間太短，只錄到 ${snapshot.size} 筆資料。",
+                    analysisFailureReason = app.getString(R.string.engine_too_short, snapshot.size),
                     analyzing = false,
                     exportPath = path,
                 )
@@ -292,11 +382,13 @@ class SensorEngine(context: Context) : SensorEventListener {
                 val window = com.roger.turntablerpm.core.StabilityGate.find(snapshot)
                 when {
                     window == null ->
-                        "整段量測都沒有穩定的轉速。轉盤有轉起來嗎？至少要連續穩定 5 秒。"
+                        app.getString(R.string.engine_no_stable_window)
                     window.medianOmega / 6.0 < MeasurementAnalysis.MINIMUM_RPM ->
-                        "量到的轉速只有 %.3f RPM —— 轉盤沒有轉起來。".format(window.medianOmega / 6.0)
+                        app.getString(
+                            R.string.engine_platter_not_spinning, window.medianOmega / 6.0,
+                        )
                     else ->
-                        "資料不足以分析。試著量久一點，90 秒以上比較可靠。"
+                        app.getString(R.string.engine_not_enough_data)
                 }
             } else null
             // **分析完成後，對外讀數換成切過的平均值。**
@@ -322,9 +414,65 @@ class SensorEngine(context: Context) : SensorEventListener {
                 )
             }
             if (result != null) {
-                onAnalysisComplete?.invoke(result, result.meanRPM / factor)
+                onAnalysisComplete?.invoke(result, result.meanRPM / factor, _state.value.revolutions)
             }
         }.start()
+    }
+
+    /** 診斷欄位的快照。必須在持有 lock 的情況下呼叫。 */
+    private data class Diagnostics(
+        val phaseDegrees: Double,
+        val gyroTotalDegrees: Double,
+        val magneticTotalDegrees: Double,
+        val yawDegrees: Double?,
+        val fusedCalibration: Double?,
+        val gravity: Vector3?,
+        val rotationRate: Vector3?,
+        val field: Vector3?,
+        val rawField: Vector3?,
+        val accuracy: String,
+        val magneticTotal: Double,
+        val magneticRevolutions: Int,
+        val magneticSampleCount: Int,
+        val magneticHorizontal: Double,
+        val magneticRange: Pair<Double, Double>?,
+        val refined: MagneticRevolutionCounter.Refined?,
+        val rawMagneticTotal: Double,
+        val rawMagneticRevolutions: Int,
+        val rawMagneticSampleCount: Int,
+        val rawRefined: MagneticRevolutionCounter.Refined?,
+    )
+
+    private fun snapshotDiagnostics(includeRefined: Boolean) = Diagnostics(
+        phaseDegrees = phase.phaseDegrees,
+        gyroTotalDegrees = phase.gyroTotalDegrees,
+        magneticTotalDegrees = phase.magneticTotalDegrees,
+        yawDegrees = latestYawRadians?.let { Math.toDegrees(it) },
+        fusedCalibration = phase.calibrationEstimate,
+        gravity = latestGravity,
+        rotationRate = latestRotationRate,
+        field = latestField,
+        rawField = latestRawField,
+        accuracy = fieldAccuracy,
+        magneticTotal = magneticCounter.totalDegrees,
+        magneticRevolutions = magneticCounter.revolutions,
+        magneticSampleCount = magneticCounter.sampleCount,
+        magneticHorizontal = magneticCounter.horizontalMagnitude,
+        magneticRange = magneticCounter.horizontalRange,
+        refined = if (includeRefined) magneticCounter.refined() else null,
+        rawMagneticTotal = rawMagneticCounter.totalDegrees,
+        rawMagneticRevolutions = rawMagneticCounter.revolutions,
+        rawMagneticSampleCount = rawMagneticCounter.sampleCount,
+        rawRefined = if (includeRefined) rawMagneticCounter.refined() else null,
+    )
+
+    /** 磁力計校準等級。Android 的等級是 0–3，直接給數字沒人看得懂。 */
+    private fun accuracyLabel(accuracy: Int): String = when (accuracy) {
+        SensorManager.SENSOR_STATUS_ACCURACY_HIGH -> app.getString(R.string.accuracy_high)
+        SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM -> app.getString(R.string.accuracy_medium)
+        SensorManager.SENSOR_STATUS_ACCURACY_LOW -> app.getString(R.string.accuracy_low)
+        SensorManager.SENSOR_STATUS_UNRELIABLE -> app.getString(R.string.accuracy_unreliable)
+        else -> "—"
     }
 
     /**
@@ -397,10 +545,25 @@ class SensorEngine(context: Context) : SensorEventListener {
     /** 交出目前累積的樣本，供離線分析。 */
     fun snapshotSamples(): List<SpinSample> = synchronized(lock) { ArrayList(samples) }
 
-    /** 匯出用的逐樣本快照。長度一定對得起來 —— 兩個 list 在同一個鎖裡一起 append。 */
+    /**
+     * 匯出用的逐樣本快照。長度一定對得起來 —— 兩個 list 在同一個鎖裡一起 append。
+     *
+     * 磁場只有最新一筆（那三顆走 50 Hz，跟陀螺儀的 100 Hz 對不齊），
+     * 所以每一筆樣本帶的是「當下最新的那一次磁場讀數」。離線分析要的是軌跡形狀，
+     * 重複幾筆相同的值不影響圓擬合。
+     */
     fun snapshotFrames(): List<RawFrame> = synchronized(lock) {
-        val n = minOf(samples.size, gravities.size)
-        (0 until n).map { RawFrame(samples[it].t, samples[it].omega, gravities[it]) }
+        val n = minOf(samples.size, gravities.size, fields.size, rawFields.size)
+        (0 until n).map {
+            RawFrame(
+                t = samples[it].t,
+                omega = samples[it].omega,
+                gravity = gravities[it],
+                yaw = samples[it].yaw,
+                field = fields[it],
+                rawField = rawFields[it],
+            )
+        }
     }
 
     /**
@@ -435,7 +598,8 @@ class SensorEngine(context: Context) : SensorEventListener {
                 if (now - stableSinceMs >= AUTO_STABLE_MS) {
                     // 丟掉等待期間的資料，從乾淨的狀態開始記錄。
                     synchronized(lock) {
-                        samples.clear(); gravities.clear(); rawTimestamps.clear()
+                        samples.clear(); gravities.clear()
+                    fields.clear(); rawFields.clear(); rawTimestamps.clear()
                         totalDegrees = 0.0; lastSampleTime = null; lastOmega = 0.0
                         baseNanos = 0; baseWallNanos = 0; latestWallNanos = 0
                     }
@@ -461,6 +625,44 @@ class SensorEngine(context: Context) : SensorEventListener {
                         event.values[1].toDouble(),
                         event.values[2].toDouble(),
                     )
+                }
+            }
+
+            Sensor.TYPE_ROTATION_VECTOR -> {
+                // 融合姿態 → 方位角。這是 iOS `attitude.yaw` 的對應物，
+                // **也就是那條已經證實是同義反覆的路徑**（坑 11）。
+                val r = FloatArray(9)
+                SensorManager.getRotationMatrixFromVector(r, event.values)
+                val orientation = FloatArray(3)
+                SensorManager.getOrientation(r, orientation)
+                synchronized(lock) { latestYawRadians = orientation[0].toDouble() }
+            }
+
+            Sensor.TYPE_MAGNETIC_FIELD -> {
+                val f = Vector3(
+                    event.values[0].toDouble(),
+                    event.values[1].toDouble(),
+                    event.values[2].toDouble(),
+                )
+                synchronized(lock) {
+                    latestField = f
+                    fieldAccuracy = accuracyLabel(event.accuracy)
+                    latestGravity?.let { magneticCounter.add(f, it) }
+                }
+            }
+
+            Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED -> {
+                // 前三個是未扣偏置的原始讀數，後三個是系統估的偏置。
+                // 這裡要的是原始值 —— 拿它跟已校準的並排，才看得出偏置估計器
+                // 有沒有在量測過程中改動讀數。
+                val f = Vector3(
+                    event.values[0].toDouble(),
+                    event.values[1].toDouble(),
+                    event.values[2].toDouble(),
+                )
+                synchronized(lock) {
+                    latestRawField = f
+                    latestGravity?.let { rawMagneticCounter.add(f, it) }
                 }
             }
 
@@ -495,9 +697,14 @@ class SensorEngine(context: Context) : SensorEventListener {
                     lastDisplayOmega = omega
                     lastSampleTime = t
                     lastOmega = omega
-                    samples += SpinSample(t = t, omega = omega)
+                    latestRotationRate = rate
+                    val sample = SpinSample(t = t, omega = omega, yaw = latestYawRadians)
+                    samples += sample
                     gravities += g
+                    fields += latestField
+                    rawFields += latestRawField
                     rawTimestamps += t
+                    phase.add(sample)
                     latestWallNanos = wall
                 }
                 maybePublish()
@@ -528,12 +735,16 @@ class SensorEngine(context: Context) : SensorEventListener {
         data class Snap(
             val samples: List<SpinSample>, val times: DoubleArray,
             val base: String?, val wallSpan: Double, val degrees: Double,
+            val diagnostics: Diagnostics,
         )
         val snap = synchronized(lock) {
             Snap(
                 ArrayList(samples), rawTimestamps.toDoubleArray(), timestampBase,
                 if (baseWallNanos > 0) (latestWallNanos - baseWallNanos) / 1e9 else 0.0,
                 totalDegrees,
+                // 圓擬合是 O(n)，但 refined() 每次都會重跑整包點；量測中不必那麼勤，
+                // 所以只在停止之後算一次。
+                snapshotDiagnostics(includeRefined = !running),
             )
         }
         val snapshot = snap.samples
@@ -568,6 +779,28 @@ class SensorEngine(context: Context) : SensorEventListener {
                 clockRatio = if (snapshot.size >= 2) {
                     SamplingStats.clockRatio(snapshot.last().t - snapshot.first().t, snap.wallSpan)
                 } else null,
+
+                latestOmega = snapshot.lastOrNull()?.omega ?: 0.0,
+                phaseDegrees = snap.diagnostics.phaseDegrees,
+                gyroTotalDegrees = snap.diagnostics.gyroTotalDegrees,
+                magneticTotalDegrees = snap.diagnostics.magneticTotalDegrees,
+                magneticYawDegrees = snap.diagnostics.yawDegrees,
+                fusedCalibration = snap.diagnostics.fusedCalibration,
+                gravityVector = snap.diagnostics.gravity,
+                rotationRate = snap.diagnostics.rotationRate,
+                calibratedField = snap.diagnostics.field,
+                rawField = snap.diagnostics.rawField,
+                fieldAccuracy = snap.diagnostics.accuracy,
+                magneticTotal = snap.diagnostics.magneticTotal,
+                magneticRevolutions = snap.diagnostics.magneticRevolutions,
+                magneticSampleCount = snap.diagnostics.magneticSampleCount,
+                magneticHorizontal = snap.diagnostics.magneticHorizontal,
+                magneticHorizontalRange = snap.diagnostics.magneticRange,
+                refined = snap.diagnostics.refined ?: previous.refined,
+                rawMagneticTotal = snap.diagnostics.rawMagneticTotal,
+                rawMagneticRevolutions = snap.diagnostics.rawMagneticRevolutions,
+                rawMagneticSampleCount = snap.diagnostics.rawMagneticSampleCount,
+                rawRefined = snap.diagnostics.rawRefined ?: previous.rawRefined,
             )
         }
         if (running) advanceAutoPhase(recent)
@@ -579,5 +812,8 @@ class SensorEngine(context: Context) : SensorEventListener {
 
         /** 低於這個轉速視為盤面停下。16⅔ 的一半。 */
         const val STOP_RPM = 8.0
+
+        /** 診斷感測器的取樣週期。20000 µs = 50 Hz。 */
+        const val DIAGNOSTIC_PERIOD_US = 20_000
     }
 }
