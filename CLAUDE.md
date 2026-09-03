@@ -672,6 +672,30 @@ CI 另外還有 `.github/workflows/swift.yml`。
     教訓：**移植的驗收標準不能只是「功能清單打勾」**。把兩邊的主畫面並排截圖，
     從上到下逐塊問「這一塊在對面是什麼樣子、為什麼」，才會看到這些。
 
+46. **臨時 patch 如果寫到「程式碼以外」的地方，`git checkout` 還原不了它。**
+    拍 Android 英文截圖時加過一個臨時的 `forceLocale` 偏好（Android 沒有
+    iOS `-AppleLanguages` 那種啟動參數，只能自己做一個）。程式碼還原了，
+    但**它寫進 SharedPreferences 的那個值留在手機上**。
+
+    症狀完全誤導：手機系統語言是繁中（設定頁自己是中文的）、APK 裡 `values-zh-rTW`
+    的字串查得到（`aapt2 dump resources` 看得到「轉速量測」）、`am get-config`
+    回報 `b+zh+Hant+TW`、`am force-stop` 之後重開還是英文。
+    每一條證據都指向「資源比對壞了」，實際上資源完全正常。
+
+    **診斷順序記起來**：資源三件事（APK 有沒有該語系、裝置 config 是什麼、
+    force-stop 後會不會變）全部正常卻還是錯語言時，**去看 app 自己的持久化狀態**：
+
+        adb shell run-as <pkg> cat shared_prefs/<name>.xml
+
+    一行就看到 `<string name="forceLocale">en</string>`。
+
+    **教訓有兩層。** 一是**臨時 patch 的還原清單要包含它產生的狀態**，不只是檔案 ——
+    iOS 那邊同樣的教訓是坑 31(b) 的 SwiftData store。二是**「程式碼已經還原」不等於
+    「行為已經還原」**，驗收要看跑起來的樣子，不是看 `git status` 乾不乾淨。
+
+    順帶：`run-as ... sh -c "cat > file"` 會被 SELinux 擋（Permission denied），
+    要改成 `adb push` 到 `/data/local/tmp` 再 `run-as ... cp` 進去。
+
 ## 設計原則
 
 - **比例因子校準原本被當成成敗關鍵，實測後證明不是。**

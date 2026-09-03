@@ -191,7 +191,7 @@ make android-crosscheck FILE=TurntableRPM-20260901-155337.json
 
 ## 開發筆記
 
-[`CLAUDE.md`](CLAUDE.md) 記錄了 45 條踩過的坑，包含幾個花了很久才找到的：
+[`CLAUDE.md`](CLAUDE.md) 記錄了 46 條踩過的坑，包含幾個花了很久才找到的：
 
 - `CMDeviceMotion.attitude.yaw` 是融合結果，拿它校準陀螺儀是同義反覆
 - 移動平均只能用在顯示路徑；用在抖晃率計算會把 4 Hz 的加權峰值整個挖掉
