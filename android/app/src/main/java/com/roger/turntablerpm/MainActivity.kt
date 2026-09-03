@@ -315,7 +315,9 @@ private fun AppRoot(modifier: Modifier = Modifier) {
         Screen.Diagnostics -> SamplingDiagnostics(
             state = state,
             available = engine.isAvailable,
-            onStart = { engine.start(it) },
+            // **手動模式 + samplingOnly。** 這一頁量的是取樣特性，不是一次量測：
+            // 自動模式會在轉穩時清掉樣本、停下時自己結束，兩者都會毀掉統計。
+            onStart = { engine.start(it, mode = Mode.MANUAL, samplingOnly = true) },
             onStop = { engine.stop() },
             onBack = { screen = Screen.Measure },
             modifier = modifier,

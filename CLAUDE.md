@@ -723,6 +723,37 @@ CI 另外還有 `.github/workflows/swift.yml`。
     順帶：`run-as ... sh -c "cat > file"` 會被 SELinux 擋（Permission denied），
     要改成 `adb push` 到 `/data/local/tmp` 再 `run-as ... cp` 進去。
 
+47. **診斷畫面共用生產引擎時，會把生產路徑的副作用一起繼承走。**
+    Pixel 3a 第一次上機就撞到：只在「取樣特性診斷」跑 10 秒再返回，主畫面就多出
+    一筆「這次量測 10.0 s / 994 筆」加一個橘色的「分析不出來」，而使用者從沒按過開始。
+
+    原因是那一頁直接呼叫同一個 `engine.start()/stop()`，而 `stop()` 會跑完整的分析
+    管線。副作用有三層，**最後一層最嚴重**：
+    - 主畫面冒出假的量測卡與失敗訊息（最容易撞到）
+    - 碼錶校準讀 `meanRPM`，會拿到 0.0079 RPM
+    - `onAnalysisComplete` 是**無條件** `history.add()` —— 把手機放在轉動的盤面上
+      跑取樣診斷很自然，那會靜靜存一筆使用者沒按過開始的歷史記錄
+
+    另外那一頁還用了預設的 `Mode.AUTOMATIC`，所以在轉動的盤面上跑診斷時，
+    自動相位推進會在「轉穩了」把已收的樣本清掉、盤面停下時自己 `stop()` ——
+    兩件事都會毀掉取樣統計本身。
+
+    修法是加一個 `samplingOnly` 旗標（`@Volatile`，不是發布給 UI 的欄位 —— 坑 35），
+    診斷跑不分析、不存檔、不進自動相位，並用 `keepingMeasurementOf()`
+    把量測那一組欄位原封不動還回去。
+
+    **第一版只修對一半，是實機打臉才發現的。** 平均轉速保住了，但
+    「量測時間 8.1 s / 樣本數 801」被診斷跑的 6.1 s / 602 蓋掉 ——
+    `sampleCount` / `elapsedSeconds` / `stats` **兩個畫面都在讀**，
+    我把它們當成「取樣類欄位」留給診斷了。真正的修法是給診斷一個自己的
+    `samplingStats`，那三個一律留給量測。
+    **「哪些欄位屬於量測」要有單一定義**（就是 `keepingMeasurementOf`），
+    憑印象分類會漏。
+
+    **iOS 沒有這個問題** —— `AdvancedDiagnosticsView` 是純顯示的，沒有自己的
+    開始／停止，iOS 也沒有可切換取樣率的診斷頁（它穩定在 100 Hz，不需要）。
+    所以這跟坑 36 是同一類：**加一個對面沒有的畫面，等於加一條沒有人走過的路徑。**
+
 ## 設計原則
 
 - **比例因子校準原本被當成成敗關鍵，實測後證明不是。**
@@ -787,7 +818,7 @@ App 圖示已完成（`tools/make_icon.py` 產生，可重跑）—— 唱片加
 
 **Android 版** — 功能上已與 iOS 對齊。核心 92 個 JVM 測試（含
 `MagneticRevolutionCounter` / `ScaleCalibrator` / `CalibrationConfidence`，
-與 Swift 端同一組情境），app 層另有 17 個。**拿 iOS 匯出的真實錄音交叉驗證過：
+與 Swift 端同一組情境），app 層另有 19 個。**拿 iOS 匯出的真實錄音交叉驗證過：
 兩個實作的結果差 0.002% 以內**（`make android-crosscheck`）。CI 上會跑核心測試、
 app 測試與 debug APK 建置。
 

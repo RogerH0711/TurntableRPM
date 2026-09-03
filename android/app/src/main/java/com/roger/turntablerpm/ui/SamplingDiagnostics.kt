@@ -113,7 +113,9 @@ fun SamplingDiagnostics(
 
 @Composable
 fun StatsCard(state: EngineState) {
-    val s = state.stats
+    // **這一頁只看 samplingStats。** `stats` 是量測那條在用的，跑診斷不能碰
+    // —— 碰了主畫面的「這次量測」就會被這一輪的數字蓋掉。
+    val s = state.samplingStats
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(stringResource(R.string.samp_section), style = MaterialTheme.typography.titleMedium)
@@ -127,7 +129,7 @@ fun StatsCard(state: EngineState) {
                 Text(stringResource(R.string.samp_hz_actual), style = MaterialTheme.typography.bodyMedium)
             }
             Row(Modifier.height(6.dp)) {}
-            StatRow(stringResource(R.string.samp_count), "${state.sampleCount}")
+            StatRow(stringResource(R.string.samp_count), s?.count?.toString() ?: "—")
             StatRow(
                 stringResource(R.string.samp_duration),
                 if (s != null) "%.1f s".format(s.durationSeconds) else "—",

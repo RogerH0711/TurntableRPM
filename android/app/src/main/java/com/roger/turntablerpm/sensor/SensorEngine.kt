@@ -38,6 +38,35 @@ enum class Mode { MANUAL, AUTOMATIC }
 /** 量測的階段。自動模式會多一個「等待轉速穩定」。 */
 enum class Phase { IDLE, WAITING_FOR_STABILITY, MEASURING, STOPPED }
 
+/**
+ * 「這是一次量測的結果」那一組欄位，原封不動地留住。
+ *
+ * 主畫面的「這次量測」卡、碼錶校準讀的 `meanRPM`、匯出按鈕、以及自動存進歷史，
+ * 全部吃這一組。取樣診斷跟量測共用同一個引擎，但它不是量測 ——
+ * 這個函式是「哪些欄位屬於量測」的**單一定義**，`start()` 與 `publish()` 都用它，
+ * 以後新增欄位時只有一個地方要改。
+ *
+ * `sampleCount` / `elapsedSeconds` / `stats` 這三個**兩邊都要用** —— 主畫面的
+ * 「這次量測」要顯示它們，診斷頁也要。所以診斷跑的取樣統計改走 `samplingStats`，
+ * 這三個一律留給量測。第一版漏掉這點，實機上平均轉速保住了、樣本數卻被蓋掉。
+ */
+internal fun EngineState.keepingMeasurementOf(previous: EngineState) = copy(
+    sampleCount = previous.sampleCount,
+    elapsedSeconds = previous.elapsedSeconds,
+    stats = previous.stats,
+    instantRPM = previous.instantRPM,
+    meanRPM = previous.meanRPM,
+    rawMeanRPM = previous.rawMeanRPM,
+    appliedFactor = previous.appliedFactor,
+    nominal = previous.nominal,
+    errorPercent = previous.errorPercent,
+    revolutions = previous.revolutions,
+    analysis = previous.analysis,
+    analysisFailureReason = previous.analysisFailureReason,
+    analyzing = previous.analyzing,
+    exportPath = previous.exportPath,
+)
+
 /** 一次量測的即時狀態。 */
 data class EngineState(
     val running: Boolean = false,
@@ -48,6 +77,11 @@ data class EngineState(
     val instantRPM: Double = 0.0,
     val meanRPM: Double? = null,
     val stats: SamplingStats? = null,
+    /**
+     * 取樣特性診斷頁專用的統計。**只有 samplingOnly 的那一輪會寫這裡。**
+     * 診斷跑不是量測，不能去動 `stats`（主畫面的「這次量測」在用）。
+     */
+    val samplingStats: SamplingStats? = null,
     val timestampBase: String? = null,
     /** 牆鐘量到的時長，用來跟感測器時間戳對照。 */
     val wallElapsedSeconds: Double = 0.0,
@@ -171,6 +205,18 @@ class SensorEngine(context: Context) : SensorEventListener {
     @Volatile private var active = false
 
     /**
+     * 這一輪是不是「只量取樣特性」。
+     *
+     * 取樣診斷頁跟量測畫面共用同一個引擎（陀螺儀的註冊與時間戳邏輯只該有一份），
+     * 但**跑診斷不是一次量測**：它不該蓋掉主畫面的「這次量測」、不該餵給碼錶校準、
+     * 更不該觸發 `onAnalysisComplete` 把一筆假記錄自動存進歷史。
+     *
+     * 跟 `active` 一樣是獨立的 `@Volatile` 旗標，不用發布給 UI 的欄位當守衛 ——
+     * 那個會被感測器執行緒覆寫（坑 35）。
+     */
+    @Volatile private var samplingOnly = false
+
+    /**
      * **統計不能算在感測器執行緒上。** `SamplingStats.from()` 內含排序，
      * 每 200 ms 對全部樣本排一次；3 分鐘的量測是兩萬筆，會直接卡住事件處理。
      * 實測：量測畫面的抖動比 0.811%，同一台在純診斷畫面是 0.160%。
@@ -269,7 +315,11 @@ class SensorEngine(context: Context) : SensorEventListener {
      *   注意 Android 12 起超過 200 Hz 需要 HIGH_SAMPLING_RATE_SENSORS 權限 ——
      *   這個 app 不需要那麼快（50 Hz 以上只佔加權能量 0.72%），刻意不宣告。
      */
-    fun start(samplingPeriodUs: Int = 10_000, mode: Mode = Mode.AUTOMATIC) {
+    fun start(
+        samplingPeriodUs: Int = 10_000,
+        mode: Mode = Mode.AUTOMATIC,
+        samplingOnly: Boolean = false,
+    ) {
         if (active) return
         val gyro = gyroscope
         val grav = gravity
@@ -306,6 +356,7 @@ class SensorEngine(context: Context) : SensorEventListener {
         thread = t
         handler = Handler(t.looper)
         active = true
+        this.samplingOnly = samplingOnly
         manager.registerListener(this, grav, samplingPeriodUs, handler)
         manager.registerListener(this, gyro, samplingPeriodUs, handler)
         // 診斷用的三顆用 SENSOR_DELAY_GAME（約 50 Hz）而不是 100 Hz：
@@ -319,7 +370,8 @@ class SensorEngine(context: Context) : SensorEventListener {
         lastDisplayTime = 0.0
         lastDisplayOmega = 0.0
         stableSinceMs = 0
-        _state.value = EngineState(
+        val carried = _state.value
+        val fresh = EngineState(
             running = true,
             mode = mode,
             phase = if (mode == Mode.AUTOMATIC) Phase.WAITING_FOR_STABILITY else Phase.MEASURING,
@@ -327,6 +379,9 @@ class SensorEngine(context: Context) : SensorEventListener {
             gravityName = "${grav.name} / ${grav.vendor}",
             gravityIsFused = gravityIsFused,
         )
+        // 診斷跑不能把使用者上一次的量測結果洗掉 —— 光是「按下開始」就清空，
+        // 主畫面在他返回時已經沒東西了。
+        _state.value = if (samplingOnly) fresh.keepingMeasurementOf(carried) else fresh
     }
 
     fun stop() {
@@ -338,7 +393,10 @@ class SensorEngine(context: Context) : SensorEventListener {
         handler = null
         _state.update { it.copy(phase = Phase.STOPPED) }
         publish(running = false)
-        runAnalysis()
+        // 診斷跑不分析：分析會寫對外讀數、寫匯出檔，而且成功時會 onAnalysisComplete
+        // 自動存一筆歷史。把手機放在轉動的盤面上跑取樣診斷是很自然的事，
+        // 那不該變成一筆使用者沒按過「開始量測」的記錄。
+        if (!samplingOnly) runAnalysis()
     }
 
     /**
@@ -801,9 +859,15 @@ class SensorEngine(context: Context) : SensorEventListener {
                 rawMagneticRevolutions = snap.diagnostics.rawMagneticRevolutions,
                 rawMagneticSampleCount = snap.diagnostics.rawMagneticSampleCount,
                 rawRefined = snap.diagnostics.rawRefined ?: previous.rawRefined,
-            )
+            ).let { next ->
+                if (!samplingOnly) next
+                // 診斷跑：新算的取樣統計走自己的欄位，量測那一組原封不動還回去。
+                else next.keepingMeasurementOf(previous).copy(samplingStats = next.stats)
+            }
         }
-        if (running) advanceAutoPhase(recent)
+        // 自動模式的相位推進會在「轉穩了」時把已收的樣本清掉、盤面停下時自己 stop()。
+        // 那兩件事對取樣統計都是災難，所以診斷跑一律不進這條。
+        if (running && !samplingOnly) advanceAutoPhase(recent)
     }
 
     private companion object {

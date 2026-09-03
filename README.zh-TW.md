@@ -126,7 +126,7 @@ cd TurntableRPM
 | 指令 | 做什麼 |
 |---|---|
 | `make test` | Swift 演算法測試（99 個，約 4 秒，不需要模擬器或實機） |
-| `make android-test` | Kotlin 測試（核心 92 + app 17，JVM，不需要手機） |
+| `make android-test` | Kotlin 測試（核心 92 + app 19，JVM，不需要手機） |
 | `make android-apk` | 建出 debug APK |
 | `make android-release` | 建出已簽章的 release APK —— 見 [`docs/android-release.md`](docs/android-release.md) |
 | `make android-strings` | 從 `android/tools/strings_catalog.json` 重新產生四個 `strings.xml` |
@@ -191,7 +191,7 @@ make android-crosscheck FILE=TurntableRPM-20260901-155337.json
 
 ## 開發筆記
 
-[`CLAUDE.md`](CLAUDE.md) 記錄了 46 條踩過的坑，包含幾個花了很久才找到的：
+[`CLAUDE.md`](CLAUDE.md) 記錄了 47 條踩過的坑，包含幾個花了很久才找到的：
 
 - `CMDeviceMotion.attitude.yaw` 是融合結果，拿它校準陀螺儀是同義反覆
 - 移動平均只能用在顯示路徑；用在抖晃率計算會把 4 Hz 的加權峰值整個挖掉

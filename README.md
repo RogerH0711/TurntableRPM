@@ -141,7 +141,7 @@ cd TurntableRPM
 | Command | What it does |
 |---|---|
 | `make test` | Swift algorithm tests (99, ~4 s, no simulator or device needed) |
-| `make android-test` | Kotlin tests (92 core + 17 app, JVM, no phone needed) |
+| `make android-test` | Kotlin tests (92 core + 19 app, JVM, no phone needed) |
 | `make android-apk` | Debug APK |
 | `make android-release` | Signed release APK — see [`docs/android-release.md`](docs/android-release.md) |
 | `make android-strings` | Regenerate the four `strings.xml` from `android/tools/strings_catalog.json` |
@@ -212,7 +212,7 @@ make android-crosscheck FILE=TurntableRPM-20260901-155337.json
 
 ## Development notes
 
-[`CLAUDE.md`](CLAUDE.md) records 46 pitfalls hit along the way, including several that took
+[`CLAUDE.md`](CLAUDE.md) records 47 pitfalls hit along the way, including several that took
 a long time to find (the file is in Traditional Chinese):
 
 - `CMDeviceMotion.attitude.yaw` is a fusion result — calibrating the gyroscope against it
