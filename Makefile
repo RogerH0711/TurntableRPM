@@ -70,6 +70,14 @@ android-test:
 android-strings:
 	cd android && python3 tools/gen_strings.py . tools/strings_catalog.json
 
+## 建出 release APK（需要 android/keystore.properties，見 docs/android-release.md）
+android-release:
+	cd android && JAVA_HOME="$(ANDROID_JAVA_HOME)" ./gradlew :app:assembleRelease
+	@echo ""
+	@ls -la android/app/build/outputs/apk/release/*.apk
+	@echo ""
+	@echo "檔名帶 -unsigned 代表沒有找到金鑰，見 docs/android-release.md"
+
 ## 建出 debug APK
 android-apk:
 	cd android && JAVA_HOME="$(ANDROID_JAVA_HOME)" ./gradlew :app:assembleDebug

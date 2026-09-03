@@ -735,7 +735,12 @@ app 測試與 debug APK 建置。
 改 `android/tools/strings_catalog.json` 再跑 `make android-strings`，
 那支腳本會強制四個語系的鍵完全一致、含參數的字串位置參數齊全。
 
-還沒做：release 簽章與上架。
+**release 建置已備妥**：R8 開著（23.1 MB → **2.7 MB**，縮混後的版本實機驗過
+每個畫面），簽章設定讀 `android/keystore.properties`（已 gitignore）或環境變數；
+兩個都沒有時不會失敗，只是產出未簽章的 APK。步驟見 `docs/android-release.md` ——
+**產生金鑰那一步要自己跑**，它會問你設定密碼。
+
+還沒做：上架素材（付費開發者帳號、實機截圖、商店描述、隱私問卷）。
 
 **還沒做的上架必要項目**：付費開發者帳號、上架素材（截圖／描述／隱私問卷）。
 截圖必須用實機拍 —— 模擬器沒有陀螺儀，畫面永遠是空狀態。

@@ -23,3 +23,9 @@ local.properties
 *.iml
 
 .DS_Store
+
+# 簽章金鑰與密碼。**永遠不進版控** —— 金鑰外流等於別人可以發布冒名的更新，
+# 而且 Google Play 的上架金鑰換不掉。
+keystore.properties
+*.jks
+*.keystore
