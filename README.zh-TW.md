@@ -12,16 +12,23 @@
 起因是一台閒置 20 年的 Thorens TD 235 EV 轉速偏慢，需要一個能量到 0.1% 的工具來診斷。
 
 <p align="center">
-  <img src="docs/screenshots/zh-TW/android-placement.png" width="235" alt="手機怎麼擺">
-  <img src="docs/screenshots/zh-TW/android-main.png" width="235" alt="量測">
-  <img src="docs/screenshots/zh-TW/android-analysis.png" width="235" alt="分析結果">
-  <img src="docs/screenshots/zh-TW/android-history.png" width="235" alt="歷史與趨勢">
+  <img src="docs/screenshots/zh-TW/ios-placement.png" width="235" alt="手機怎麼擺">
+  <img src="docs/screenshots/zh-TW/ios-main.png" width="235" alt="轉速讀數">
+  <img src="docs/screenshots/zh-TW/ios-analysis.png" width="235" alt="抖晃率與是哪個零件造成的">
 </p>
 
-<p align="center"><sub><b>手機怎麼擺 · 量到什麼 · 是什麼造成的 · 有沒有變好。</b><br>
-Thorens TD 235 EV 的真實資料 —— 201 秒、20,377 筆樣本。譜峰是這台盤的實際指紋：
-偏心在 1×、皮帶在 0.91×、馬達在 35.3×。<br>
-歷史裡最後兩筆是同一台盤量兩次、中間把手機原地轉 180° —— 每圈一次掉了 74%，
+<p align="center"><sub><b>手機怎麼擺 · 量到什麼 · 是哪個零件造成的。</b><br>
+Thorens TD 235 EV 的真實資料 —— 201 秒、20,377 筆樣本。</sub></p>
+
+<p align="center">
+  <img src="docs/screenshots/zh-TW/ios-charts.png" width="235" alt="頻譜與盤面分布">
+  <img src="docs/screenshots/zh-TW/ios-history.png" width="235" alt="歷史與趨勢">
+  <img src="docs/screenshots/zh-TW/ios-calibrate.png" width="235" alt="碼錶校準">
+</p>
+
+<p align="center"><sub><b>頻譜與誤差在盤面的分布 · 有沒有變好 · 用碼錶校準。</b><br>
+譜峰是這台盤的實際指紋：偏心在 1×、皮帶在 0.91×、馬達在 35.3×。
+歷史裡最後兩筆是同一台盤量兩次、中間把手機原地轉 180° —— 偏心從 0.31% 掉到 0.08%，
 因為那裡面有一大半本來就是手機造成的，不是唱盤的。</sub></p>
 
 ## 它能告訴你什麼
@@ -70,11 +77,18 @@ Thorens TD 235 EV 的真實資料 —— 201 秒、20,377 筆樣本。譜峰是�
 不是每一支 Android 都有，中階機常常省掉；沒有的話 app 開起來會直接告訴你。
 細節見 [`docs/android-sensors.md`](docs/android-sensors.md)。
 
+<p align="center">
+  <img src="docs/screenshots/zh-TW/android-main.png" width="235" alt="Android 版的轉速讀數">
+  <img src="docs/screenshots/zh-TW/android-analysis.png" width="235" alt="Android 版的分析結果">
+  <img src="docs/screenshots/zh-TW/android-history.png" width="235" alt="Android 版的歷史記錄">
+</p>
+
+<p align="center"><sub>同一段錄音在 Android 上 —— 同樣的版面、同樣的數字，
+各自用該平台原生的元件。</sub></p>
+
 ### iOS —— 自己建置或自己簽章
 
 沒有 App Store 版本：那需要付費開發者帳號，這個專案沒有。
-
-畫面跟上面 Android 的一樣 —— 同樣的版面、同樣的數字，各自用該平台原生的元件。
 
 **用 Xcode 自己建置**（最可靠）—— 往下看「建置」。
 

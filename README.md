@@ -13,19 +13,26 @@ It started with a Thorens TD 235 EV that had sat idle for 20 years and ran slow.
 that needed a tool accurate to 0.1%.
 
 <p align="center">
-  <img src="docs/screenshots/en/android-placement.png" width="235" alt="Where to put the phone">
-  <img src="docs/screenshots/en/android-main.png" width="235" alt="Measuring">
-  <img src="docs/screenshots/en/android-analysis.png" width="235" alt="Analysis">
-  <img src="docs/screenshots/en/android-history.png" width="235" alt="History and trend">
+  <img src="docs/screenshots/en/ios-placement.png" width="235" alt="Where to put the phone">
+  <img src="docs/screenshots/en/ios-main.png" width="235" alt="Speed reading">
+  <img src="docs/screenshots/en/ios-analysis.png" width="235" alt="Wow and flutter, and which part is causing it">
 </p>
 
-<p align="center"><sub><b>Where to put the phone · what it measured · what is causing it ·
-how it changed.</b><br>
-Real data from the Thorens TD 235 EV — 201 s, 20,377 samples. The spectral peaks are that
-deck's actual fingerprint: eccentricity at 1×, the belt at 0.91×, the motor at 35.3×.<br>
-In the history, the last two runs are the same deck measured twice with the phone rotated
-180° in between — the 1×/rev drops 74%, because most of it was the phone, not the
-turntable.</sub></p>
+<p align="center"><sub><b>Where to put the phone · what it measured · which part is causing it.</b><br>
+Real data from the Thorens TD 235 EV — 201 s, 20,377 samples.</sub></p>
+
+<p align="center">
+  <img src="docs/screenshots/en/ios-charts.png" width="235" alt="Spectrum and the platter map">
+  <img src="docs/screenshots/en/ios-history.png" width="235" alt="History and trend">
+  <img src="docs/screenshots/en/ios-calibrate.png" width="235" alt="Stopwatch calibration">
+</p>
+
+<p align="center"><sub><b>The spectrum and the platter map · how it changed · calibrating
+against a stopwatch.</b><br>
+The peaks are that deck's actual fingerprint: eccentricity at 1×, the belt at 0.91×, the
+motor at 35.3×. In the history, the last two runs are the same deck measured twice with the
+phone turned 180° in between — eccentricity drops from 0.31% to 0.08%, because most of it
+was the phone, not the turntable.</sub></p>
 
 ## What it tells you
 
@@ -83,13 +90,19 @@ Needs **Android 9 or later** and — this is the real constraint — **a gyrosco
 Android phone has one; mid-range models often omit it, and the app says so plainly on launch
 if yours doesn't. See [`docs/android-sensors.md`](docs/android-sensors.md).
 
+<p align="center">
+  <img src="docs/screenshots/en/android-main.png" width="235" alt="Speed reading on Android">
+  <img src="docs/screenshots/en/android-analysis.png" width="235" alt="Analysis on Android">
+  <img src="docs/screenshots/en/android-history.png" width="235" alt="History on Android">
+</p>
+
+<p align="center"><sub>The same recording on Android — same layout, same numbers, native
+controls on each platform.</sub></p>
+
 ### iOS — build it or sign it yourself
 
 There is no App Store build: that needs a paid developer account, which this project does
 not have.
-
-The screens are the same as the Android ones above — same layout, same numbers, native
-controls on each platform.
 
 **Build it in Xcode** (most reliable) — see [Building](#building) below.
 
