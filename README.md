@@ -228,8 +228,8 @@ a long time to find (the file is in Traditional Chinese):
 particular turntable.
 
 [`docs/android-sensors.md`](docs/android-sensors.md) covers what the Android port measured
-about sensor timing — the sampling rate that is 7.9% above what was requested, and why that
-turned out to be harmless.
+about sensor timing — why the actual sampling rate misses the one you asked for (one phone
+by +7.9%, another by −0.75%), and why that turns out to be harmless.
 
 ## Safety
 

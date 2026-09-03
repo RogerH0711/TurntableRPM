@@ -201,7 +201,8 @@ make android-crosscheck FILE=TurntableRPM-20260901-155337.json
 [`docs/td235ev-maintenance.md`](docs/td235ev-maintenance.md) 是那台唱盤本身的維修記錄。
 
 [`docs/android-sensors.md`](docs/android-sensors.md) 是 Android 版在真實硬體上量到的
-感測器行為 —— 為什麼取樣率比要求的高 7.9%，以及為什麼那件事其實無害。
+感測器行為 —— 為什麼實際取樣率不會剛好等於你要求的（一支高 7.9%、另一支低 0.75%），
+以及為什麼那件事其實無害。
 
 ## 安全提醒
 
