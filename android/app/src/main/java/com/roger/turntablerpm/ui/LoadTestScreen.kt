@@ -71,7 +71,7 @@ fun LoadTestScreen(
 
     val base = records.firstOrNull { it.epochMillis == baseId }
     val loaded = records.firstOrNull { it.epochMillis == loadedId }
-    val added = addedText.toDoubleOrNull() ?: 0.0
+    val added = parseDecimal(addedText) ?: 0.0
 
     val result = if (base != null && loaded != null && base !== loaded && added > 0) {
         LoadCompensator.extrapolate(
@@ -140,8 +140,8 @@ fun LoadTestScreen(
                         style = MaterialTheme.typography.titleSmall,
                     )
                     OutlinedTextField(
-                        value = if (phoneMassGrams > 0) trimGrams(phoneMassGrams) else "",
-                        onValueChange = { onPhoneMassChange(it.toDoubleOrNull() ?: 0.0) },
+                        value = if (phoneMassGrams > 0) formatDecimal(phoneMassGrams) else "",
+                        onValueChange = { onPhoneMassChange(parseDecimal(it) ?: 0.0) },
                         label = { Text(stringResource(R.string.load_phone_mass)) },
                         suffix = { Text("g") },
                         singleLine = true,
@@ -150,7 +150,7 @@ fun LoadTestScreen(
                     )
                     OutlinedTextField(
                         value = addedText,
-                        onValueChange = { addedText = it },
+                        onValueChange = { addedText = filterDecimalInput(it) },
                         label = { Text(stringResource(R.string.load_added_mass)) },
                         suffix = { Text("g") },
                         singleLine = true,
@@ -314,6 +314,3 @@ private fun verdict(r: LoadCompensationResult): String {
         R.string.load_verdict_significant, dir, abs(r.phoneEffectRPM), pct, r.zeroLoadRPM,
     )
 }
-
-private fun trimGrams(v: Double): String =
-    if (v == v.toLong().toDouble()) v.toLong().toString() else v.toString()

@@ -255,13 +255,13 @@ private fun NumberField(
     value: Double?,
     onChange: (Double?) -> Unit,
 ) {
-    var text by remember(value == null) { mutableStateOf(value?.let { trimNumber(it) } ?: "") }
+    var text by remember(value == null) { mutableStateOf(value?.let { formatDecimal(it) } ?: "") }
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         OutlinedTextField(
             value = text,
             onValueChange = {
                 text = it
-                onChange(if (it.isBlank()) null else it.toDoubleOrNull())
+                onChange(if (it.isBlank()) null else parseDecimal(it))
             },
             label = { Text(label) },
             suffix = { Text(unit) },
@@ -270,13 +270,17 @@ private fun NumberField(
             modifier = Modifier.weight(1f),
         )
         if (text.isNotEmpty()) {
-            TextButton(onClick = { text = ""; onChange(null) }, modifier = Modifier.width(64.dp)) {
-                Text(stringResource(R.string.prof_clear_field), style = MaterialTheme.typography.bodySmall)
+            // **不要固定寬度。** 中文的「清除」兩個字，德文的 Löschen 七個字母 ——
+            // 寫死 64.dp 會讓德文斷成「Lösche / n」。讓按鈕照內容撐開，
+            // 輸入框那邊有 weight(1f) 會自己讓位。
+            TextButton(onClick = { text = ""; onChange(null) }) {
+                Text(
+                    stringResource(R.string.prof_clear_field),
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1,
+                )
             }
         }
     }
 }
 
-/** 8.5 顯示成 "8.5"、8.0 顯示成 "8"，不要一律補到小數三位。 */
-private fun trimNumber(v: Double): String =
-    if (v == v.toLong().toDouble()) v.toLong().toString() else v.toString()

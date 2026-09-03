@@ -124,8 +124,10 @@ fun AdvancedDiagnosticsScreen(
                         )
                     }
                 }
+                // **可信度說明只在「算得出倍率」時才貼。** 算不出來的時候
+                // 上面那句「還沒滿一圈」已經說完了，再貼一次同樣的話只是雜訊。
+                ConfidenceNote(state)
             }
-            ConfidenceNote(state)
         }
 
         // ── 磁力計路徑 ────────────────────────────────────────

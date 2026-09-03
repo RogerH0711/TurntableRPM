@@ -5,14 +5,14 @@
   "args": 0,
   "en": "↑ This side faces you",
   "ja": "↑ こちら側を手前に",
-  "de": "↑ Diese Seite zeigt zu Ihnen"
+  "de": "↑ Diese Seite zeigt zu dir"
  },
  {
   "key": "place_across_spindle",
   "zh": "手機橫跨轉軸放在唱片鎮上，讓質心落在轉軸正上方",
   "args": 0,
   "en": "Rest the phone across the record weight, over the spindle, so its centre of mass sits on the axis",
-  "ja": "レコードウェイトの上にスピンドルをまたぐように iPhone を置き、重心が軸の真上に来るようにする",
+  "ja": "レコードウェイトの上にスピンドルをまたぐようにスマホを置き、重心が軸の真上に来るようにする",
   "de": "Leg das Telefon quer über das Plattengewicht, mittig auf der Achse ab, damit sein Schwerpunkt auf der Drehachse liegt"
  },
  {
@@ -20,7 +20,7 @@
   "zh": "手機下緣朝著你（跟平放在桌上看一樣）",
   "args": 0,
   "en": "The phone’s bottom edge faces you (as if it were lying flat on a table)",
-  "ja": "iPhone の下端を自分の方へ（机に平置きして見るときと同じ向き）",
+  "ja": "スマホの下端を自分の方へ（机に平置きして見るときと同じ向き）",
   "de": "Die Unterkante zeigt zu dir (so, wie es flach auf dem Tisch läge)"
  },
  {
@@ -44,7 +44,7 @@
   "zh": "沒有唱片鎮也可以：手機右側長邊的中點貼著轉軸、機身放在左半邊，然後在對面放一個跟手機等重的東西（小馬克杯加水就很好用），距離轉軸差不多遠。",
   "args": 0,
   "en": "No record weight? That works too: put the midpoint of the phone’s right long edge against the spindle with the body on the left half, then place something of equal weight opposite it (a small mug filled with water does nicely), about the same distance from the spindle.",
-  "ja": "レコードウェイトがなくても構いません：iPhone の右の長辺の中点をスピンドルに当てて本体を左半分に置き、反対側に同じ重さのもの（水を入れた小さめのマグカップが便利）を、スピンドルからほぼ同じ距離に置いてください。",
+  "ja": "レコードウェイトがなくても構いません：スマホの右の長辺の中点をスピンドルに当てて本体を左半分に置き、反対側に同じ重さのもの（水を入れた小さめのマグカップが便利）を、スピンドルからほぼ同じ距離に置いてください。",
   "de": "Auch ohne Plattengewicht geht es: Lege die Mitte der rechten Längsseite an die Achse, das Gerät auf die linke Hälfte, und stelle gegenüber etwas gleich Schweres hin (eine kleine, mit Wasser gefüllte Tasse eignet sich gut), etwa gleich weit von der Achse entfernt."
  },
  {
@@ -197,7 +197,7 @@
   "args": 0,
   "en": "Measurement finished — you can lift the phone off the platter",
   "ja": "測定が終わりました。ターンテーブルからスマホを取り上げてかまいません",
-  "de": "Messung beendet — Sie können das Telefon vom Teller nehmen"
+  "de": "Messung beendet — du kannst das Telefon vom Teller nehmen"
  },
  {
   "key": "dial_see_analysis",
@@ -236,8 +236,8 @@
   "zh": "把手機放在轉動的唱盤上，就能量出轉速、偏差和抖晃率。",
   "args": 0,
   "en": "Put your phone on the spinning platter and it measures speed, error and wow & flutter.",
-  "ja": "回っている円盤の上に iPhone を置くだけで、回転数・誤差・ワウ・フラッターが測れます。",
-  "de": "Leg dein iPhone auf den drehenden Teller — es misst Drehzahl, Abweichung und Gleichlaufschwankungen."
+  "ja": "回っている円盤の上にスマホを置くだけで、回転数・誤差・ワウ・フラッターが測れます。",
+  "de": "Leg dein Telefon auf den drehenden Teller — es misst Drehzahl, Abweichung und Gleichlaufschwankungen."
  },
  {
   "key": "onb_no_strobe_needed",
@@ -252,8 +252,8 @@
   "zh": "手機這樣擺",
   "args": 0,
   "en": "Place the phone like this",
-  "ja": "iPhone はこう置きます",
-  "de": "So legst du das iPhone auf"
+  "ja": "スマホはこう置きます",
+  "de": "So legst du das Telefon auf"
  },
  {
   "key": "onb_title_how_to_measure",
@@ -341,7 +341,7 @@
   "args": 0,
   "en": "The full explanation is under “About” on the main screen.",
   "ja": "詳しい説明はメイン画面の「説明」にあります。",
-  "de": "Die ausführliche Erklärung finden Sie unter „Info“ auf dem Hauptbildschirm."
+  "de": "Die ausführliche Erklärung findest du unter „Info“ auf dem Hauptbildschirm."
  },
  {
   "key": "onb_get_started",
@@ -821,7 +821,7 @@
   "args": 0,
   "en": "Write down what you did this time. Three months from now a column of numbers only tells you something changed, not why.",
   "ja": "今回何をしたかを書いておきましょう。3 か月後に数字の列を見ても、メモがなければ「変わった」ことしか分からず、理由は分かりません。",
-  "de": "Notieren Sie, was Sie diesmal getan haben. In drei Monaten sagt Ihnen eine Zahlenspalte ohne Notiz nur, dass sich etwas geändert hat — nicht warum."
+  "de": "Notiere, was du diesmal getan hast. In drei Monaten sagt dir eine Zahlenspalte ohne Notiz nur, dass sich etwas geändert hat — nicht warum."
  },
  {
   "key": "detail_back_to_history",
@@ -845,7 +845,7 @@
   "args": 0,
   "en": "This device has no gyroscope. Not every Android phone does — mid-range models often leave it out.\n\nThis app measures rotation rate with the gyroscope; without one there is no way to measure, and neither the accelerometer nor the magnetometer can stand in. Please use a phone that has a gyroscope.",
   "ja": "この端末にはジャイロがありません。すべての Android スマホにあるわけではなく、ミドルレンジでは省かれることがよくあります。\n\nこのアプリはジャイロで自転角速度を測ります。ジャイロがなければ測定できず、加速度センサーや磁気センサーでは代用できません。ジャイロを搭載したスマホをお使いください。",
-  "de": "Dieses Gerät hat kein Gyroskop. Nicht jedes Android-Telefon hat eines — bei Mittelklassemodellen fehlt es häufig.\n\nDiese App misst die Drehrate mit dem Gyroskop; ohne eines lässt sich nicht messen, und weder Beschleunigungs- noch Magnetsensor können es ersetzen. Bitte verwenden Sie ein Telefon mit Gyroskop."
+  "de": "Dieses Gerät hat kein Gyroskop. Nicht jedes Android-Telefon hat eines — bei Mittelklassemodellen fehlt es häufig.\n\nDiese App misst die Drehrate mit dem Gyroskop; ohne eines lässt sich nicht messen, und weder Beschleunigungs- noch Magnetsensor können es ersetzen. Bitte verwende ein Telefon mit Gyroskop."
  },
  {
   "key": "engine_no_gravity",
@@ -981,7 +981,7 @@
   "args": 0,
   "en": "You need one completed measurement first, so there is a reading to compare against. Go back, measure once, then return here.",
   "ja": "比較する読みを得るには、先に測定を 1 回終える必要があります。前の画面で一度測ってから戻ってきてください。",
-  "de": "Zuerst braucht es eine abgeschlossene Messung als Vergleichswert. Gehen Sie zurück, messen Sie einmal und kommen Sie dann hierher."
+  "de": "Zuerst braucht es eine abgeschlossene Messung als Vergleichswert. Geh zurück, miss einmal und komm dann hierher."
  },
  {
   "key": "cal_this_calibration",
@@ -1005,7 +1005,7 @@
   "args": 0,
   "en": "never this far off — check whether the revolution count or the seconds were mistyped.",
   "ja": "ここまでずれることはありません —— 回転数か秒数の入力ミスを確認してください。",
-  "de": "niemals so weit daneben — prüfen Sie, ob Umdrehungszahl oder Sekunden vertippt sind."
+  "de": "niemals so weit daneben — prüfe, ob Umdrehungszahl oder Sekunden vertippt sind."
  },
  {
   "key": "cal_how_to",
@@ -1013,7 +1013,7 @@
   "args": 0,
   "en": "1. Stick a visible mark on the edge of the platter\n2. Start the stopwatch and start counting as the mark passes a fixed reference point\n3. Stop when the mark passes the same point after the set number of revolutions",
   "ja": "1. ターンテーブルの縁に見える印を貼る\n2. 印が固定した基準点を通過する瞬間にストップウォッチを押し、同時に数え始める\n3. 設定した回転数を数え終え、印が同じ点を通過したときに止める",
-  "de": "1. Kleben Sie eine sichtbare Marke an den Tellerrand\n2. Starten Sie die Stoppuhr und zählen Sie mit, wenn die Marke einen festen Bezugspunkt passiert\n3. Stoppen Sie, wenn die Marke nach der eingestellten Zahl von Umdrehungen denselben Punkt passiert"
+  "de": "1. Kleb eine sichtbare Marke an den Tellerrand\n2. Starte die Stoppuhr und zähl mit, wenn die Marke einen festen Bezugspunkt passiert\n3. Stopp, wenn die Marke nach der eingestellten Zahl von Umdrehungen denselben Punkt passiert"
  },
  {
   "key": "cal_precision_note",
@@ -1045,7 +1045,7 @@
   "args": 0,
   "en": "Measure twice as usual: once with just the phone, once with something of known weight stacked on top of it. Then pick those two runs below.",
   "ja": "通常どおり 2 回測ります。1 回はスマホだけ、もう 1 回はスマホの上に重さの分かったものを載せて。そのあと下でその 2 件を選びます。",
-  "de": "Messen Sie zweimal wie gewohnt: einmal nur mit dem Telefon, einmal mit einem Gegenstand bekannten Gewichts darauf. Wählen Sie danach unten diese beiden Durchläufe aus."
+  "de": "Miss zweimal wie gewohnt: einmal nur mit dem Telefon, einmal mit einem Gegenstand bekannten Gewichts darauf. Wähl danach unten diese beiden Durchläufe aus."
  },
  {
   "key": "load_balance_warning",
@@ -1061,7 +1061,7 @@
   "args": 0,
   "en": "This test needs at least two saved measurements. Measure twice as described above first.",
   "ja": "このテストには少なくとも 2 件の測定記録が必要です。まず上の方法で 2 回測ってください。",
-  "de": "Für diesen Test braucht es mindestens zwei gespeicherte Messungen. Messen Sie zunächst zweimal wie oben beschrieben."
+  "de": "Für diesen Test braucht es mindestens zwei gespeicherte Messungen. Miss zunächst zweimal wie oben beschrieben."
  },
  {
   "key": "load_pick_two",
@@ -1076,8 +1076,8 @@
   "zh": "只放手機",
   "args": 0,
   "en": "Phone only",
-  "ja": "iPhone のみ",
-  "de": "Nur iPhone"
+  "ja": "スマホのみ",
+  "de": "Nur Telefon"
  },
  {
   "key": "load_with_mass",
@@ -1108,8 +1108,8 @@
   "zh": "手機重量",
   "args": 0,
   "en": "Phone weight",
-  "ja": "iPhone の重さ",
-  "de": "Gewicht des iPhone"
+  "ja": "スマホの重さ",
+  "de": "Gewicht des Telefons"
  },
  {
   "key": "load_added_mass",
@@ -1148,8 +1148,8 @@
   "zh": "手機造成的變化",
   "args": 0,
   "en": "Change caused by the phone",
-  "ja": "iPhone による変化",
-  "de": "Änderung durch das iPhone"
+  "ja": "スマホによる変化",
+  "de": "Änderung durch das Telefon"
  },
  {
   "key": "load_zero_load",
@@ -1173,7 +1173,7 @@
   "args": 0,
   "en": "There is no turntable profile yet, so the result has nowhere to go. Add one under “Turntable profiles” first.",
   "ja": "ターンテーブルのプロファイルがまだないため、結果を保存できません。先に「ターンテーブルのプロファイル」で 1 台追加してください。",
-  "de": "Es gibt noch kein Plattenspieler-Profil, das Ergebnis kann nirgends hin. Legen Sie zuerst unter „Plattenspieler-Profile“ eines an."
+  "de": "Es gibt noch kein Plattenspieler-Profil, das Ergebnis kann nirgends hin. Leg zuerst unter „Plattenspieler-Profile“ eines an."
  },
  {
   "key": "load_pick_two_hint",
@@ -1181,7 +1181,7 @@
   "args": 0,
   "en": "Pick two different runs and enter the added weight.",
   "ja": "異なる 2 件の測定を選び、追加した重さを入力してください。",
-  "de": "Wählen Sie zwei verschiedene Durchläufe und geben Sie das Zusatzgewicht ein."
+  "de": "Wähl zwei verschiedene Durchläufe und gib das Zusatzgewicht ein."
  },
  {
   "key": "load_saved_result",
@@ -1204,16 +1204,16 @@
   "zh": "手機的重量確實會影響讀數。",
   "args": 0,
   "en": "The phone’s weight does affect the reading.",
-  "ja": "iPhone の重さは表示値に影響します。",
-  "de": "Das Gewicht des iPhone beeinflusst die Anzeige tatsächlich."
+  "ja": "スマホの重さは表示値に影響します。",
+  "de": "Das Gewicht des Telefons beeinflusst die Anzeige tatsächlich."
  },
  {
   "key": "load_not_significant",
   "zh": "這台盤對載重不敏感，手機的重量不影響讀數。",
   "args": 0,
   "en": "This deck is insensitive to load — the phone’s weight does not affect the reading.",
-  "ja": "このターンテーブルは荷重の影響を受けにくく、iPhone の重さは表示値に影響しません。",
-  "de": "Dieses Laufwerk reagiert kaum auf Last — das Gewicht des iPhone beeinflusst die Anzeige nicht."
+  "ja": "このターンテーブルは荷重の影響を受けにくく、スマホの重さは表示値に影響しません。",
+  "de": "Dieses Laufwerk reagiert kaum auf Last — das Gewicht des Telefons beeinflusst die Anzeige nicht."
  },
  {
   "key": "load_back_to_profile",
@@ -1324,8 +1324,8 @@
   "zh": "斜率在量測雜訊以內 —— 這台唱盤對載重不敏感，手機的重量不影響讀數。",
   "args": 0,
   "en": "The slope is within measurement noise — this deck is insensitive to load, so the phone’s weight does not affect the reading.",
-  "ja": "傾きは測定ノイズの範囲内です —— このターンテーブルは荷重の影響を受けにくく、iPhone の重さは表示値に影響しません。",
-  "de": "Die Steigung liegt im Messrauschen — dieses Laufwerk reagiert kaum auf Last, das Gewicht des iPhone beeinflusst die Anzeige nicht."
+  "ja": "傾きは測定ノイズの範囲内です —— このターンテーブルは荷重の影響を受けにくく、スマホの重さは表示値に影響しません。",
+  "de": "Die Steigung liegt im Messrauschen — dieses Laufwerk reagiert kaum auf Last, das Gewicht des Telefons beeinflusst die Anzeige nicht."
  },
  {
   "key": "load_slows",
@@ -1524,8 +1524,8 @@
   "zh": "手機的重量會不會把唱盤拖慢，完全取決於馬達型式，查表沒有用，要實測。",
   "args": 0,
   "en": "Whether the phone’s weight slows your deck depends entirely on the motor type — no table can tell you, you have to measure it.",
-  "ja": "iPhone の重さでターンテーブルが遅くなるかどうかはモーターの方式次第で、表を調べても分かりません。実測するしかありません。",
-  "de": "Ob das Gewicht des iPhone dein Laufwerk bremst, hängt allein von der Motorbauart ab — keine Tabelle sagt es dir, du musst es messen."
+  "ja": "スマホの重さでターンテーブルが遅くなるかどうかはモーターの方式次第で、表を調べても分かりません。実測するしかありません。",
+  "de": "Ob das Gewicht des Telefons dein Laufwerk bremst, hängt allein von der Motorbauart ab — keine Tabelle sagt es dir, du musst es messen."
  },
  {
   "key": "prof_redo_load_test",
@@ -1685,7 +1685,7 @@
   "args": 0,
   "en": "To find out how much is the deck's own: measure once, rotate the phone 180° in place, measure again. The phone's contribution flips phase and the deck's does not, so the difference between the two runs is the phone's share.",
   "ja": "ターンテーブル自身の分を知るには、1 回測り、スマホをその場で 180° 回してもう 1 回測ります。スマホの寄与は位相が反転し、ターンテーブルの分は変わらないので、2 回の差がスマホの分です。",
-  "de": "So finden Sie den Anteil des Laufwerks heraus: einmal messen, das Telefon an Ort und Stelle um 180° drehen, noch einmal messen. Der Beitrag des Telefons kehrt die Phase um, der des Laufwerks nicht — die Differenz ist der Anteil des Telefons."
+  "de": "So findest du den Anteil des Laufwerks heraus: einmal messen, das Telefon an Ort und Stelle um 180° drehen, noch einmal messen. Der Beitrag des Telefons kehrt die Phase um, der des Laufwerks nicht — die Differenz ist der Anteil des Telefons."
  },
  {
   "key": "about_2x_is_harmonic",
@@ -1693,7 +1693,7 @@
   "args": 0,
   "en": "By the same token, if the 1×/rev is large, the 2×/rev below it is most likely just its harmonic rather than an out-of-round platter — bring the eccentricity down first, then look again.",
   "ja": "同様に、1 回転 1 回が大きい場合、その下の 1 回転 2 回はたいていその高調波であって、盤の真円度の問題ではありません —— まず偏心を下げてから見てください。",
-  "de": "Ebenso: Ist das 1×/Umdr. groß, so ist das 2×/Umdr. darunter meist nur dessen Harmonische und kein unrunder Teller — senken Sie zuerst die Exzentrizität."
+  "de": "Ebenso: Ist das 1×/Umdr. groß, so ist das 2×/Umdr. darunter meist nur dessen Harmonische und kein unrunder Teller — senk zuerst die Exzentrizität."
  },
  {
   "key": "about_sec_accuracy",
@@ -1716,8 +1716,8 @@
   "zh": "手機怎麼擺",
   "args": 0,
   "en": "How to place the phone",
-  "ja": "iPhone の置き方",
-  "de": "So legst du das iPhone auf"
+  "ja": "スマホの置き方",
+  "de": "So legst du das Telefon auf"
  },
  {
   "key": "about_sec_safety",
@@ -1740,16 +1740,16 @@
   "zh": "把唱臂鎖在臂座上，不要讓唱頭懸在盤面上方。手機在盤上時碰到唱針，壞的是唱針。",
   "args": 0,
   "en": "Lock the tonearm into its rest; never leave the cartridge hanging over the platter. If it meets the phone while the phone is on the platter, it is the stylus that loses.",
-  "ja": "トーンアームはアームレストに固定し、カートリッジを円盤の上に張り出させないでください。iPhone が載っている状態で当たれば、壊れるのは針のほうです。",
-  "de": "Arretiere den Tonarm in seiner Stütze und lass den Tonabnehmer nie über dem Teller hängen. Trifft er auf das aufliegende iPhone, verliert die Nadel."
+  "ja": "トーンアームはアームレストに固定し、カートリッジを円盤の上に張り出させないでください。スマホが載っている状態で当たれば、壊れるのは針のほうです。",
+  "de": "Arretiere den Tonarm in seiner Stütze und lass den Tonabnehmer nie über dem Teller hängen. Trifft er auf das aufliegende Telefon, verliert die Nadel."
  },
  {
   "key": "about_safety_mat",
   "zh": "絨布墊、不織布墊、橡膠墊都可以，不需要另外放一張唱片。重點是不要讓手機直接壓在裸露的盤面上 —— 兩邊都會刮。放之前確認手機背面和墊子上沒有沙粒。",
   "args": 0,
   "en": "Felt, non-woven or rubber mats all work; you do not need to put a record down as well. What matters is not pressing the phone straight onto the bare platter — that scratches both. Check the back of the phone and the mat for grit first.",
-  "ja": "フェルト、不織布、ゴムのマット、どれでも構いません。レコードを別に敷く必要もありません。大事なのは iPhone を裸の円盤に直接押し当てないことで、そうすると両方が傷つきます。置く前に iPhone の背面とマットに砂粒がないか確認してください。",
-  "de": "Matten aus Filz, Vlies oder Gummi gehen alle; eine Platte musst du nicht zusätzlich auflegen. Wichtig ist nur, das iPhone nicht direkt auf den blanken Teller zu drücken — das zerkratzt beide. Prüfe vorher Rückseite und Matte auf Sandkörner."
+  "ja": "フェルト、不織布、ゴムのマット、どれでも構いません。レコードを別に敷く必要もありません。大事なのはスマホを裸の円盤に直接押し当てないことで、そうすると両方が傷つきます。置く前にスマホの背面とマットに砂粒がないか確認してください。",
+  "de": "Matten aus Filz, Vlies oder Gummi gehen alle; eine Platte musst du nicht zusätzlich auflegen. Wichtig ist nur, das Telefon nicht direkt auf den blanken Teller zu drücken — das zerkratzt beide. Prüfe vorher Rückseite und Matte auf Sandkörner."
  },
  {
   "key": "about_safety_78",
@@ -1844,16 +1844,16 @@
   "zh": "按下按鈕後把手機放上轉盤，程式會等轉速穩定才開始記錄，盤面停下時自動結束。",
   "args": 0,
   "en": "Tap the button, then put the phone on the platter. Recording only starts once the speed is steady, and ends automatically when the platter stops.",
-  "ja": "ボタンを押してから iPhone を円盤に置いてください。回転が安定してはじめて記録が始まり、円盤が止まると自動で終了します。",
-  "de": "Tippe auf die Taste und lege dann das iPhone auf den Teller. Die Aufzeichnung beginnt erst bei stabiler Drehzahl und endet automatisch, wenn der Teller steht."
+  "ja": "ボタンを押してからスマホを円盤に置いてください。回転が安定してはじめて記録が始まり、円盤が止まると自動で終了します。",
+  "de": "Tippe auf die Taste und lege dann das Telefon auf den Teller. Die Aufzeichnung beginnt erst bei stabiler Drehzahl und endet automatisch, wenn der Teller steht."
  },
  {
   "key": "meas_manual_hint",
   "zh": "自己按開始與停止。記得先讓轉盤轉起來、手機放好，再按開始。",
   "args": 0,
   "en": "You start and stop it yourself. Remember to get the platter spinning and the phone placed before you tap Start.",
-  "ja": "開始と停止を自分で操作します。先にターンテーブルを回し、iPhone を置いてから開始を押してください。",
-  "de": "Du startest und stoppst selbst. Denk daran, den Teller laufen zu lassen und das iPhone aufzulegen, bevor du auf Start tippst."
+  "ja": "開始と停止を自分で操作します。先にターンテーブルを回し、スマホを置いてから開始を押してください。",
+  "de": "Du startest und stoppst selbst. Denk daran, den Teller laufen zu lassen und das Telefon aufzulegen, bevor du auf Start tippst."
  },
  {
   "key": "meas_stop",
@@ -2068,7 +2068,7 @@
   "zh": "手機橫跨轉軸放在唱片鎮上，讓質心落在轉軸正上方 —— 這是最省事的擺法。沒有唱片鎮的話，手機右側長邊中點貼轉軸、機身放左半邊，對面放一個等重的東西配平。",
   "en": "Rest the phone across the spindle on the record weight so its centre of mass sits over the axis — that is the least trouble. Without a record weight, put the midpoint of the phone's right long edge against the spindle with the body on the left half, and counterbalance with something of equal weight opposite.",
   "ja": "スマホをレコードウェイトの上でスピンドルをまたいで置き、重心が軸の真上に来るようにします —— これがいちばん手間がかかりません。レコードウェイトがない場合は、スマホ右側長辺の中点をスピンドルに当てて本体を左半分に置き、反対側に同じ重さのもので釣り合いを取ります。",
-  "de": "Legen Sie das Telefon quer über die Achse auf das Plattengewicht, sodass sein Schwerpunkt über der Achse liegt — das ist am einfachsten. Ohne Plattengewicht die Mitte der rechten Längskante an die Achse legen, den Körper auf die linke Hälfte, und gegenüber mit etwas gleich Schwerem auswuchten.",
+  "de": "Leg das Telefon quer über die Achse auf das Plattengewicht, sodass sein Schwerpunkt über der Achse liegt — das ist am einfachsten. Ohne Plattengewicht die Mitte der rechten Längskante an die Achse legen, den Körper auf die linke Hälfte, und gegenüber mit etwas gleich Schwerem auswuchten.",
   "args": 0
  },
  {
@@ -2076,7 +2076,7 @@
   "zh": "手機偏在一邊會拖慢轉速 0.3%、放大每圈一次的抖動三成。實測顯示「每圈一次」裡有一大半是手機造成的，不是唱盤的 —— 想知道唱盤自己有多少，把手機轉 180° 再量一次，兩次的差就是手機的貢獻。",
   "en": "A phone off to one side slows the platter by 0.3% and swells the once-per-revolution wobble by a third. Measurements show most of that 1×/rev comes from the phone, not the deck — to find the deck's own share, rotate the phone 180° and measure again; the difference is the phone's contribution.",
   "ja": "スマホが片寄っていると回転が 0.3% 遅くなり、1 回転 1 回のゆらぎが 3 割増えます。実測では 1×/回転の大半がターンテーブルではなくスマホ由来でした —— ターンテーブル自身の分を知るには、スマホを 180° 回してもう一度測り、2 回の差を見てください。",
-  "de": "Ein außermittiges Telefon bremst den Teller um 0,3 % und vergrößert das Wanken einmal pro Umdrehung um ein Drittel. Messungen zeigen, dass der Großteil dieses 1×/Umdr. vom Telefon stammt, nicht vom Laufwerk — drehen Sie das Telefon um 180° und messen Sie erneut; die Differenz ist der Anteil des Telefons.",
+  "de": "Ein außermittiges Telefon bremst den Teller um 0,3 % und vergrößert das Wanken einmal pro Umdrehung um ein Drittel. Messungen zeigen, dass der Großteil dieses 1×/Umdr. vom Telefon stammt, nicht vom Laufwerk — dreh das Telefon um 180° und miss erneut; die Differenz ist der Anteil des Telefons.",
   "args": 0
  },
  {
@@ -2716,7 +2716,7 @@
   "zh": "本地磁場蓋過地磁，圓沒有包住原點 —— 角度只能來回擺盪，這條路徑不成立。先把磁吸配件與含磁鐵的手機殼拿掉；台灣的地磁水平分量約 37 µT，本地磁場超過這個數就不行。",
   "en": "The local field overwhelms the geomagnetic one and the circle no longer encloses the origin — the angle can only swing back and forth, so this path does not hold. Remove magnetic accessories and cases with magnets first; the geomagnetic horizontal component in Taiwan is about 37 µT, and anything larger than that breaks it.",
   "ja": "ローカル磁場が地磁気を上回り、円が原点を囲まなくなっています —— 角度は往復するだけで、この経路は成立しません。まずマグネット式アクセサリーと磁石入りケースを外してください。台湾の地磁気水平成分は約 37 µT で、それを超えるローカル磁場では成り立ちません。",
-  "de": "Das lokale Feld überwiegt das Erdfeld, und der Kreis umschließt den Ursprung nicht mehr — der Winkel kann nur hin- und herschwingen, dieser Pfad trägt also nicht. Entfernen Sie zuerst magnetisches Zubehör und Hüllen mit Magneten; die horizontale Erdfeldkomponente beträgt in Taiwan etwa 37 µT, alles darüber macht es unmöglich.",
+  "de": "Das lokale Feld überwiegt das Erdfeld, und der Kreis umschließt den Ursprung nicht mehr — der Winkel kann nur hin- und herschwingen, dieser Pfad trägt also nicht. Entferne zuerst magnetisches Zubehör und Hüllen mit Magneten; die horizontale Erdfeldkomponente beträgt in Taiwan etwa 37 µT, alles darüber macht es unmöglich.",
   "args": 0
  },
  {

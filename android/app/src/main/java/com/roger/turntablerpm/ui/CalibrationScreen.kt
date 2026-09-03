@@ -54,7 +54,7 @@ fun CalibrationScreen(
     var seconds by remember { mutableStateOf("") }
 
     val rev = revolutions.toIntOrNull()
-    val secs = seconds.toDoubleOrNull()
+    val secs = parseDecimal(seconds)
     val candidate = if (rev != null && secs != null && measuredRPM != null) {
         StopwatchCalibration.create(rev, secs, measuredRPM, CalibrationStore.deviceModel)
     } else null
@@ -139,7 +139,7 @@ fun CalibrationScreen(
                         )
                         OutlinedTextField(
                             value = seconds,
-                            onValueChange = { seconds = it.filter { c -> c.isDigit() || c == '.' } },
+                            onValueChange = { seconds = filterDecimalInput(it) },
                             label = { Text(stringResource(R.string.cal_seconds)) },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             singleLine = true,
