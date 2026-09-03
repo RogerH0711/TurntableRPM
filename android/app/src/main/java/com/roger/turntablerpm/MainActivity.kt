@@ -2,6 +2,7 @@ package com.roger.turntablerpm
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
@@ -137,6 +138,31 @@ private fun AppRoot(modifier: Modifier = Modifier) {
     var phoneMass by remember { mutableStateOf(onboarding.getFloat("phoneMassGrams", 200f).toDouble()) }
 
     DisposableEffect(Unit) { onDispose { engine.stop() } }
+
+    // ── 系統返回鍵 ──────────────────────────────────────────────
+    //
+    // **Android 的返回鍵必須回上一頁，不是離開 app。** 這個 app 的畫面是用一個
+    // `screen` 狀態切換的，不是 Activity 堆疊，所以系統不會自己知道該退到哪裡 ——
+    // 沒有 BackHandler 的話，從說明頁按返回會直接把 app 關掉。
+    // iOS 的 NavigationStack 免費得到這個行為，Compose 要自己接。
+    BackHandler(enabled = showOnboarding && onboarding.getBoolean("seenOnboarding", false)) {
+        // 第一次開啟時不攔 —— 那時導覽是最外層，返回就是離開 app。
+        // 從說明入口重看時才需要退回原本的畫面。
+        showOnboarding = false
+    }
+    BackHandler(enabled = showDial) {
+        // **量測中不讓返回鍵停止量測。** 手機這時在轉盤上，返回鍵是誤觸的高風險區，
+        // 而中斷一次 3 分鐘的量測沒有辦法復原。停止要走畫面上半部那個大按鈕。
+        // 凍結之後（量測已結束）才讓它關掉盤面。
+        if (!state.running) showDial = false
+    }
+    BackHandler(enabled = !showOnboarding && !showDial && screen != Screen.Measure) {
+        screen = when (screen) {
+            Screen.HistoryDetail -> Screen.History
+            Screen.LoadTest -> Screen.Profiles
+            else -> Screen.Measure
+        }
+    }
 
     // 量測中不讓螢幕睡著。3 分鐘的量測遠長於預設的螢幕逾時，睡著就等於量測中斷 ——
     // iOS 版用 isIdleTimerDisabled 做同一件事。
